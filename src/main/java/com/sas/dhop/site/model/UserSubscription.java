@@ -1,10 +1,9 @@
 package com.sas.dhop.site.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.io.Serializable;
 import java.time.Instant;
+import lombok.*;
 
 @Getter
 @Setter
@@ -32,5 +31,4 @@ public class UserSubscription extends AbstractEntity<Integer> implements Seriali
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
-
 }

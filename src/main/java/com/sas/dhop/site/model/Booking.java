@@ -1,10 +1,9 @@
 package com.sas.dhop.site.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.io.Serializable;
 import java.time.Instant;
+import lombok.*;
 
 @Getter
 @Setter
@@ -60,5 +59,4 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "performance_id", nullable = false)
     private Performance performance;
-
 }

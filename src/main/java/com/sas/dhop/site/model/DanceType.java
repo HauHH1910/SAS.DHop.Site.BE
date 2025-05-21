@@ -3,9 +3,8 @@ package com.sas.dhop.site.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.*;
-
 import java.io.Serializable;
+import lombok.*;
 
 @Getter
 @Setter

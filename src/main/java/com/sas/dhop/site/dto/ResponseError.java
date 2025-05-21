@@ -1,4 +1,4 @@
-package com.sas.dhop.site.common;
+package com.sas.dhop.site.dto;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,9 +1,8 @@
 package com.sas.dhop.site.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.io.Serializable;
+import lombok.*;
 
 @Getter
 @Setter
@@ -33,5 +32,4 @@ public class Performance extends AbstractEntity<Integer> implements Serializable
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
-
 }

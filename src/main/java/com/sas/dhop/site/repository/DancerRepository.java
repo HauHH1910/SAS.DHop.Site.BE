@@ -4,5 +4,4 @@ import com.sas.dhop.site.model.Dancer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface DancerRepository extends JpaRepository<Dancer, Integer>, JpaSpecificationExecutor<Dancer> {
-}
+public interface DancerRepository extends JpaRepository<Dancer, Integer>, JpaSpecificationExecutor<Dancer> {}

@@ -1,15 +1,16 @@
 package com.sas.dhop.site.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.Serializable;
 import java.util.Set;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User extends AbstractEntity<Integer> implements Serializable {
 
@@ -32,17 +33,17 @@ public class User extends AbstractEntity<Integer> implements Serializable {
     private String password;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "area_id", nullable = false)
+    @JoinColumn(name = "area_id")
     private Area area;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "status_id", nullable = false)
+    @JoinColumn(name = "status_id")
     private Status status;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles",
+    @JoinTable(
+            name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
-
 }

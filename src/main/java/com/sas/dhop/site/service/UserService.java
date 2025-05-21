@@ -1,4 +1,3 @@
 package com.sas.dhop.site.service;
 
-public interface UserService {
-}
+public interface UserService {}

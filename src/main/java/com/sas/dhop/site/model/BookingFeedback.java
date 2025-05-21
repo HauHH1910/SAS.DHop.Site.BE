@@ -1,9 +1,8 @@
 package com.sas.dhop.site.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.io.Serializable;
+import lombok.*;
 
 @Getter
 @Setter
@@ -35,5 +34,4 @@ public class BookingFeedback extends AbstractEntity<Integer> implements Serializ
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
-
 }
