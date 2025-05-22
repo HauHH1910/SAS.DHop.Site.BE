@@ -1,9 +1,7 @@
 package com.sas.dhop.site.model;
 
-import com.sas.dhop.site.enums.StatusType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.sas.dhop.site.model.enums.StatusType;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import lombok.*;
 
@@ -20,6 +18,7 @@ public class Status extends AbstractEntity<Integer> implements Serializable {
     private String statusName;
 
     @Column(name = "status_type")
+    @Enumerated(EnumType.STRING)
     private StatusType statusType;
 
     @Column(name = "description")

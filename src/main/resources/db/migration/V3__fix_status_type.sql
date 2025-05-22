@@ -1,0 +1,2 @@
+ALTER TABLE `status`
+    MODIFY COLUMN status_type ENUM('ACTIVE', 'INACTIVE', 'PENDING');

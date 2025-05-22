@@ -1,9 +1,8 @@
 package com.sas.dhop.site.config;
 
-import com.sas.dhop.site.enums.PermissionName;
-import com.sas.dhop.site.enums.RoleName;
-import com.sas.dhop.site.enums.StatusType;
 import com.sas.dhop.site.model.*;
+import com.sas.dhop.site.model.enums.RoleName;
+import com.sas.dhop.site.model.enums.StatusType;
 import com.sas.dhop.site.repository.*;
 import jakarta.transaction.Transactional;
 import java.util.HashSet;
@@ -28,17 +27,12 @@ public class ApplicationInitConfig {
             UserRepository userRepository,
             RoleRepository roleRepository,
             PermissionRepository permissionRepository,
-            AreaRepository areaRepository,
             StatusRepository statusRepository) {
         return args -> {
-            Permission permission = permissionRepository
-                    .findByName(PermissionName.READ_DATA)
-                    .orElseGet(() -> {
-                        Permission p = Permission.builder()
-                                .name(PermissionName.READ_DATA)
-                                .build();
-                        return permissionRepository.save(p);
-                    });
+            Permission permission = permissionRepository.findByName("READ_DATA").orElseGet(() -> {
+                Permission p = Permission.builder().name("READ_DATA").build();
+                return permissionRepository.save(p);
+            });
 
             Role role = roleRepository.findByName(RoleName.ADMIN).orElseGet(() -> {
                 Set<Permission> permissions = new HashSet<>();
@@ -48,11 +42,6 @@ public class ApplicationInitConfig {
                         .permissions(permissions)
                         .build();
                 return roleRepository.save(r);
-            });
-
-            Area area = areaRepository.findByDistrict("ABC").orElseGet(() -> {
-                Area a = Area.builder().district("ABC").ward("ABC").city("ABC").build();
-                return areaRepository.save(a);
             });
 
             Status status = statusRepository.findByStatusName("ADMIN").orElseGet(() -> {
@@ -74,7 +63,6 @@ public class ApplicationInitConfig {
                         .password(passwordEncoder.encode("123456"))
                         .roles(roles)
                         .status(status)
-                        .area(area)
                         .build();
                 userRepository.save(user);
                 log.info("Created default admin user");

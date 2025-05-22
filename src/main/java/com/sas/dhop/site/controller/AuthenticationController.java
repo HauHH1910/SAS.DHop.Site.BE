@@ -1,19 +1,21 @@
 package com.sas.dhop.site.controller;
 
+import com.nimbusds.jose.JOSEException;
 import com.sas.dhop.site.dto.ResponseData;
-import com.sas.dhop.site.dto.request.LoginRequest;
-import com.sas.dhop.site.dto.response.LoginResponse;
-import com.sas.dhop.site.enums.ResponseMessage;
+import com.sas.dhop.site.dto.request.AuthenticationRequest;
+import com.sas.dhop.site.dto.request.IntrospectRequest;
+import com.sas.dhop.site.dto.request.RefreshTokenRequest;
+import com.sas.dhop.site.dto.response.AuthenticationResponse;
+import com.sas.dhop.site.dto.response.IntrospectResponse;
+import com.sas.dhop.site.model.enums.ResponseMessage;
 import com.sas.dhop.site.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.text.ParseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -24,13 +26,38 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
+    @PostMapping("/authenticate")
+    public ResponseData<AuthenticationResponse> oauthAuthenticate(@RequestParam("code") String code) {
+        return ResponseData.<AuthenticationResponse>builder()
+                .message(ResponseMessage.AUTHENTICATION_LOGIN.getMessage())
+                .data(authenticationService.oauthLogin(code))
+                .build();
+    }
+
     @PostMapping("/login")
     @Operation(description = "API to login to the system", summary = "API to login to the system")
-    public ResponseData<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseData<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
         log.info("User try to login: {}", request.email());
-        return ResponseData.<LoginResponse>builder()
+        return ResponseData.<AuthenticationResponse>builder()
                 .message(ResponseMessage.AUTHENTICATION_LOGIN.getMessage())
                 .data(authenticationService.login(request))
+                .build();
+    }
+
+    @PostMapping("/introspect")
+    public ResponseData<IntrospectResponse> introspect(@RequestBody IntrospectRequest request) {
+        return ResponseData.<IntrospectResponse>builder()
+                .message(ResponseMessage.INTROSPECT_TOKEN.getMessage())
+                .data(authenticationService.introspect(request))
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    public ResponseData<AuthenticationResponse> refresh(@RequestBody RefreshTokenRequest request)
+            throws ParseException, JOSEException {
+        return ResponseData.<AuthenticationResponse>builder()
+                .message(ResponseMessage.REFRESH_TOKEN.getMessage())
+                .data(authenticationService.refreshToken(request))
                 .build();
     }
 }

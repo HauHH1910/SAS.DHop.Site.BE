@@ -8,6 +8,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.User;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -24,13 +25,10 @@ public class JwtUtil {
     @Value("${sas.dhop.site.key}")
     private String KEY;
 
-    @Value("${sas.dhop.site.valid-duration}")
-    private long VALID_DURATION;
-
     @Value("${sas.dhop.site.refreshable-duration}")
     private long REFRESHABLE_DURATION;
 
-    public String generateToken(User user) {
+    public String generateToken(User user, Long expireIn, Boolean isRefreshToken) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
@@ -38,9 +36,10 @@ public class JwtUtil {
                 .issuer("sas.dhop.site")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
+                        Instant.now().plus(expireIn, ChronoUnit.SECONDS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
+                .claim("type", isRefreshToken ? "refresh" : "access")
                 .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());
@@ -48,7 +47,7 @@ public class JwtUtil {
         JWSObject jwsObject = new JWSObject(header, payload);
 
         try {
-            jwsObject.sign(new MACSigner(KEY.getBytes()));
+            jwsObject.sign(new MACSigner(KEY.getBytes(StandardCharsets.UTF_8)));
         } catch (JOSEException e) {
             throw new RuntimeException(e);
         }
@@ -78,15 +77,13 @@ public class JwtUtil {
         return signedJWT;
     }
 
-    public String buildScope(User user) {
+    private String buildScope(User user) {
         StringJoiner joiner = new StringJoiner(" ");
         if (!CollectionUtils.isEmpty(user.getRoles())) {
             user.getRoles().forEach(role -> {
                 joiner.add("ROLE_" + role.getName());
                 if (!CollectionUtils.isEmpty(role.getPermissions())) {
-                    role.getPermissions().forEach(permission -> {
-                        joiner.add(permission.getName().name());
-                    });
+                    role.getPermissions().forEach(permission -> joiner.add(permission.getName()));
                 }
             });
         }

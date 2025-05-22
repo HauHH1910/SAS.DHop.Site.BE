@@ -52,7 +52,7 @@ public class CustomJwtDecoder implements JwtDecoder {
 
         } catch (Exception e) {
             log.error("{}", e.getMessage());
-            throw new BusinessException(ErrorConstant.INVALID_ERROR);
+            throw new BusinessException(ErrorConstant.UNCATEGORIZED_ERROR);
         }
     }
 }

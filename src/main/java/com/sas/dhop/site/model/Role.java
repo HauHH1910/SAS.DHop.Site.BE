@@ -1,6 +1,6 @@
 package com.sas.dhop.site.model;
 
-import com.sas.dhop.site.enums.RoleName;
+import com.sas.dhop.site.model.enums.RoleName;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
