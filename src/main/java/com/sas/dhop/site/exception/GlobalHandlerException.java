@@ -62,8 +62,7 @@ public class GlobalHandlerException {
         try {
             errorConstant = ErrorConstant.valueOf(enumKey);
 
-            var constraintViolation =
-                    e.getBindingResult().getAllErrors().get(0).unwrap(ConstraintViolation.class);
+            var constraintViolation = e.getBindingResult().getAllErrors().get(0).unwrap(ConstraintViolation.class);
 
             attributes = constraintViolation.getConstraintDescriptor().getAttributes();
 

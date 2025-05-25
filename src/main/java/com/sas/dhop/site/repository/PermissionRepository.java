@@ -1,7 +1,6 @@
 package com.sas.dhop.site.repository;
 
 import com.sas.dhop.site.model.Permission;
-
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;

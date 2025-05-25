@@ -18,6 +18,7 @@ public enum ResponseMessage {
     GET_ALL_ROLE("Lấy tất cả vai trò thành công"),
     CREATE_ROLE("Tạo vai trò mới thành công"),
     DELETE_ROLE("Xóa vai trò thành công"),
-    ;
+    REGISTER_SUCCESS("Đăng ký thành công vui lòng xác nhận OTP qua email"),
+    VERIFICATION_OTP_SUCCESS("Xác thực tài khoản thành công");
     private final String message;
 }

@@ -3,10 +3,7 @@ package com.sas.dhop.site.service.impl;
 import com.nimbusds.jose.*;
 import com.sas.dhop.site.controller.client.OAuthIdentityClient;
 import com.sas.dhop.site.controller.client.OAuthUserClient;
-import com.sas.dhop.site.dto.request.AuthenticationRequest;
-import com.sas.dhop.site.dto.request.ExchangeTokenRequest;
-import com.sas.dhop.site.dto.request.IntrospectRequest;
-import com.sas.dhop.site.dto.request.RefreshTokenRequest;
+import com.sas.dhop.site.dto.request.*;
 import com.sas.dhop.site.dto.response.AuthenticationResponse;
 import com.sas.dhop.site.dto.response.ExchangeTokenResponse;
 import com.sas.dhop.site.dto.response.IntrospectResponse;
@@ -22,11 +19,15 @@ import com.sas.dhop.site.repository.RoleRepository;
 import com.sas.dhop.site.repository.StatusRepository;
 import com.sas.dhop.site.repository.UserRepository;
 import com.sas.dhop.site.service.AuthenticationService;
+import com.sas.dhop.site.service.OTPService;
 import com.sas.dhop.site.util.JwtUtil;
+import jakarta.mail.MessagingException;
 import java.text.ParseException;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,18 +37,25 @@ import org.springframework.stereotype.Service;
 @Slf4j(topic = "[Authentication Service]")
 public class AuthenticationServiceImpl implements AuthenticationService {
 
+    private final OTPService oTPService;
+
+    @NonFinal
     @Value("${sas.dhop.oauth.client-id}")
     private String CLIENT_ID;
 
+    @NonFinal
     @Value("${sas.dhop.oauth.client-secret}")
     private String CLIENT_SECRET;
 
+    @NonFinal
     @Value("${sas.dhop.oauth.redirect-uri}")
     private String REDIRECT_URI;
 
+    @NonFinal
     @Value("${sas.dhop.oauth.grant-type}")
     private String GRANT_TYPE;
 
+    @NonFinal
     @Value("${sas.dhop.site.valid-duration}")
     private long VALID_DURATION;
 
@@ -133,6 +141,74 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var user = userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.UNAUTHENTICATED));
+
+        var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
+        var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
+
+        return new AuthenticationResponse(accessToken, refreshToken);
+    }
+
+    @Override
+    public void register(RegisterRequest request) throws MessagingException {
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new BusinessException(ErrorConstant.EMAIL_ALREADY_EXIST);
+        }
+
+        var role = roleRepository
+                .findByName(request.role())
+                .orElseGet(() ->
+                        roleRepository.save(Role.builder().name(request.role()).build()));
+
+        Set<Role> roles = Set.of(role);
+
+        var status = statusRepository
+                .findByStatusName("Chưa kích hoạt")
+                .orElseGet(() -> statusRepository.save(Status.builder()
+                        .statusName("Chưa kích hoạt")
+                        .statusType(StatusType.ACTIVE)
+                        .description("Tài khoản chưa kích hoạt")
+                        .build()));
+
+        User user = User.builder()
+                .name(request.name())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .roles(roles)
+                .status(status)
+                .build();
+
+        userRepository.save(user);
+
+        String generateOTP = oTPService.generateOTP(request.email());
+
+        oTPService.sendOTPByEmail(request.email(), request.name(), generateOTP).thenAccept(success -> {
+            if (success) {
+                log.info("Sent OTP to email [{}]", request.email());
+            } else {
+                log.error("Sent OTP fail to email [{}]", request.email());
+            }
+        });
+    }
+
+    @Override
+    public AuthenticationResponse verifyOTPAndActiveUSer(VerifyOTPRequest request) {
+        boolean isValid = oTPService.validateOTP(request.email(), request.otpCode());
+        if (!isValid) throw new BusinessException(ErrorConstant.INVALID_OTP);
+
+        User user = userRepository
+                .findByEmail(request.email())
+                .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
+
+        val status = statusRepository
+                .findByStatusName("Kích hoạt thành công")
+                .orElseGet(() -> statusRepository.save(Status.builder()
+                        .statusName("Kích hoạt thành công")
+                        .statusType(StatusType.ACTIVE)
+                        .description("Kích hoạt tài khoản thành công")
+                        .build()));
+
+        user.setStatus(status);
+        userRepository.save(user);
 
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);

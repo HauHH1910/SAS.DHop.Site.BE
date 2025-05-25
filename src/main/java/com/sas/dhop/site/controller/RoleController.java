@@ -5,10 +5,8 @@ import com.sas.dhop.site.dto.request.RoleRequest;
 import com.sas.dhop.site.dto.response.RoleResponse;
 import com.sas.dhop.site.model.enums.ResponseMessage;
 import com.sas.dhop.site.service.RoleService;
-
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
