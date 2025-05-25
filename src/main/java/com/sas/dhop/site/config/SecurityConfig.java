@@ -28,7 +28,7 @@ public class SecurityConfig {
     @Lazy
     private final CustomJwtDecoder customJwtDecoder;
 
-    private final String[] PUBLIC_ENDPOINTS = {"/auth/login", "/auth/authenticate/**", "/users"};
+    private final String[] PUBLIC_ENDPOINTS = {"/auth/login", "/auth/register", "/auth/authenticate/**", "/users"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {

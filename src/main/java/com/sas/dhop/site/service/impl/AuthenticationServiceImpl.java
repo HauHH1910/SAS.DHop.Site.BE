@@ -14,20 +14,21 @@ import com.sas.dhop.site.model.Role;
 import com.sas.dhop.site.model.Status;
 import com.sas.dhop.site.model.User;
 import com.sas.dhop.site.model.enums.RoleName;
-import com.sas.dhop.site.model.enums.StatusType;
 import com.sas.dhop.site.repository.RoleRepository;
-import com.sas.dhop.site.repository.StatusRepository;
 import com.sas.dhop.site.repository.UserRepository;
 import com.sas.dhop.site.service.AuthenticationService;
 import com.sas.dhop.site.service.OTPService;
+import com.sas.dhop.site.service.RoleService;
+import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.util.JwtUtil;
 import jakarta.mail.MessagingException;
+
 import java.text.ParseException;
 import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,8 @@ import org.springframework.stereotype.Service;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final OTPService oTPService;
+    private final StatusService statusService;
+    private final RoleService roleService;
 
     @NonFinal
     @Value("${sas.dhop.oauth.client-id}")
@@ -62,8 +65,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${sas.dhop.site.refreshable-duration}")
     private long REFRESHABLE_DURATION;
 
-    private final RoleRepository roleRepository;
-    private final StatusRepository statusRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final OAuthUserClient userClient;
@@ -110,19 +111,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         var userInfo = userClient.getUserInfo("json", response.accessToken());
 
-        var role = roleRepository
-                .findByName(RoleName.USER)
-                .orElseGet(() ->
-                        roleRepository.save(Role.builder().name(RoleName.USER).build()));
+        Role role = roleService.findByRoleName(RoleName.USER);
 
         Set<Role> roles = Set.of(role);
 
-        var status = statusRepository
-                .findByStatusName("USER")
-                .orElseGet(() -> statusRepository.save(Status.builder()
-                        .statusName("USER")
-                        .statusType(StatusType.ACTIVE)
-                        .build()));
+        var status = statusService.createStatus("Kích hoạt thành công");
 
         var user = onBoardUserOAuth(userInfo, status, roles);
 
@@ -154,20 +147,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BusinessException(ErrorConstant.EMAIL_ALREADY_EXIST);
         }
 
-        var role = roleRepository
-                .findByName(request.role())
-                .orElseGet(() ->
-                        roleRepository.save(Role.builder().name(request.role()).build()));
+        Role role = roleService.findByRoleName(request.role());
 
         Set<Role> roles = Set.of(role);
 
-        var status = statusRepository
-                .findByStatusName("Chưa kích hoạt")
-                .orElseGet(() -> statusRepository.save(Status.builder()
-                        .statusName("Chưa kích hoạt")
-                        .statusType(StatusType.ACTIVE)
-                        .description("Tài khoản chưa kích hoạt")
-                        .build()));
+        var status = statusService.createStatus("Chưa kích hoạt");
 
         User user = User.builder()
                 .name(request.name())
@@ -199,13 +183,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
 
-        val status = statusRepository
-                .findByStatusName("Kích hoạt thành công")
-                .orElseGet(() -> statusRepository.save(Status.builder()
-                        .statusName("Kích hoạt thành công")
-                        .statusType(StatusType.ACTIVE)
-                        .description("Kích hoạt tài khoản thành công")
-                        .build()));
+        var status = statusService.createStatus("Kích hoạt thành công");
 
         user.setStatus(status);
         userRepository.save(user);

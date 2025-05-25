@@ -2,6 +2,9 @@ package com.sas.dhop.site.service;
 
 import com.sas.dhop.site.dto.request.RoleRequest;
 import com.sas.dhop.site.dto.response.RoleResponse;
+import com.sas.dhop.site.model.Role;
+import com.sas.dhop.site.model.enums.RoleName;
+
 import java.util.List;
 
 public interface RoleService {
@@ -11,4 +14,6 @@ public interface RoleService {
     List<RoleResponse> getAll();
 
     void deleteRole(Integer id);
+
+    Role findByRoleName(RoleName role);
 }
