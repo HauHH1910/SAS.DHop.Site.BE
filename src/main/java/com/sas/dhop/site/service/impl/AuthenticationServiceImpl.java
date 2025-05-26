@@ -254,7 +254,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         String resetUrl = String.format("http://localhost:3000/reset-password?token=%s", token);
 
-        String body = String.format(
+        return String.format(
                 "<p>Chào bạn,</p>" + "<p>Bạn vừa yêu cầu đặt lại mật khẩu cho tài khoản của mình.</p>"
                         + "<p>Vui lòng bấm nút bên dưới để xác nhận và đặt lại mật khẩu:</p>"
                         + "<p style=\"text-align:center;\">"
@@ -262,6 +262,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         + "</p>"
                         + "<p>Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>",
                 resetUrl);
-        return body;
     }
 }
