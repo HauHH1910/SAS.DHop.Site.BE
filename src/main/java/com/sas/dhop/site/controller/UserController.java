@@ -24,7 +24,7 @@ public class UserController {
     @GetMapping
     public ResponseData<List<UserResponse>> getAllUser() {
         return ResponseData.<List<UserResponse>>builder()
-                .message(ResponseMessage.GET_ALL_USER.getMessage())
+                .message(ResponseMessage.GET_ALL_USER)
                 .data(userService.getAllUser())
                 .build();
     }
@@ -32,7 +32,7 @@ public class UserController {
     @GetMapping("/info")
     public ResponseData<UserResponse> getUserInfo() {
         return ResponseData.<UserResponse>builder()
-                .message(ResponseMessage.GET_USER_INFO.getMessage())
+                .message(ResponseMessage.GET_USER_INFO)
                 .data(userService.getUserInfo())
                 .build();
     }
@@ -40,7 +40,7 @@ public class UserController {
     @PostMapping
     public ResponseData<UserResponse> createUser(@RequestBody CreateUserRequest request) {
         return ResponseData.<UserResponse>builder()
-                .message(ResponseMessage.CREATE_USER.getMessage())
+                .message(ResponseMessage.CREATE_USER)
                 .data(userService.createUser(request))
                 .build();
     }
@@ -49,7 +49,7 @@ public class UserController {
     public ResponseData<Void> deleteUser(@PathVariable("id") Integer id) {
         userService.deleteUser(id);
         return ResponseData.<Void>builder()
-                .message(ResponseMessage.DELETE_USER.getMessage())
+                .message(ResponseMessage.DELETE_USER)
                 .build();
     }
 
@@ -57,7 +57,7 @@ public class UserController {
     public ResponseData<UserResponse> updateUser(
             @PathVariable("id") Integer id, @RequestBody UpdateUserRequest request) {
         return ResponseData.<UserResponse>builder()
-                .message(ResponseMessage.UPDATE_USER.getMessage())
+                .message(ResponseMessage.UPDATE_USER)
                 .data(userService.updateUser(id, request))
                 .build();
     }
@@ -65,7 +65,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseData<UserResponse> getUser(@PathVariable("id") Integer id) {
         return ResponseData.<UserResponse>builder()
-                .message(ResponseMessage.GET_USER.getMessage())
+                .message(ResponseMessage.GET_USER)
                 .data(userService.getUser(id))
                 .build();
     }

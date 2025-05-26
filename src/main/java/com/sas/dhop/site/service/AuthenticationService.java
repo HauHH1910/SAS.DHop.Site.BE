@@ -19,5 +19,9 @@ public interface AuthenticationService {
 
     AuthenticationResponse oauthLogin(String code);
 
+    void forgotPassword(String email) throws MessagingException;
+
+    AuthenticationResponse resetPassword(ResetPasswordRequest request) throws ParseException, JOSEException;
+
     AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException;
 }

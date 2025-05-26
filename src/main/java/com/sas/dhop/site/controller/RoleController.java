@@ -23,7 +23,7 @@ public class RoleController {
     @GetMapping
     public ResponseData<List<RoleResponse>> getAllRole() {
         return ResponseData.<List<RoleResponse>>builder()
-                .message(ResponseMessage.GET_ALL_ROLE.getMessage())
+                .message(ResponseMessage.GET_ALL_ROLE)
                 .data(roleService.getAll())
                 .build();
     }
@@ -31,7 +31,7 @@ public class RoleController {
     @PostMapping
     public ResponseData<RoleResponse> createRole(@RequestBody RoleRequest request) {
         return ResponseData.<RoleResponse>builder()
-                .message(ResponseMessage.CREATE_ROLE.getMessage())
+                .message(ResponseMessage.CREATE_ROLE)
                 .data(roleService.createRole(request))
                 .build();
     }
@@ -40,7 +40,7 @@ public class RoleController {
     public ResponseData<Void> deleteRole(@PathVariable("id") Integer id) {
         roleService.deleteRole(id);
         return ResponseData.<Void>builder()
-                .message(ResponseMessage.DELETE_ROLE.getMessage())
+                .message(ResponseMessage.DELETE_ROLE)
                 .build();
     }
 }

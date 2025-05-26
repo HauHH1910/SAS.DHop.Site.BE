@@ -14,12 +14,8 @@ import com.sas.dhop.site.model.Role;
 import com.sas.dhop.site.model.Status;
 import com.sas.dhop.site.model.User;
 import com.sas.dhop.site.model.enums.RoleName;
-import com.sas.dhop.site.repository.RoleRepository;
 import com.sas.dhop.site.repository.UserRepository;
-import com.sas.dhop.site.service.AuthenticationService;
-import com.sas.dhop.site.service.OTPService;
-import com.sas.dhop.site.service.RoleService;
-import com.sas.dhop.site.service.StatusService;
+import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.JwtUtil;
 import jakarta.mail.MessagingException;
 
@@ -41,6 +37,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final OTPService oTPService;
     private final StatusService statusService;
     private final RoleService roleService;
+    private final EmailService emailService;
 
     @NonFinal
     @Value("${sas.dhop.oauth.client-id}")
@@ -118,6 +115,42 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var status = statusService.createStatus("Kích hoạt thành công");
 
         var user = onBoardUserOAuth(userInfo, status, roles);
+
+        var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
+        var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
+
+        return new AuthenticationResponse(accessToken, refreshToken);
+    }
+
+    @Override
+    public void forgotPassword(String email) throws MessagingException {
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
+
+        String body = emailContent(user);
+
+        emailService.sendEmail(email, "Đặt lại mật khẩu", body);
+    }
+
+    @Override
+    public AuthenticationResponse resetPassword(ResetPasswordRequest request) {
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
+
+        boolean isValidToken = true;
+
+        try {
+            jwtUtil.verifyToken(request.token(), false);
+        } catch (ParseException | JOSEException e) {
+            isValidToken = false;
+        }
+
+        if (!isValidToken) {
+            throw new BusinessException(ErrorConstant.INVALID_TOKEN);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
+        userRepository.save(user);
 
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
@@ -214,5 +247,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .name(String.join(" ", userInfo.givenName(), userInfo.familyName()))
                         .avatar(userInfo.picture())
                         .build()));
+    }
+
+    private String emailContent(User user) {
+        String token = jwtUtil.generateToken(user, VALID_DURATION, false);
+
+        String resetUrl = String.format("http://localhost:3000/reset-password?token=%s", token);
+
+        String body = String.format(
+                "<p>Chào bạn,</p>" +
+                        "<p>Bạn vừa yêu cầu đặt lại mật khẩu cho tài khoản của mình.</p>" +
+                        "<p>Vui lòng bấm nút bên dưới để xác nhận và đặt lại mật khẩu:</p>" +
+                        "<p style=\"text-align:center;\">" +
+                        "<a href=\"%s\" style=\"display:inline-block; padding:10px 20px; font-size:16px; color:#fff; background-color:#007bff; text-decoration:none; border-radius:5px;\">Xác nhận reset mật khẩu</a>" +
+                        "</p>" +
+                        "<p>Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>",
+                resetUrl
+        );
+        return body;
     }
 }

@@ -11,7 +11,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+
 import java.text.ParseException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +30,24 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseData<AuthenticationResponse> oauthAuthenticate(@RequestParam("code") String code) {
         return ResponseData.<AuthenticationResponse>builder()
-                .message(ResponseMessage.AUTHENTICATION_LOGIN.getMessage())
+                .message(ResponseMessage.AUTHENTICATION_LOGIN)
                 .data(authenticationService.oauthLogin(code))
+                .build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseData<AuthenticationResponse> resetPassword(@RequestBody ResetPasswordRequest request) throws ParseException, JOSEException {
+        return ResponseData.<AuthenticationResponse>builder()
+                .message(ResponseMessage.RESET_PASSWORD)
+                .data(authenticationService.resetPassword(request))
+                .build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseData<Void> forgotPassword(@RequestBody String email) throws MessagingException {
+        authenticationService.forgotPassword(email);
+        return ResponseData.<Void>builder()
+                .message(ResponseMessage.FORGOT_PASSWORD)
                 .build();
     }
 
@@ -37,15 +55,15 @@ public class AuthenticationController {
     public ResponseData<Void> register(@RequestBody RegisterRequest request) throws MessagingException {
         authenticationService.register(request);
         return ResponseData.<Void>builder()
-                .message(ResponseMessage.REGISTER_SUCCESS.getMessage())
+                .message(ResponseMessage.REGISTER_SUCCESS)
                 .build();
     }
 
-    @PostMapping("/verify-token")
+    @PostMapping("/verify-otp")
     public ResponseData<AuthenticationResponse> verifyOTP(@RequestBody VerifyOTPRequest request) {
         return ResponseData.<AuthenticationResponse>builder()
                 .data(authenticationService.verifyOTPAndActiveUSer(request))
-                .message(ResponseMessage.VERIFICATION_OTP_SUCCESS.getMessage())
+                .message(ResponseMessage.VERIFICATION_OTP_SUCCESS)
                 .build();
     }
 
@@ -54,7 +72,7 @@ public class AuthenticationController {
     public ResponseData<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
         log.info("User try to login: {}", request.email());
         return ResponseData.<AuthenticationResponse>builder()
-                .message(ResponseMessage.AUTHENTICATION_LOGIN.getMessage())
+                .message(ResponseMessage.AUTHENTICATION_LOGIN)
                 .data(authenticationService.login(request))
                 .build();
     }
@@ -62,7 +80,7 @@ public class AuthenticationController {
     @PostMapping("/introspect")
     public ResponseData<IntrospectResponse> introspect(@RequestBody IntrospectRequest request) {
         return ResponseData.<IntrospectResponse>builder()
-                .message(ResponseMessage.INTROSPECT_TOKEN.getMessage())
+                .message(ResponseMessage.INTROSPECT_TOKEN)
                 .data(authenticationService.introspect(request))
                 .build();
     }
@@ -71,7 +89,7 @@ public class AuthenticationController {
     public ResponseData<AuthenticationResponse> refresh(@RequestBody RefreshTokenRequest request)
             throws ParseException, JOSEException {
         return ResponseData.<AuthenticationResponse>builder()
-                .message(ResponseMessage.REFRESH_TOKEN.getMessage())
+                .message(ResponseMessage.REFRESH_TOKEN)
                 .data(authenticationService.refreshToken(request))
                 .build();
     }

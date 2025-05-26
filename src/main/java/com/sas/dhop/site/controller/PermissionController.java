@@ -22,7 +22,7 @@ public class PermissionController {
     @GetMapping
     public ResponseData<List<PermissionResponse>> getAllRole() {
         return ResponseData.<List<PermissionResponse>>builder()
-                .message(ResponseMessage.GET_ALL_ROLE.getMessage())
+                .message(ResponseMessage.GET_ALL_ROLE)
                 .data(permissionService.getAll())
                 .build();
     }
@@ -30,7 +30,7 @@ public class PermissionController {
     @PostMapping
     public ResponseData<PermissionResponse> createRole(@RequestBody PermissionRequest request) {
         return ResponseData.<PermissionResponse>builder()
-                .message(ResponseMessage.CREATE_ROLE.getMessage())
+                .message(ResponseMessage.CREATE_ROLE)
                 .data(permissionService.createPermission(request))
                 .build();
     }
@@ -39,7 +39,7 @@ public class PermissionController {
     public ResponseData<Void> deleteRole(@PathVariable("id") Integer id) {
         permissionService.deletePermission(id);
         return ResponseData.<Void>builder()
-                .message(ResponseMessage.DELETE_ROLE.getMessage())
+                .message(ResponseMessage.DELETE_ROLE)
                 .build();
     }
 }
