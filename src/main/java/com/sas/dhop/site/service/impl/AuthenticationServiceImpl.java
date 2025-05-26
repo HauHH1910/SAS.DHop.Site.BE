@@ -18,10 +18,8 @@ import com.sas.dhop.site.repository.UserRepository;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.JwtUtil;
 import jakarta.mail.MessagingException;
-
 import java.text.ParseException;
 import java.util.Set;
-
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -124,7 +122,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void forgotPassword(String email) throws MessagingException {
-        var user = userRepository.findByEmail(email)
+        var user = userRepository
+                .findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
 
         String body = emailContent(user);
@@ -134,7 +133,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse resetPassword(ResetPasswordRequest request) {
-        User user = userRepository.findByEmail(request.email())
+        User user = userRepository
+                .findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
 
         boolean isValidToken = true;
@@ -255,15 +255,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String resetUrl = String.format("http://localhost:3000/reset-password?token=%s", token);
 
         String body = String.format(
-                "<p>Chào bạn,</p>" +
-                        "<p>Bạn vừa yêu cầu đặt lại mật khẩu cho tài khoản của mình.</p>" +
-                        "<p>Vui lòng bấm nút bên dưới để xác nhận và đặt lại mật khẩu:</p>" +
-                        "<p style=\"text-align:center;\">" +
-                        "<a href=\"%s\" style=\"display:inline-block; padding:10px 20px; font-size:16px; color:#fff; background-color:#007bff; text-decoration:none; border-radius:5px;\">Xác nhận reset mật khẩu</a>" +
-                        "</p>" +
-                        "<p>Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>",
-                resetUrl
-        );
+                "<p>Chào bạn,</p>" + "<p>Bạn vừa yêu cầu đặt lại mật khẩu cho tài khoản của mình.</p>"
+                        + "<p>Vui lòng bấm nút bên dưới để xác nhận và đặt lại mật khẩu:</p>"
+                        + "<p style=\"text-align:center;\">"
+                        + "<a href=\"%s\" style=\"display:inline-block; padding:10px 20px; font-size:16px; color:#fff; background-color:#007bff; text-decoration:none; border-radius:5px;\">Xác nhận reset mật khẩu</a>"
+                        + "</p>"
+                        + "<p>Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>",
+                resetUrl);
         return body;
     }
 }

@@ -39,8 +39,6 @@ public class RoleController {
     @DeleteMapping("/{id}")
     public ResponseData<Void> deleteRole(@PathVariable("id") Integer id) {
         roleService.deleteRole(id);
-        return ResponseData.<Void>builder()
-                .message(ResponseMessage.DELETE_ROLE)
-                .build();
+        return ResponseData.<Void>builder().message(ResponseMessage.DELETE_ROLE).build();
     }
 }
