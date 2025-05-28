@@ -17,4 +17,6 @@ public class ResponseMessage {
     public static final String VERIFICATION_OTP_SUCCESS = "Xác thực tài khoản thành công";
     public static final String RESET_PASSWORD = "Đổi mật khẩu thành công";
     public static final String FORGOT_PASSWORD = "Gửi yêu cầu đổi mật khẩu thành công";
+    public static final String GET_ALL_DANCE_TYPE = "Lấy tất cả thể loại nhảy thaành công";
+    public static final String CREATE_DANCE_TYPE = "Tạo thể loại nhảy mới thành công";
 }

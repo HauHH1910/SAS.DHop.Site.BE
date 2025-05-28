@@ -17,7 +17,9 @@ public enum ErrorConstant {
     USER_NOT_FOUND(7, "Không tìm thấy người dùng", HttpStatus.NOT_FOUND),
     EMAIL_ALREADY_EXIST(8, "Email đã tồn tại", HttpStatus.BAD_REQUEST),
     INVALID_OTP(9, "Mã OTP không hợp lệ", HttpStatus.FORBIDDEN),
-    ;
+    DANCE_TYPE_NOT_FOUND(10, "Không tìm thấy thể loại nhảy", HttpStatus.NOT_FOUND),
+    DANCE_TYPE_ALREADY_EXISTS(11, "Đã tồn tại thể loại nhảy này", HttpStatus.FORBIDDEN),
+    SENT_EMAIL_ERROR(12, "Không thể gửi OTP, quá trình đăng ký bị hủy bỏ.", HttpStatus.FORBIDDEN);
     private final Integer code;
 
     private final String message;
