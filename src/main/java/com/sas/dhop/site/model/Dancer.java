@@ -3,6 +3,7 @@ package com.sas.dhop.site.model;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Set;
 import lombok.*;
 
 @Getter
@@ -14,9 +15,12 @@ import lombok.*;
 @Table(name = "dancer")
 public class Dancer extends AbstractEntity<Integer> implements Serializable {
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "dance_type_id", nullable = false)
-    private DanceType danceType;
+    @ManyToMany
+    @JoinTable(
+            name = "dancer_dance_type",
+            joinColumns = @JoinColumn(name = "dancer_id"),
+            inverseJoinColumns = @JoinColumn(name = "dance_type_id"))
+    private Set<DanceType> danceTypes;
 
     @Column(name = "dancer_nick_name")
     private String dancerNickName;
@@ -37,8 +41,7 @@ public class Dancer extends AbstractEntity<Integer> implements Serializable {
     @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "subscription_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Subscription subscription;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

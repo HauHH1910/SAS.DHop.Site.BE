@@ -48,9 +48,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseData<Void> deleteUser(@PathVariable("id") Integer id) {
         userService.deleteUser(id);
-        return ResponseData.<Void>builder()
-                .message(ResponseMessage.DELETE_USER)
-                .build();
+        return ResponseData.<Void>builder().message(ResponseMessage.DELETE_USER).build();
     }
 
     @PatchMapping("/{id}")

@@ -8,9 +8,7 @@ import com.sas.dhop.site.repository.PermissionRepository;
 import com.sas.dhop.site.repository.RoleRepository;
 import com.sas.dhop.site.service.RoleService;
 import com.sas.dhop.site.util.mapper.RoleMapper;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,13 +47,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role findByRoleName(RoleName role) {
-        return roleRepository.findByName(role)
-                .orElseGet(() -> roleRepository.save
-                        (
-                                Role.builder()
-                                        .name(role)
-                                        .build()
-                        )
-                );
+        return roleRepository
+                .findByName(role)
+                .orElseGet(() -> roleRepository.save(Role.builder().name(role).build()));
     }
 }

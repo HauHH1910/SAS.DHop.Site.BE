@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j(topic = "[Status Service]")
@@ -18,14 +17,12 @@ public class StatusServiceImpl implements StatusService {
 
     @Override
     public Status createStatus(String status) {
-        return statusRepository.findByStatusName(status).orElseGet(
-                () -> statusRepository.save(
-                        Status.builder()
-                                .statusName(status)
-                                .statusType(StatusType.ACTIVE)
-                                .description(status)
-                                .build()
-                )
-        );
+        return statusRepository
+                .findByStatusName(status)
+                .orElseGet(() -> statusRepository.save(Status.builder()
+                        .statusName(status)
+                        .statusType(StatusType.ACTIVE)
+                        .description(status)
+                        .build()));
     }
 }

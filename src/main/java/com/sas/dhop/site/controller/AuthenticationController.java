@@ -11,9 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
-
 import java.text.ParseException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +34,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseData<AuthenticationResponse> resetPassword(@RequestBody ResetPasswordRequest request) throws ParseException, JOSEException {
+    public ResponseData<AuthenticationResponse> resetPassword(@RequestBody ResetPasswordRequest request)
+            throws ParseException, JOSEException {
         return ResponseData.<AuthenticationResponse>builder()
                 .message(ResponseMessage.RESET_PASSWORD)
                 .data(authenticationService.resetPassword(request))

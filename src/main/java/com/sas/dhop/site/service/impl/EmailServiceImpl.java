@@ -3,9 +3,7 @@ package com.sas.dhop.site.service.impl;
 import com.sas.dhop.site.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-
 import java.util.concurrent.CompletableFuture;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +23,6 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public CompletableFuture<Void> sendEmail(String recipients, String subject, String text) {
-        
-
 
         return CompletableFuture.runAsync(() -> {
             try {
@@ -44,5 +40,4 @@ public class EmailServiceImpl implements EmailService {
             }
         });
     }
-
 }
