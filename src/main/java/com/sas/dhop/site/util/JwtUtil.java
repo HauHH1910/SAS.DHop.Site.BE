@@ -12,10 +12,12 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.jwt.MappedJwtClaimSetConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -41,6 +43,7 @@ public class JwtUtil {
                 .claim("scope", buildScope(user))
                 .claim("type", isRefreshToken ? "refresh" : "access")
                 .build();
+
 
         Payload payload = new Payload(claimsSet.toJSONObject());
 

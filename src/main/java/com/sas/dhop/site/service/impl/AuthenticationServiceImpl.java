@@ -17,9 +17,11 @@ import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.JwtUtil;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
+
 import java.text.ParseException;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -124,14 +126,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void forgotPassword(String email) throws MessagingException {
+    public void forgotPassword(ForgotPasswordRequest request) throws MessagingException {
         var user = userRepository
-                .findByEmail(email)
+                .findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
-
+        log.info("[{}] quên mật khẩu rồi sir", request.email());
         String body = emailContent(user);
 
-        emailService.sendEmail(email, "Đặt lại mật khẩu", body);
+        emailService.sendEmail(request.email(), "Đặt lại mật khẩu", body);
     }
 
     @Override

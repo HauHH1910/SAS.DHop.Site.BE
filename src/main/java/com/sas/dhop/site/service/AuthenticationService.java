@@ -19,7 +19,7 @@ public interface AuthenticationService {
 
     AuthenticationResponse oauthLogin(String code);
 
-    void forgotPassword(String email) throws MessagingException;
+    void forgotPassword(ForgotPasswordRequest request) throws MessagingException;
 
     AuthenticationResponse resetPassword(ResetPasswordRequest request) throws ParseException, JOSEException;
 

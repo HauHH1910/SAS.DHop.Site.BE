@@ -43,8 +43,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseData<Void> forgotPassword(@RequestBody String email) throws MessagingException {
-        authenticationService.forgotPassword(email);
+    public ResponseData<Void> forgotPassword(@RequestBody ForgotPasswordRequest request) throws MessagingException {
+        authenticationService.forgotPassword(request);
         return ResponseData.<Void>builder()
                 .message(ResponseMessage.FORGOT_PASSWORD)
                 .build();
