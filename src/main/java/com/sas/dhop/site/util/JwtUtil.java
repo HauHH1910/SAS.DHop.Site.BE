@@ -25,9 +25,6 @@ public class JwtUtil {
     @Value("${sas.dhop.site.key}")
     private String KEY;
 
-    @Value("${sas.dhop.site.refreshable-duration}")
-    private long REFRESHABLE_DURATION;
-
     public String generateToken(User user, Long expireIn, Boolean isRefreshToken) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
