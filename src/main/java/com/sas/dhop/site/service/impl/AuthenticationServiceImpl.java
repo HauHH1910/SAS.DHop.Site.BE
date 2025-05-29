@@ -294,7 +294,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private String emailContent(User user) {
-        String token = jwtUtil.generateToken(user, VALID_DURATION, false);
+        String token = jwtUtil.generateToken(user, 500L, false);
 
         String resetUrl = String.format("http://localhost:3000/reset-password?token=%s", token);
 
