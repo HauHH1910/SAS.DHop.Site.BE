@@ -17,16 +17,15 @@ import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.JwtUtil;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
-
 import java.text.ParseException;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -44,7 +43,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final OAuthUserClient userClient;
     private final OAuthIdentityClient identityClient;
     private final JwtUtil jwtUtil;
-    private final SubscriptionRepository subscriptionRepository;
     private final ChoreographyRepository choreographyRepository;
     private final DancerRepository dancerRepository;
 
@@ -68,8 +66,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${sas.dhop.site.valid-duration}")
     private long VALID_DURATION;
 
+    @NonFinal
     @Value("${sas.dhop.site.refreshable-duration}")
     private long REFRESHABLE_DURATION;
+
+    @NonFinal
+    @Value("${sas.dhop.site.reset-duration}")
+    private long RESET_DURATION;
 
     @Override
     public AuthenticationResponse login(AuthenticationRequest request) {
@@ -96,7 +99,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         boolean isValid = true;
 
         try {
-            jwtUtil.verifyToken(token, false);
+            jwtUtil.verifyToken(token, VALID_DURATION, false);
         } catch (BusinessException | ParseException | JOSEException e) {
             isValid = false;
         }
@@ -138,21 +141,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse resetPassword(ResetPasswordRequest request) {
-        User user = userRepository
-                .findByEmail(request.email())
-                .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
-
         boolean isValidToken = true;
+        String email;
 
         try {
-            jwtUtil.verifyToken(request.token(), false);
-        } catch (ParseException | JOSEException e) {
+            var claims = jwtUtil.verifyToken(request.token(), RESET_DURATION, false);
+            email = claims.getSubject();
+
+            log.info("[{}] is trying to reset password sir", email);
+        } catch (ParseException | JOSEException | BadJwtException e) {
             isValidToken = false;
+            email = null;
         }
 
-        if (!isValidToken) {
+        if (!isValidToken || email == null) {
             throw new BusinessException(ErrorConstant.INVALID_TOKEN);
         }
+
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
 
         user.setPassword(passwordEncoder.encode(request.newPassword()));
         userRepository.save(user);
@@ -165,9 +173,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException {
-        var signedJWT = jwtUtil.verifyToken(request.token(), true);
+        var signedJWT = jwtUtil.verifyToken(request.token(), REFRESHABLE_DURATION, true);
 
-        var email = signedJWT.getJWTClaimsSet().getSubject();
+        var email = signedJWT.getSubject();
 
         var user = userRepository
                 .findByEmail(email)
@@ -294,7 +302,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private String emailContent(User user) {
-        String token = jwtUtil.generateToken(user, 500L, false);
+        String token = jwtUtil.generateToken(user, 100L, false);
 
         String resetUrl = String.format("http://localhost:3000/reset-password?token=%s", token);
 

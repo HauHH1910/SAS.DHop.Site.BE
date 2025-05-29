@@ -12,12 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.jwt.MappedJwtClaimSetConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -44,7 +42,6 @@ public class JwtUtil {
                 .claim("type", isRefreshToken ? "refresh" : "access")
                 .build();
 
-
         Payload payload = new Payload(claimsSet.toJSONObject());
 
         JWSObject jwsObject = new JWSObject(header, payload);
@@ -57,27 +54,38 @@ public class JwtUtil {
         return jwsObject.serialize();
     }
 
-    public SignedJWT verifyToken(String token, boolean isRefresh) throws ParseException, JOSEException {
-        JWSVerifier jwsVerifier = new MACVerifier(KEY.getBytes());
-
+    public JWTClaimsSet verifyToken(String token, Long durationInSeconds, boolean isRefresh)
+            throws ParseException, JOSEException {
+        JWSVerifier jwsVerifier = new MACVerifier(KEY.getBytes(StandardCharsets.UTF_8));
         SignedJWT signedJWT = SignedJWT.parse(token);
 
-        Date expirationTime = (isRefresh)
-                ? new Date(signedJWT
-                        .getJWTClaimsSet()
-                        .getIssueTime()
-                        .toInstant()
-                        .plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)
-                        .toEpochMilli())
-                : signedJWT.getJWTClaimsSet().getExpirationTime();
-
-        boolean verified = signedJWT.verify(jwsVerifier);
-
-        if (!(verified && expirationTime.after(new Date()))) {
+        if (!signedJWT.verify(jwsVerifier)) {
             throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
         }
 
-        return signedJWT;
+        JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+
+        Date now = new Date();
+
+        if (isRefresh) {
+            Date issueTime = claims.getIssueTime();
+            if (issueTime == null) {
+                throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
+            }
+            Date expiryTime = Date.from(issueTime.toInstant().plus(durationInSeconds, ChronoUnit.SECONDS));
+
+            if (now.after(expiryTime)) {
+                throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
+            }
+
+        } else {
+            Date expirationTime = claims.getExpirationTime();
+            if (expirationTime == null || now.after(expirationTime)) {
+                throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
+            }
+        }
+
+        return claims;
     }
 
     private String buildScope(User user) {
