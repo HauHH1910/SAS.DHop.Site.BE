@@ -26,8 +26,6 @@ public class JwtUtil {
     private String KEY;
 
     public String generateToken(User user, Long expireIn, Boolean isRefreshToken) {
-        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
-
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getEmail())
                 .issuer("sas.dhop.site")
@@ -39,26 +37,29 @@ public class JwtUtil {
                 .claim("type", isRefreshToken ? "refresh" : "access")
                 .build();
 
-        Payload payload = new Payload(claimsSet.toJSONObject());
-
-        JWSObject jwsObject = new JWSObject(header, payload);
+        SignedJWT signedJWT = new SignedJWT(
+                new JWSHeader(JWSAlgorithm.HS512),
+                claimsSet
+        );
 
         try {
-            jwsObject.sign(new MACSigner(KEY.getBytes(StandardCharsets.UTF_8)));
+            signedJWT.sign(new MACSigner(KEY.getBytes(StandardCharsets.UTF_8)));
         } catch (JOSEException e) {
             throw new RuntimeException(e);
         }
-        return jwsObject.serialize();
+
+        return signedJWT.serialize();
     }
+
 
     public JWTClaimsSet verifyToken(String token, Long durationInSeconds, boolean isRefresh)
             throws ParseException, JOSEException {
         JWSVerifier jwsVerifier = new MACVerifier(KEY.getBytes(StandardCharsets.UTF_8));
         SignedJWT signedJWT = SignedJWT.parse(token);
-
         if (!signedJWT.verify(jwsVerifier)) {
             throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
         }
+
 
         JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
 
