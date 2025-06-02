@@ -69,8 +69,17 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND)));
     }
 
+    @Override
+    public User getLoginUser() {
+        String Email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(Email)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+    }
+
     private User findUserById(Integer id) {
         log.info("[find user] - [{}]", id);
         return userRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
     }
+
+
 }

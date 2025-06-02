@@ -19,4 +19,6 @@ public class ResponseMessage {
     public static final String FORGOT_PASSWORD = "Gửi yêu cầu đổi mật khẩu thành công";
     public static final String GET_ALL_DANCE_TYPE = "Lấy tất cả thể loại nhảy thaành công";
     public static final String CREATE_DANCE_TYPE = "Tạo thể loại nhảy mới thành công";
+    public static final String GET_ALL_AREA = "Lấy tất cả các khu vực hoạt động của nhóm nhảy";
+
 }
