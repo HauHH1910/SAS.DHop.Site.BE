@@ -3,7 +3,6 @@ package com.sas.dhop.site.config;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,8 +41,7 @@ public class SecurityConfig {
                 .permitAll()
                 .anyRequest()
                 .authenticated());
-        httpSecurity.headers(headers ->
-                headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
+        httpSecurity.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(customJwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
@@ -65,26 +63,10 @@ public class SecurityConfig {
 
         configuration.setAllowCredentials(true);
 
-        configuration.setAllowedOrigins(
-                Collections.singletonList("http://localhost:3000")
-        );
-        configuration.setAllowedHeaders(
-                Arrays.asList(
-                        HttpHeaders.ORIGIN,
-                        HttpHeaders.CONTENT_TYPE,
-                        HttpHeaders.ACCEPT,
-                        HttpHeaders.AUTHORIZATION
-                )
-        );
-        configuration.setAllowedMethods(
-                Arrays.asList(
-                        "GET",
-                        "POST",
-                        "DELETE",
-                        "PUT",
-                        "PATCH"
-                )
-        );
+        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+        configuration.setAllowedHeaders(Arrays.asList(
+                HttpHeaders.ORIGIN, HttpHeaders.CONTENT_TYPE, HttpHeaders.ACCEPT, HttpHeaders.AUTHORIZATION));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH"));
         source.registerCorsConfiguration("/**", configuration);
 
         return new CorsFilter(source);

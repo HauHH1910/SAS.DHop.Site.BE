@@ -8,10 +8,8 @@ import com.sas.dhop.site.model.nosql.Message;
 import com.sas.dhop.site.model.nosql.Room;
 import com.sas.dhop.site.service.RoomService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.security.Principal;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

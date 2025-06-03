@@ -10,11 +10,8 @@ import com.sas.dhop.site.model.nosql.Room;
 import com.sas.dhop.site.repository.UserRepository;
 import com.sas.dhop.site.repository.nosql.RoomRepository;
 import com.sas.dhop.site.service.RoomService;
-
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -55,7 +52,8 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomResponse getRoom(Principal principal) {
-        User user = userRepository.findByEmail(principal.getName())
+        User user = userRepository
+                .findByEmail(principal.getName())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
         log.info("Find room with ID: [{}] ", user.getId());
         List<Room> rooms = roomRepository.findByRoomIdContaining(user.getId().toString());

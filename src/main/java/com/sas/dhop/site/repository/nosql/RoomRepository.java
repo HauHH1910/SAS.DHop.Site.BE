@@ -3,8 +3,6 @@ package com.sas.dhop.site.repository.nosql;
 import com.sas.dhop.site.model.nosql.Room;
 import java.util.List;
 import java.util.Optional;
-
-import feign.QueryMap;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 

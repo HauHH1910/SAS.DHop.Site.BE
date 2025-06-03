@@ -4,7 +4,6 @@ import com.sas.dhop.site.dto.request.CreateRoomRequest;
 import com.sas.dhop.site.dto.response.RoomResponse;
 import com.sas.dhop.site.model.nosql.Message;
 import com.sas.dhop.site.model.nosql.Room;
-
 import java.security.Principal;
 import java.util.List;
 

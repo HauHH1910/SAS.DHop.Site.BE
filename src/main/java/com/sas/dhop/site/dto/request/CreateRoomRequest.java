@@ -9,8 +9,6 @@ public record CreateRoomRequest(List<String> participantIds, List<String> names)
     }
 
     public String roomId() {
-        return participantIds.stream()
-                .sorted()
-                .collect(Collectors.joining("-"));
+        return participantIds.stream().sorted().collect(Collectors.joining("-"));
     }
 }

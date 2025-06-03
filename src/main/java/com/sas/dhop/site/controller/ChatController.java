@@ -5,7 +5,6 @@ import com.sas.dhop.site.model.nosql.Message;
 import com.sas.dhop.site.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -27,5 +26,4 @@ public class ChatController {
         Message savedMessage = chatService.sendMessage(roomId, payload);
         messagingTemplate.convertAndSend("/topic/room/" + roomId, savedMessage);
     }
-
 }
