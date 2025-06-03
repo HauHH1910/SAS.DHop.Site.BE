@@ -1,33 +1,31 @@
 package com.sas.dhop.site.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.sas.dhop.site.dto.payload.MessagePayload;
+import com.sas.dhop.site.model.nosql.Message;
+import com.sas.dhop.site.service.ChatService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.security.Principal;
-
+@Slf4j
 @Controller
+@RequiredArgsConstructor
 public class ChatController {
 
-    @SendTo("/topic/public")
-    @MessageMapping("/chat.send")
-    public ChatMessage sendMessage(@Payload ChatMessage message, Principal principal) {
-        message.setSender(principal.getName()); // Lấy từ token JWT
-        message.setTimestamp(String.valueOf(System.currentTimeMillis()));
-        return message;
-    }
-}
+    private final ChatService chatService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-class ChatMessage {
-    private String sender;
-    private String content;
-    private String timestamp;
+    @MessageMapping("/sendMessage/{roomId}")
+    @SendTo("/topic/room/{roomId}")
+    public void sendMessage(@DestinationVariable String roomId, @Payload MessagePayload payload) {
+        Message savedMessage = chatService.sendMessage(roomId, payload);
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, savedMessage);
+    }
+
 }

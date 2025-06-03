@@ -37,10 +37,7 @@ public class JwtUtil {
                 .claim("type", isRefreshToken ? "refresh" : "access")
                 .build();
 
-        SignedJWT signedJWT = new SignedJWT(
-                new JWSHeader(JWSAlgorithm.HS512),
-                claimsSet
-        );
+        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS512), claimsSet);
 
         try {
             signedJWT.sign(new MACSigner(KEY.getBytes(StandardCharsets.UTF_8)));
@@ -51,7 +48,6 @@ public class JwtUtil {
         return signedJWT.serialize();
     }
 
-
     public JWTClaimsSet verifyToken(String token, Long durationInSeconds, boolean isRefresh)
             throws ParseException, JOSEException {
         JWSVerifier jwsVerifier = new MACVerifier(KEY.getBytes(StandardCharsets.UTF_8));
@@ -59,7 +55,6 @@ public class JwtUtil {
         if (!signedJWT.verify(jwsVerifier)) {
             throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
         }
-
 
         JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
 

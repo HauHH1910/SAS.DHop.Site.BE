@@ -4,10 +4,7 @@ import com.nimbusds.jose.*;
 import com.sas.dhop.site.controller.client.OAuthIdentityClient;
 import com.sas.dhop.site.controller.client.OAuthUserClient;
 import com.sas.dhop.site.dto.request.*;
-import com.sas.dhop.site.dto.response.AuthenticationResponse;
-import com.sas.dhop.site.dto.response.ExchangeTokenResponse;
-import com.sas.dhop.site.dto.response.IntrospectResponse;
-import com.sas.dhop.site.dto.response.OAuthUserResponse;
+import com.sas.dhop.site.dto.response.*;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.*;
@@ -15,11 +12,14 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.JwtUtil;
+import com.sas.dhop.site.util.mapper.UserMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
+
 import java.text.ParseException;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtUtil jwtUtil;
     private final ChoreographyRepository choreographyRepository;
     private final DancerRepository dancerRepository;
+    private final UserMapper userMapper;
 
     @NonFinal
     @Value("${sas.dhop.oauth.client-id}")
@@ -89,7 +90,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
         log.info("User {} login successfully", user.getEmail());
 
-        return new AuthenticationResponse(accessToken, refreshToken);
+        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
     }
 
     @Override
@@ -125,7 +126,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken);
+        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
     }
 
     @Override
@@ -168,7 +169,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken);
+        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
     }
 
     @Override
@@ -184,7 +185,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken);
+        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
     }
 
     @Override
@@ -276,7 +277,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken);
+        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
     }
 
     private ExchangeTokenResponse getTokenResponse(String code) {
