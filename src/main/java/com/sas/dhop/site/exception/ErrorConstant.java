@@ -20,11 +20,12 @@ public enum ErrorConstant {
     DANCE_TYPE_NOT_FOUND(10, "Không tìm thấy thể loại nhảy", HttpStatus.NOT_FOUND),
     DANCE_TYPE_ALREADY_EXISTS(11, "Đã tồn tại thể loại nhảy này", HttpStatus.FORBIDDEN),
     SENT_EMAIL_ERROR(12, "Không thể gửi OTP, quá trình đăng ký bị hủy bỏ.", HttpStatus.FORBIDDEN),
-    BOOKING_NOT_FOUND(13, "Không tìm thấy được booking.", HttpStatus.NOT_FOUND),
+     BOOKING_NOT_FOUND(13, "Không tìm thấy được booking.", HttpStatus.NOT_FOUND),
     AREA_NOT_FOUND(14, "Không tìm thấy khu vực.", HttpStatus.NOT_FOUND),
     ROLE_NOT_FOUND(15, "Vai trò không tồn tại", HttpStatus.NOT_FOUND),
     ROLE_ACCESS_DENIED(16, "từ chối quuyền truy cập", HttpStatus.NOT_FOUND),
-    AREA_ALREADY_EXISTS(17,"Khu vực đã tồn tại hoặc bị trùng lặp", HttpStatus.CONFLICT);
+    AREA_ALREADY_EXISTS(17,"Khu vực đã tồn tại hoặc bị trùng lặp", HttpStatus.CONFLICT),
+   ROOM_NOT_FOUND(13, "Không tìm thấy phòng", HttpStatus.FORBIDDEN);
 
     private final Integer code;
 

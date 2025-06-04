@@ -67,4 +67,12 @@ public class UserController {
                 .data(userService.getUser(id))
                 .build();
     }
+
+    @GetMapping("/search")
+    public ResponseData<UserResponse> findByEmail(@RequestParam String email) {
+        return ResponseData.<UserResponse>builder()
+                .message(ResponseMessage.FIND_EMAIL)
+                .data(userService.findUser(email))
+                .build();
+    }
 }

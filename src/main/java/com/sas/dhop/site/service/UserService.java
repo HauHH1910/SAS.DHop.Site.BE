@@ -20,6 +20,8 @@ public interface UserService {
     UserResponse createUser(CreateUserRequest request);
 
     UserResponse getUserInfo();
-
-    User getLoginUser();
+  
+   UserResponse findUser(String email);
+  
+   User getLoginUser();
 }

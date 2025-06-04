@@ -19,6 +19,12 @@ public class ResponseMessage {
     public static final String FORGOT_PASSWORD = "Gửi yêu cầu đổi mật khẩu thành công";
     public static final String GET_ALL_DANCE_TYPE = "Lấy tất cả thể loại nhảy thaành công";
     public static final String CREATE_DANCE_TYPE = "Tạo thể loại nhảy mới thành công";
+    public static final String FIND_EMAIL = "Tìm thấy email";
+    public static final String GET_MESSAGE = "Lấy tin nhắn thành công";
+    public static final String CREATE_ROOM = "Tạo phòng thành công";
+    public static final String JOIN_ROOM = "Vào phòng thành công";
+    public static final String LIST_MESSAGE = "Lấy tin nhắn thành công";
+    public static final String GET_ALL_ROOM = "Lấy tất cả đoạn chat của người dùng thành công";
     public static final String GET_ALL_AREA = "Lấy tất cả các khu vực hoạt động của nhóm nhảy";
 
 }
