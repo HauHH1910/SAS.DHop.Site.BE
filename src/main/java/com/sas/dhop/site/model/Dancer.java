@@ -15,11 +15,11 @@ import lombok.*;
 @Table(name = "dancer")
 public class Dancer extends AbstractEntity<Integer> implements Serializable {
 
-    @ManyToMany
     @JoinTable(
             name = "dancer_dance_type",
             joinColumns = @JoinColumn(name = "dancer_id"),
             inverseJoinColumns = @JoinColumn(name = "dance_type_id"))
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<DanceType> danceTypes;
 
     @Column(name = "dancer_nick_name")

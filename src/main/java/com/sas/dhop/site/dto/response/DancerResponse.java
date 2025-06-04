@@ -2,11 +2,11 @@ package com.sas.dhop.site.dto.response;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
-// Remember to check again
 public record DancerResponse(
         String dancerNickName,
-        List<Integer> danceTypeId,
+        Set<String> danceTypeName,
         Integer userId,
         int yearExperience,
         int teamSize,
