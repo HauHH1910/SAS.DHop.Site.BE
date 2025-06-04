@@ -25,4 +25,6 @@ public class ResponseMessage {
     public static final String JOIN_ROOM = "Vào phòng thành công";
     public static final String LIST_MESSAGE = "Lấy tin nhắn thành công";
     public static final String GET_ALL_ROOM = "Lấy tất cả đoạn chat của người dùng thành công";
+    public static final String GET_ALL_AREA = "Lấy tất cả các khu vực hoạt động của nhóm nhảy";
+
 }

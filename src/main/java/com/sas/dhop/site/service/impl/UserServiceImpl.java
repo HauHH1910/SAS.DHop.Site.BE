@@ -70,14 +70,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse findUser(String email) {
+      public UserResponse findUser(String email) {
         return userMapper.mapToUserResponse(userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND)));
     }
+  
+  @Override
+   public User getLoginUser() {
+        String Email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(Email)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+   }
 
     private User findUserById(Integer id) {
         log.info("[find user] - [{}]", id);
         return userRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
     }
+
+
 }

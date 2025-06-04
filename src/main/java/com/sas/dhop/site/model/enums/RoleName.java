@@ -4,5 +4,6 @@ public enum RoleName {
     ADMIN,
     USER,
     DANCER,
+    STAFF,
     CHOREOGRAPHY
 }
