@@ -117,7 +117,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Set<Role> roles = Set.of(role);
 
-        var status = statusService.createStatus("Kích hoạt thành công");
+        var status = statusService.findStatusOrCreated("Kích hoạt thành công");
 
         var user = onBoardUserOAuth(userInfo, status, roles);
 
@@ -193,7 +193,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BusinessException(ErrorConstant.EMAIL_ALREADY_EXIST);
         }
 
-        Status userStatus = statusService.createStatus("Chưa kích hoạt");
+        Status userStatus = statusService.findStatusOrCreated("Chưa kích hoạt");
 
         Role role = roleService.findByRoleName(request.role());
         Set<Role> roles = Set.of(role);
@@ -210,7 +210,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (RoleName.CHOREOGRAPHY.equals(request.role()) && request.choreography() != null) {
             log.info("[{}] đăng ký vai trò CHOREOGRAPHY", request.email());
-            Status choreographyStatus = statusService.createStatus("Chờ xác nhận để trở thành biên đạo");
+            Status choreographyStatus = statusService.findStatusOrCreated("Chờ xác nhận để trở thành biên đạo");
 
             Set<DanceType> danceTypes = request.choreography().danceType().stream()
                     .map(danceTypeService::findDanceType)
@@ -227,7 +227,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             choreographyRepository.save(choreography);
         } else if (RoleName.DANCER.equals(request.role()) && request.dancer() != null) {
             log.info("[{}] đăng ký vai trò DANCER", request.email());
-            Status dancerStatus = statusService.createStatus("Chờ xác nhận để trở thành nhóm nhảy");
+            Status dancerStatus = statusService.findStatusOrCreated("Chờ xác nhận để trở thành nhóm nhảy");
 
             Set<DanceType> danceTypes = request.dancer().danceType().stream()
                     .map(danceTypeService::findDanceType)
@@ -267,7 +267,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
 
-        var status = statusService.createStatus("Kích hoạt thành công");
+        var status = statusService.findStatusOrCreated("Kích hoạt thành công");
 
         user.setStatus(status);
         userRepository.save(user);

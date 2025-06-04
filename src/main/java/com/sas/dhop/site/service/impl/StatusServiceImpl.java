@@ -18,7 +18,7 @@ public class StatusServiceImpl implements StatusService {
     private final StatusRepository statusRepository;
 
     @Override
-    public Status createStatus(String status) {
+    public Status findStatusOrCreated(String status) {
         return statusRepository
                 .findByStatusName(status)
                 .orElseGet(() -> statusRepository.save(Status.builder()
