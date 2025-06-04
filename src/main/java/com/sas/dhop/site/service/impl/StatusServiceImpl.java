@@ -1,5 +1,7 @@
 package com.sas.dhop.site.service.impl;
 
+import com.sas.dhop.site.exception.BusinessException;
+import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.Status;
 import com.sas.dhop.site.model.enums.StatusType;
 import com.sas.dhop.site.repository.StatusRepository;
@@ -26,5 +28,9 @@ public class StatusServiceImpl implements StatusService {
                         .build()));
     }
 
-
+    @Override
+    public Status getStatus(String status) {
+        return statusRepository.findByStatusName(status)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.STATUS_NOT_FOUND));
+    }
 }

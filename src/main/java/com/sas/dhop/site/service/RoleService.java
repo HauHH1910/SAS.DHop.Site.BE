@@ -14,7 +14,7 @@ public interface RoleService {
 
     void deleteRole(Integer id);
 
-//    void checkRole(Integer id, RoleName... allowedRoles);
+    //    void checkRole(Integer id, RoleName... allowedRoles);
 
     Role findByRoleName(RoleName role);
 }

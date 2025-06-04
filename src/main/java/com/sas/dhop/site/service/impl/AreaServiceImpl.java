@@ -12,15 +12,17 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.AreaRepository;
 import com.sas.dhop.site.service.AreaService;
 import com.sas.dhop.site.service.RoleService;
+import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.AreaMapper;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
@@ -30,98 +32,77 @@ public class AreaServiceImpl implements AreaService {
     private final UserService userService;
     private final RoleService roleService;
     private final AreaMapper areaMapper;
+    private final StatusService statusService;
 
-
-//    @Override
-//    public List<AreaResponse> getAllArea() {
-//        User currentUser = userService.getLoginUser();
-//
-//        boolean isAdmin = currentUser.getRoles().stream()
-//                .anyMatch(role -> role.getName() == RoleName.ADMIN);
-//
-//        List<Area> areas = isAdmin
-//                ? areaRepository.findAll()
-//                : Collections.singletonList(areaRepository.findAreaByStatus(AreaStatus.ACTIVATED_AREA));
-//
-//        return areas.stream()
-//                .map(areaMapper::mapToAreaResponse)
-//                .collect(Collectors.toList());
-//    }
 
     @Override
     public List<AreaResponse> getAllArea() {
         User currentUser = userService.getLoginUser();
 
-        boolean isAdmin = currentUser.getRoles().stream()
-                .anyMatch(role -> role.getName() == RoleName.ADMIN);
+        boolean isAdmin = currentUser.getRoles().stream().anyMatch(role -> role.getName() == RoleName.ADMIN);
+
+        Status status = statusService.getStatus(AreaStatus.ACTIVATED_AREA.getName());
 
         List<Area> areas = isAdmin
                 ? areaRepository.findAll()
-                : Collections.singletonList(areaRepository.findAreaByStatus(AreaStatus.ACTIVATED_AREA));
+                : Collections.singletonList(areaRepository.findAreaByStatus(status.getStatusName()));
 
-        return areas.stream()
-                .map(areaMapper::mapToAreaResponse)
-                .collect(Collectors.toList());
+        return areas.stream().map(areaMapper::mapToAreaResponse).collect(Collectors.toList());
     }
-
-
-
 
     @Override
     public AreaResponse getAreaById(int areaId) {
-        Area area = areaRepository.findAreaByIdAndStatus(areaId, AreaStatus.valueOf(String.valueOf(AreaStatus.ACTIVATED_AREA)));
+        Area area = areaRepository.findAreaByIdAndStatus(
+                areaId, AreaStatus.valueOf(String.valueOf(AreaStatus.ACTIVATED_AREA)));
         if (area == null) {
             throw new BusinessException(ErrorConstant.AREA_NOT_FOUND);
         }
         return areaMapper.mapToAreaResponse(area);
     }
 
-
     @Override
     public AreaResponse createNewArea(AreaRequest areaRequest) {
         User currentUser = userService.getLoginUser();
 
-        boolean isStaff = currentUser.getRoles().stream()
-                .anyMatch(role ->  role.getName() == RoleName.STAFF);
+        boolean hasRole = currentUser.getRoles().stream().anyMatch(role ->
+                role.getName().equals(RoleName.STAFF) || role.getName().equals(RoleName.ADMIN)
+        );
 
-        if (!isStaff) {
+        if (!hasRole) {
             throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
         }
 
         boolean isExists = areaRepository.existsByLocation(
                 areaRequest.city().trim(),
                 areaRequest.district().trim(),
-                areaRequest.ward().trim()
-        );
+                areaRequest.ward().trim());
 
         if (isExists) {
             throw new BusinessException(ErrorConstant.AREA_ALREADY_EXISTS);
         }
 
+        Status status = statusService.createStatus(AreaStatus.ACTIVATED_AREA.getName());
         Area area = areaMapper.mapToArea(areaRequest);
+        area.setStatus(status);
         Area savedArea = areaRepository.save(area);
         return areaMapper.mapToAreaResponse(savedArea);
     }
 
-
-
-
     @Override
-    public AreaResponse updateArea(int areaId,AreaRequest areaRequest) {
+    public AreaResponse updateArea(int areaId, AreaRequest areaRequest) {
 
         User currentUser = userService.getLoginUser();
 
-        boolean isStaff = currentUser.getRoles().stream()
-                .anyMatch(role ->  role.getName() == RoleName.STAFF);
+        boolean isStaff = currentUser.getRoles().stream().anyMatch(role -> role.getName() == RoleName.STAFF);
 
         if (!isStaff) {
             throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
         }
 
-        Area area = areaRepository.findById(areaId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.AREA_NOT_FOUND));
+        Area area =
+                areaRepository.findById(areaId).orElseThrow(() -> new BusinessException(ErrorConstant.AREA_NOT_FOUND));
 
-        checkAreaDuplicate( areaId, areaRequest.city(), areaRequest.district(), areaRequest.ward());
+        checkAreaDuplicate(areaId, areaRequest.city(), areaRequest.district(), areaRequest.ward());
 
         area.setCity(areaRequest.city().trim());
         area.setDistrict(areaRequest.district().trim());
@@ -143,18 +124,17 @@ public class AreaServiceImpl implements AreaService {
             throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
         }
 
-        Area area = areaRepository.findById(areaId).orElseThrow(() -> new BusinessException(ErrorConstant.AREA_NOT_FOUND));
+        Area area =
+                areaRepository.findById(areaId).orElseThrow(() -> new BusinessException(ErrorConstant.AREA_NOT_FOUND));
 
         Status status = area.getStatus();
-        if(status.getStatusName().equals(AreaStatus.ACTIVATED_AREA)) {
+        if (status.getStatusName().equals(AreaStatus.ACTIVATED_AREA)) {
             status.setStatusName(String.valueOf(AreaStatus.INACTIVE_AREA));
         } else {
             status.setStatusName(String.valueOf(AreaStatus.ACTIVATED_AREA));
         }
         return areaMapper.mapToAreaResponse(area);
     }
-
-
 
     private void checkAreaDuplicate(Integer areaId, String city, String district, String ward) {
         String normalizedCity = city.trim();
@@ -163,18 +143,14 @@ public class AreaServiceImpl implements AreaService {
 
         List<Area> allAreas = areaRepository.findAll();
 
-        boolean isDuplicate = allAreas.stream().anyMatch(area ->
-                area.getCity().equalsIgnoreCase(normalizedCity) &&
-                        area.getDistrict().equalsIgnoreCase(normalizedDistrict) &&
-                        area.getWard().equalsIgnoreCase(normalizedWard) &&
-                        (areaId == null || area.getId() != areaId)
-        );
+        boolean isDuplicate = allAreas.stream()
+                .anyMatch(area -> area.getCity().equalsIgnoreCase(normalizedCity)
+                        && area.getDistrict().equalsIgnoreCase(normalizedDistrict)
+                        && area.getWard().equalsIgnoreCase(normalizedWard)
+                        && (areaId == null || area.getId() != areaId));
 
         if (isDuplicate) {
             throw new BusinessException(ErrorConstant.AREA_ALREADY_EXISTS);
         }
     }
-
-
-
 }

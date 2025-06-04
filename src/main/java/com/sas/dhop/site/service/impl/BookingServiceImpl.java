@@ -10,11 +10,10 @@ import com.sas.dhop.site.repository.BookingRepository;
 import com.sas.dhop.site.service.BookingService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.BookingMapper;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -25,8 +24,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper bookingMapper;
     private final UserService userService;
     private final AreaRepository areaRepository;
-
-
 
     @Override
     public BookingResponse createBookingRequest(BookingRequest bookingRequest) {
@@ -45,17 +42,16 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponse getBookingDetail(int bookingId) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+        Booking booking = bookingRepository
+                .findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
         return bookingMapper.mapToBookingResponse(booking);
     }
 
     @Override
     public List<BookingResponse> getAllBooking() {
-        return bookingRepository.findAll().stream().map(bookingMapper::mapToBookingResponse).toList();
+        return bookingRepository.findAll().stream()
+                .map(bookingMapper::mapToBookingResponse)
+                .toList();
     }
-
-
-
-
-
 }
