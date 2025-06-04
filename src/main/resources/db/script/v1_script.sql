@@ -1,3 +1,4 @@
+use exe201;
 create table dance_type
 (
     id          int auto_increment
@@ -161,7 +162,6 @@ create table choreography
 (
     id              int auto_increment
         primary key,
-    dance_type_id   int            not null,
     user_id         int            not null,
     subscription_id int            null,
     about           varchar(255)   null,
@@ -170,8 +170,6 @@ create table choreography
     status_id       int            not null,
     created_at      datetime(6)    null,
     updated_at      datetime(6)    null,
-    constraint choreography_ibfk_1
-        foreign key (dance_type_id) references dance_type (id),
     constraint choreography_ibfk_2
         foreign key (user_id) references users (id),
     constraint choreography_ibfk_3
@@ -180,8 +178,6 @@ create table choreography
         foreign key (status_id) references status (id)
 );
 
-create index dance_type_id
-    on choreography (dance_type_id);
 
 create index status_id
     on choreography (status_id);
@@ -212,7 +208,6 @@ create table dancer
 (
     id               int auto_increment
         primary key,
-    dance_type_id    int            not null,
     dancer_nick_name varchar(255)   null,
     user_id          int            not null,
     about            varchar(255)   null,
@@ -223,8 +218,6 @@ create table dancer
     status_id        int            not null,
     created_at       datetime(6)    null,
     updated_at       datetime(6)    null,
-    constraint dancer_ibfk_1
-        foreign key (dance_type_id) references dance_type (id),
     constraint dancer_ibfk_2
         foreign key (user_id) references users (id),
     constraint dancer_ibfk_3
@@ -233,8 +226,6 @@ create table dancer
         foreign key (status_id) references status (id)
 );
 
-create index dance_type_id
-    on dancer (dance_type_id);
 
 create index status_id
     on dancer (status_id);
