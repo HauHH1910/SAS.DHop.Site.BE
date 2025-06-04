@@ -41,7 +41,7 @@ public class AreaServiceImpl implements AreaService {
 
         boolean isAdmin = currentUser.getRoles().stream().anyMatch(role -> role.getName() == RoleName.ADMIN);
 
-        Status status = statusService.getStatus(AreaStatus.ACTIVATED_AREA.getName());
+        Status status = statusService.getStatus(AreaStatus.ACTIVATED_AREA);
 
         List<Area> areas = isAdmin
                 ? areaRepository.findAll()
@@ -53,7 +53,7 @@ public class AreaServiceImpl implements AreaService {
     @Override
     public AreaResponse getAreaById(int areaId) {
         Area area = areaRepository.findAreaByIdAndStatus(
-                areaId, AreaStatus.valueOf(String.valueOf(AreaStatus.ACTIVATED_AREA)));
+                areaId, AreaStatus.ACTIVATED_AREA);
         if (area == null) {
             throw new BusinessException(ErrorConstant.AREA_NOT_FOUND);
         }
@@ -81,7 +81,7 @@ public class AreaServiceImpl implements AreaService {
             throw new BusinessException(ErrorConstant.AREA_ALREADY_EXISTS);
         }
 
-        Status status = statusService.createStatus(AreaStatus.ACTIVATED_AREA.getName());
+        Status status = statusService.createStatus(AreaStatus.ACTIVATED_AREA);
         Area area = areaMapper.mapToArea(areaRequest);
         area.setStatus(status);
         Area savedArea = areaRepository.save(area);

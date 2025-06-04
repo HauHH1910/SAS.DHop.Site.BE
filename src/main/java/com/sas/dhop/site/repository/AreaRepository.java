@@ -34,5 +34,6 @@ public interface AreaRepository extends JpaRepository<Area, Integer>, JpaSpecifi
     @Query("SELECT a FROM Area a WHERE a.id = :id AND a.status.statusName = :status")
     Area findAreaByStatus(@Param("status") String status);
 
-    Area findAreaByIdAndStatus(Integer id, AreaStatus status);
+    @Query("SELECT a FROM Area  a WHERE a.id = :id AND a.status.statusName = :status")
+    Area findAreaByIdAndStatus(@Param("id") Integer id, @Param("status") String status);
 }
