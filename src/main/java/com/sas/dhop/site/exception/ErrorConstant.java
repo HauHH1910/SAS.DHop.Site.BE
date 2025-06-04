@@ -23,28 +23,32 @@ public enum ErrorConstant {
     BOOKING_NOT_FOUND(13, "Không tìm thấy được booking.", HttpStatus.NOT_FOUND),
     AREA_NOT_FOUND(14, "Không tìm thấy khu vực.", HttpStatus.NOT_FOUND),
     ROLE_NOT_FOUND(15, "Vai trò không tồn tại", HttpStatus.NOT_FOUND),
-    ROLE_ACCESS_DENIED(16, "từ chối quuyền truy cập", HttpStatus.NOT_FOUND),
+    ROLE_ACCESS_DENIED(16, "Từ chối quyền truy cập", HttpStatus.FORBIDDEN),
     AREA_ALREADY_EXISTS(17, "Khu vực đã tồn tại hoặc bị trùng lặp", HttpStatus.CONFLICT),
-    ROOM_NOT_FOUND(13, "Không tìm thấy phòng", HttpStatus.FORBIDDEN),
-    STATUS_NOT_FOUND(14, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND),
-    EMAIL_NOT_NULL(18, "Email không được trống", HttpStatus.FORBIDDEN),
-    EMAIL_NOT_BLANK(18, "Email không được trống", HttpStatus.FORBIDDEN),
-    EMAIL_NOT_EMPTY(18, "Email không được rỗng", HttpStatus.FORBIDDEN),
-    NAME_NOT_BLANK(18, "Tên không được trống", HttpStatus.FORBIDDEN),
-    NAME_NOT_EMPTY(18, "Tên không được bỏ", HttpStatus.FORBIDDEN),
-    NAME_NOT_NULL(18, "Tên không được rỗng", HttpStatus.FORBIDDEN),
-    PASSWORD_NOT_BLANK(18, "Mật khẩu không được rỗng", HttpStatus.FORBIDDEN),
-    PASSWORD_NOT_EMPTY(18, "Mật khẩu không được bỏ", HttpStatus.FORBIDDEN),
-    PASSWORD_NOT_NULL(18, "Mật khẩu không được trống", HttpStatus.FORBIDDEN),
-    NOT_DANCER(15, "Người được chọn không phải dancer", HttpStatus.FORBIDDEN),
-    MOT_CHOREOGRAPHY(16, "Người được chọn không phải choreography", HttpStatus.FORBIDDEN),
-    NOT_FOUND_DANCE_TYPE(17, "Không tìm được thể loại nhảy phù hợp", HttpStatus.NOT_FOUND),
+    ROOM_NOT_FOUND(18, "Không tìm thấy phòng", HttpStatus.FORBIDDEN),
+    STATUS_NOT_FOUND(19, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND),
 
-    SUBSCRIPTION_EXIST(19, "Gói dịch vụ", HttpStatus.FORBIDDEN),
-    SUBSCRIPTION_NOT_FOUND(20, "Không tìm thấy gói dịch vụ", HttpStatus.NOT_FOUND);
+    EMAIL_NOT_NULL(20, "Email không được trống", HttpStatus.FORBIDDEN),
+    EMAIL_NOT_BLANK(21, "Email không được trống", HttpStatus.FORBIDDEN),
+    EMAIL_NOT_EMPTY(22, "Email không được rỗng", HttpStatus.FORBIDDEN),
+
+    NAME_NOT_BLANK(23, "Tên không được trống", HttpStatus.FORBIDDEN),
+    NAME_NOT_EMPTY(24, "Tên không được bỏ", HttpStatus.FORBIDDEN),
+    NAME_NOT_NULL(25, "Tên không được rỗng", HttpStatus.FORBIDDEN),
+
+    PASSWORD_NOT_BLANK(26, "Mật khẩu không được rỗng", HttpStatus.FORBIDDEN),
+    PASSWORD_NOT_EMPTY(27, "Mật khẩu không được bỏ", HttpStatus.FORBIDDEN),
+    PASSWORD_NOT_NULL(28, "Mật khẩu không được trống", HttpStatus.FORBIDDEN),
+
+    NOT_DANCER(29, "Người được chọn không phải dancer", HttpStatus.FORBIDDEN),
+    MOT_CHOREOGRAPHY(30, "Người được chọn không phải choreography", HttpStatus.FORBIDDEN),
+    NOT_FOUND_DANCE_TYPE(31, "Không tìm được thể loại nhảy phù hợp", HttpStatus.NOT_FOUND),
+
+    SUBSCRIPTION_EXIST(32, "Gói dịch vụ đã tồn tại", HttpStatus.FORBIDDEN),
+    SUBSCRIPTION_NOT_FOUND(33, "Không tìm thấy gói dịch vụ", HttpStatus.NOT_FOUND);
+
     private final Integer code;
-
     private final String message;
-
     private final HttpStatusCode httpStatusCode;
 }
+
