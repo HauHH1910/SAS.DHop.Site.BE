@@ -26,7 +26,10 @@ public enum ErrorConstant {
     ROLE_ACCESS_DENIED(16, "từ chối quuyền truy cập", HttpStatus.NOT_FOUND),
     AREA_ALREADY_EXISTS(17, "Khu vực đã tồn tại hoặc bị trùng lặp", HttpStatus.CONFLICT),
     ROOM_NOT_FOUND(13, "Không tìm thấy phòng", HttpStatus.FORBIDDEN),
-    STATUS_NOT_FOUND(14, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND);
+    STATUS_NOT_FOUND(14, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND),
+    NOT_DANCER(15, "Người được chọn không phải dancer", HttpStatus.FORBIDDEN),
+    MOT_CHOREOGRAPHY(16, "Người được chọn không phải choreography", HttpStatus.FORBIDDEN),
+    NOT_FOUND_DANCE_TYPE(17, "Không tìm được thể loại nhảy phù hợp", HttpStatus.NOT_FOUND);
 
     private final Integer code;
 

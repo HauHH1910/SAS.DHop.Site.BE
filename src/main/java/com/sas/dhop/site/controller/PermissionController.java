@@ -1,9 +1,9 @@
 package com.sas.dhop.site.controller;
 
+import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.PermissionRequest;
 import com.sas.dhop.site.dto.response.PermissionResponse;
-import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.service.PermissionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

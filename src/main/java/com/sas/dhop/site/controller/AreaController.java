@@ -1,14 +1,15 @@
 package com.sas.dhop.site.controller;
 
+import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.AreaRequest;
 import com.sas.dhop.site.dto.response.AreaResponse;
-import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.service.AreaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

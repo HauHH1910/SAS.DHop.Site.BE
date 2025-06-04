@@ -82,7 +82,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(Email).orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
     }
 
-    private User findUserById(Integer id) {
+    @Override
+    public User findUserById(Integer id) {
         log.info("[find user] - [{}]", id);
         return userRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
     }
