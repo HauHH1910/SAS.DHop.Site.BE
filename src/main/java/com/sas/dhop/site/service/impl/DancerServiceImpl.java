@@ -92,12 +92,12 @@ public class DancerServiceImpl implements DancerService {
     @Override
     public DancerResponse getDancerByDanceType(Integer danceTypeId) {
         DanceType danceType = danceTypeService.findDanceType(danceTypeId);
-        if(danceType == null ) throw new BusinessException(ErrorConstant.NOT_FOUND_DANCE_TYPE);
+        if (danceType == null) throw new BusinessException(ErrorConstant.NOT_FOUND_DANCE_TYPE);
 
         List<Dancer> allDancers = dancerRepository.findAll();
 
-        for(Dancer dancer : allDancers){
-            if(dancer.getDanceTypes() != null && dancer.getDanceTypes().contains(danceType)){
+        for (Dancer dancer : allDancers) {
+            if (dancer.getDanceTypes() != null && dancer.getDanceTypes().contains(danceType)) {
                 return dancerMapper.mapToDancerResponse(dancer);
             }
         }

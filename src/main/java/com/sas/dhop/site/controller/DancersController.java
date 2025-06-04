@@ -6,11 +6,10 @@ import com.sas.dhop.site.dto.request.DancerRequest;
 import com.sas.dhop.site.dto.response.DancerResponse;
 import com.sas.dhop.site.service.DancerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ public class DancersController {
     private final DancerService dancerService;
 
     @GetMapping
-    public ResponseData<List<DancerResponse>> getAllDancer(){
+    public ResponseData<List<DancerResponse>> getAllDancer() {
         return ResponseData.<List<DancerResponse>>builder()
                 .message(ResponseMessage.GET_ALL_DANCERS)
                 .data(dancerService.getallDancer())
@@ -31,8 +30,7 @@ public class DancersController {
 
     @PatchMapping("/{dancerId}")
     public ResponseData<DancerResponse> updateDancer(
-            @PathVariable Integer dancerId,
-            @RequestBody DancerRequest dancerRequest) {
+            @PathVariable Integer dancerId, @RequestBody DancerRequest dancerRequest) {
         return ResponseData.<DancerResponse>builder()
                 .message(ResponseMessage.UPDATE_DANCER)
                 .data(dancerService.updateDancer(dancerId, dancerRequest))
