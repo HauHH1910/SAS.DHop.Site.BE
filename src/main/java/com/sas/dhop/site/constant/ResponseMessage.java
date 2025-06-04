@@ -28,5 +28,8 @@ public class ResponseMessage {
     public static final String GET_ALL_AREA = "Lấy tất cả các khu vực hoạt động của nhóm nhảy";
     public static final String CREATE_AREA = "Tạo khu vực mới thành công";
     public static final String GET_ALL_DANCERS = "Lấy toàn bộ dancers thành công";
-
+    public static final String UPDATE_DANCER = "Cập nhật thông tin dancer thành công";
+    public static final String REMOVE_DANCER = "Xóa dancer thành công";
+    public static final String GET_DANCER = "Lấy thông tin dancer thành công";
+    public static final String GET_DANCER_BY_DANCE_TYPE = "Lấy thông tin dancer theo thể loại nhảy thành công";
 }

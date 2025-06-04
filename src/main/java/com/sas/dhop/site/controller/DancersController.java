@@ -2,14 +2,13 @@ package com.sas.dhop.site.controller;
 
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
+import com.sas.dhop.site.dto.request.DancerRequest;
 import com.sas.dhop.site.dto.response.DancerResponse;
 import com.sas.dhop.site.service.DancerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,4 +29,37 @@ public class DancersController {
                 .build();
     }
 
+    @PatchMapping("/{dancerId}")
+    public ResponseData<DancerResponse> updateDancer(
+            @PathVariable Integer dancerId,
+            @RequestBody DancerRequest dancerRequest) {
+        return ResponseData.<DancerResponse>builder()
+                .message(ResponseMessage.UPDATE_DANCER)
+                .data(dancerService.updateDancer(dancerId, dancerRequest))
+                .build();
+    }
+
+    @DeleteMapping("/{dancerId}")
+    public ResponseData<DancerResponse> removeDancer(@PathVariable Integer dancerId) {
+        return ResponseData.<DancerResponse>builder()
+                .message(ResponseMessage.REMOVE_DANCER)
+                .data(dancerService.removeDancer(dancerId))
+                .build();
+    }
+
+    @GetMapping("/{dancerId}")
+    public ResponseData<DancerResponse> getDancerById(@PathVariable Integer dancerId) {
+        return ResponseData.<DancerResponse>builder()
+                .message(ResponseMessage.GET_DANCER)
+                .data(dancerService.getDancerById(dancerId))
+                .build();
+    }
+
+    @GetMapping("/dance-type/{danceTypeId}")
+    public ResponseData<DancerResponse> getDancerByDanceType(@PathVariable Integer danceTypeId) {
+        return ResponseData.<DancerResponse>builder()
+                .message(ResponseMessage.GET_DANCER_BY_DANCE_TYPE)
+                .data(dancerService.getDancerByDanceType(danceTypeId))
+                .build();
+    }
 }
