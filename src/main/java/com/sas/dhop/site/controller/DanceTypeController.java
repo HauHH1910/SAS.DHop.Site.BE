@@ -3,7 +3,7 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.DanceTypeRequest;
 import com.sas.dhop.site.dto.response.DanceTypeResponse;
-import com.sas.dhop.site.model.enums.ResponseMessage;
+import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.service.DanceTypeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

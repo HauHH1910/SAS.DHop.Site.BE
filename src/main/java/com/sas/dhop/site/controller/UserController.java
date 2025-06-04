@@ -4,7 +4,7 @@ import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.CreateUserRequest;
 import com.sas.dhop.site.dto.request.UpdateUserRequest;
 import com.sas.dhop.site.dto.response.UserResponse;
-import com.sas.dhop.site.model.enums.ResponseMessage;
+import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.sas.dhop.site.model.enums;
+package com.sas.dhop.site.constant;
 
 public class ResponseMessage {
     public static final String AUTHENTICATION_LOGIN = "Đăng nhập thành công";

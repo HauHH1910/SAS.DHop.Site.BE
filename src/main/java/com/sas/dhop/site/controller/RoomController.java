@@ -3,7 +3,7 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.CreateRoomRequest;
 import com.sas.dhop.site.dto.response.RoomResponse;
-import com.sas.dhop.site.model.enums.ResponseMessage;
+import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.model.nosql.Message;
 import com.sas.dhop.site.model.nosql.Room;
 import com.sas.dhop.site.service.RoomService;
