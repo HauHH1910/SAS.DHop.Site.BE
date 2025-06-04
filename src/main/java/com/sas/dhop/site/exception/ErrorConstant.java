@@ -26,8 +26,19 @@ public enum ErrorConstant {
     ROLE_ACCESS_DENIED(16, "từ chối quuyền truy cập", HttpStatus.NOT_FOUND),
     AREA_ALREADY_EXISTS(17, "Khu vực đã tồn tại hoặc bị trùng lặp", HttpStatus.CONFLICT),
     ROOM_NOT_FOUND(13, "Không tìm thấy phòng", HttpStatus.FORBIDDEN),
-    STATUS_NOT_FOUND(14, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND);
+    STATUS_NOT_FOUND(14, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND),
+    EMAIL_NOT_NULL(18, "Email không được trống", HttpStatus.FORBIDDEN),
+    EMAIL_NOT_BLANK(18, "Email không được trống", HttpStatus.FORBIDDEN),
+    EMAIL_NOT_EMPTY(18, "Email không được rỗng", HttpStatus.FORBIDDEN),
+    NAME_NOT_BLANK(18, "Tên không được trống", HttpStatus.FORBIDDEN),
+    NAME_NOT_EMPTY(18, "Tên không được bỏ", HttpStatus.FORBIDDEN),
+    NAME_NOT_NULL(18, "Tên không được rỗng", HttpStatus.FORBIDDEN),
+    PASSWORD_NOT_BLANK(18, "Mật khẩu không được rỗng", HttpStatus.FORBIDDEN),
+    PASSWORD_NOT_EMPTY(18, "Mật khẩu không được bỏ", HttpStatus.FORBIDDEN),
+    PASSWORD_NOT_NULL(18, "Mật khẩu không được trống", HttpStatus.FORBIDDEN),
 
+    SUBSCRIPTION_EXIST(19, "Gói dịch vụ", HttpStatus.FORBIDDEN),
+    SUBSCRIPTION_NOT_FOUND(20, "Không tìm thấy gói dịch vụ", HttpStatus.NOT_FOUND);
     private final Integer code;
 
     private final String message;
