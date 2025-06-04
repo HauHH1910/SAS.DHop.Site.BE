@@ -32,4 +32,9 @@ public class ResponseMessage {
     public static final String REMOVE_DANCER = "Xóa dancer thành công";
     public static final String GET_DANCER = "Lấy thông tin dancer thành công";
     public static final String GET_DANCER_BY_DANCE_TYPE = "Lấy thông tin dancer theo thể loại nhảy thành công";
+    public static final String GET_SUBSCRIPTION = "Lấy tất cả gói dịch vụ";
+    public static final String FIND_SUBSCRIPTION = "Lấy cụ thể gói dịch vụ";
+    public static final String CREATE_SUBSCRIPTION = "Tạo gói dịch vụ thành công";
+    public static final String UPDATE_SUBSCRIPTION = "Cập nhật gói dịch vụ thành công";
+    public static final String DELETE_SUBSCRIPTION = "Xóa gói dịch vụ thành công";
 }

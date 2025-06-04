@@ -77,7 +77,7 @@ public class AreaServiceImpl implements AreaService {
             throw new BusinessException(ErrorConstant.AREA_ALREADY_EXISTS);
         }
 
-        Status status = statusService.createStatus(AreaStatus.ACTIVATED_AREA);
+        Status status = statusService.findStatusOrCreated(AreaStatus.ACTIVATED_AREA);
         Area area = areaMapper.mapToArea(areaRequest);
         area.setStatus(status);
         Area savedArea = areaRepository.save(area);
