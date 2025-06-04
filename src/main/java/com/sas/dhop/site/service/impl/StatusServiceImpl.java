@@ -30,7 +30,8 @@ public class StatusServiceImpl implements StatusService {
 
     @Override
     public Status getStatus(String status) {
-        return statusRepository.findByStatusName(status)
+        return statusRepository
+                .findByStatusName(status)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.STATUS_NOT_FOUND));
     }
 }

@@ -1,10 +1,7 @@
 package com.sas.dhop.site.repository;
 
-import com.sas.dhop.site.constant.AreaStatus;
 import com.sas.dhop.site.model.Area;
-
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;

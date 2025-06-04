@@ -28,7 +28,7 @@ public class AreaController {
     }
 
     @PostMapping
-    public ResponseData<AreaResponse> createArea(@RequestBody AreaRequest request){
+    public ResponseData<AreaResponse> createArea(@RequestBody AreaRequest request) {
         return ResponseData.<AreaResponse>builder()
                 .message(ResponseMessage.CREATE_AREA)
                 .data(areaService.createNewArea(request))

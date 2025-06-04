@@ -25,7 +25,8 @@ public enum ErrorConstant {
     ROLE_NOT_FOUND(15, "Vai trò không tồn tại", HttpStatus.NOT_FOUND),
     ROLE_ACCESS_DENIED(16, "từ chối quuyền truy cập", HttpStatus.NOT_FOUND),
     AREA_ALREADY_EXISTS(17, "Khu vực đã tồn tại hoặc bị trùng lặp", HttpStatus.CONFLICT),
-    ROOM_NOT_FOUND(13, "Không tìm thấy phòng", HttpStatus.FORBIDDEN), STATUS_NOT_FOUND(14, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND);
+    ROOM_NOT_FOUND(13, "Không tìm thấy phòng", HttpStatus.FORBIDDEN),
+    STATUS_NOT_FOUND(14, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND);
 
     private final Integer code;
 

@@ -15,11 +15,9 @@ import com.sas.dhop.site.service.RoleService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.AreaMapper;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,7 +31,6 @@ public class AreaServiceImpl implements AreaService {
     private final RoleService roleService;
     private final AreaMapper areaMapper;
     private final StatusService statusService;
-
 
     @Override
     public List<AreaResponse> getAllArea() {
@@ -52,8 +49,7 @@ public class AreaServiceImpl implements AreaService {
 
     @Override
     public AreaResponse getAreaById(int areaId) {
-        Area area = areaRepository.findAreaByIdAndStatus(
-                areaId, AreaStatus.ACTIVATED_AREA);
+        Area area = areaRepository.findAreaByIdAndStatus(areaId, AreaStatus.ACTIVATED_AREA);
         if (area == null) {
             throw new BusinessException(ErrorConstant.AREA_NOT_FOUND);
         }
@@ -64,9 +60,9 @@ public class AreaServiceImpl implements AreaService {
     public AreaResponse createNewArea(AreaRequest areaRequest) {
         User currentUser = userService.getLoginUser();
 
-        boolean hasRole = currentUser.getRoles().stream().anyMatch(role ->
-                role.getName().equals(RoleName.STAFF) || role.getName().equals(RoleName.ADMIN)
-        );
+        boolean hasRole = currentUser.getRoles().stream()
+                .anyMatch(role ->
+                        role.getName().equals(RoleName.STAFF) || role.getName().equals(RoleName.ADMIN));
 
         if (!hasRole) {
             throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
