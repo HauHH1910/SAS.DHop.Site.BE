@@ -1,14 +1,14 @@
-    package com.sas.dhop.site.constant;
+package com.sas.dhop.site.constant;
 
-//    public class AreaStatus {
-//        public static final String ACTIVATED_AREA = "Khu vực được cấp phép hoạt động !!";
-//        public static final String INACTIVE_AREA = "Khu vực không được cấp phép hoạt động !!";
-//
-//
-//    }
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
+public enum AreaStatus {
+    ACTIVATED_AREA("Khu vực được cấp phép hoạt động"),
+    INACTIVE_AREA("Khu vực không được cấp phép hoạt động");
 
-    public enum AreaStatus {
-        ACTIVATED_AREA,
-        INACTIVE_AREA
-    }
+    private final String name;
+
+}

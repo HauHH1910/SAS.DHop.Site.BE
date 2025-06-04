@@ -4,7 +4,6 @@ import com.sas.dhop.site.dto.request.CreateUserRequest;
 import com.sas.dhop.site.dto.request.UpdateUserRequest;
 import com.sas.dhop.site.dto.response.UserResponse;
 import com.sas.dhop.site.model.User;
-
 import java.util.List;
 
 public interface UserService {
@@ -20,8 +19,8 @@ public interface UserService {
     UserResponse createUser(CreateUserRequest request);
 
     UserResponse getUserInfo();
-  
-   UserResponse findUser(String email);
-  
-   User getLoginUser();
+
+    UserResponse findUser(String email);
+
+    User getLoginUser();
 }

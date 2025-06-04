@@ -1,6 +1,5 @@
 package com.sas.dhop.site.constant;
 
-
 public class BookingStatus {
     public static final String BOOKING_PENDING = "Đang chờ ứng tuyển";
     public static final String BOOKING_ACTIVATE = "Đã được duyệt";
@@ -13,5 +12,4 @@ public class BookingStatus {
     public static final String BOOKING_DENY_JOIN = "Từ chối tham gia";
     public static final String BOOKING_OUT_SLOT = "Hết chỗ trống";
     public static final String BOOKING_DISPUTED = "Đang xử lý tranh chấp";
-
 }

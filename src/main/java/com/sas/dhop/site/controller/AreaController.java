@@ -1,21 +1,15 @@
 package com.sas.dhop.site.controller;
 
-
 import com.sas.dhop.site.dto.ResponseData;
+import com.sas.dhop.site.dto.request.AreaRequest;
 import com.sas.dhop.site.dto.response.AreaResponse;
-import com.sas.dhop.site.dto.response.DanceTypeResponse;
 import com.sas.dhop.site.model.enums.ResponseMessage;
 import com.sas.dhop.site.service.AreaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
-import static java.util.stream.DoubleStream.builder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +27,11 @@ public class AreaController {
                 .build();
     }
 
-
-
-
+    @PostMapping
+    public ResponseData<AreaResponse> createArea(@RequestBody AreaRequest request){
+        return ResponseData.<AreaResponse>builder()
+                .message(ResponseMessage.CREATE_AREA)
+                .data(areaService.createNewArea(request))
+                .build();
+    }
 }
