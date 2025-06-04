@@ -1,8 +1,6 @@
 package com.sas.dhop.site.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import lombok.*;
@@ -24,4 +22,8 @@ public class Area extends AbstractEntity<Integer> implements Serializable {
 
     @Size(max = 100) @Column(name = "city", length = 100)
     private String city;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "status_id")
+    private Status status;
 }
