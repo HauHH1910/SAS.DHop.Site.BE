@@ -1,0 +1,2 @@
+ALTER TABLE area ADD COLUMN status_id INT NOT NULL;
+ALTER TABLE area ADD FOREIGN KEY (status_id) REFERENCES status(id);
