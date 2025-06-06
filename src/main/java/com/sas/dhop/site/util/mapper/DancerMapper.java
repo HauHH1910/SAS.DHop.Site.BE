@@ -4,13 +4,11 @@ import com.sas.dhop.site.dto.request.DancerRequest;
 import com.sas.dhop.site.dto.response.DancerResponse;
 import com.sas.dhop.site.model.DanceType;
 import com.sas.dhop.site.model.Dancer;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -35,9 +33,7 @@ public interface DancerMapper {
         if (danceTypes == null) {
             return Collections.emptySet();
         }
-        return danceTypes.stream()
-                .map(DanceType::getType)
-                .collect(Collectors.toSet());
+        return danceTypes.stream().map(DanceType::getType).collect(Collectors.toSet());
     }
 
     @Mapping(target = "danceTypes", ignore = true)
