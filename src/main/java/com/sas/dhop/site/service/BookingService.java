@@ -6,8 +6,12 @@ import java.util.List;
 
 public interface BookingService {
 
-    // create booking contract (add field to insert information in contract), set booking status is Pending
-    BookingResponse createBookingRequest(BookingRequest bookingRequest);
+    // create booking contract for dancer(add field to insert information in contract), set booking status is Pending
+    BookingResponse createBookingRequestForDancer(BookingRequest bookingRequest);
+
+    // create booking contract for choreography(add field to insert information in contract), set booking status is
+    // Pending
+    BookingResponse createBookingRequestForChoreography(BookingRequest bookingRequest);
 
     // Set booking status is Booking_Activate
     BookingResponse acceptBookingRequest(int bookingId);

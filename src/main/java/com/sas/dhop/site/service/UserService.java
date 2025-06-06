@@ -23,4 +23,6 @@ public interface UserService {
     UserResponse findUser(String email);
 
     User getLoginUser();
+
+    User findUserById(Integer userId);
 }
