@@ -6,11 +6,9 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.model.enums.StatusType;
 import com.sas.dhop.site.repository.*;
 import jakarta.transaction.Transactional;
-
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
@@ -34,7 +32,8 @@ public class ApplicationInitConfig {
             AreaRepository areaRepository,
             DanceTypeRepository danceTypeRepository,
             DancerRepository dancerRepository,
-            ChoreographyRepository choreographyRepository, PerformanceRepository performanceRepository) {
+            ChoreographyRepository choreographyRepository,
+            PerformanceRepository performanceRepository) {
         return args -> {
             Role role = roleRepository.findByName(RoleName.ADMIN).orElseGet(() -> {
                 Role r = Role.builder().name(RoleName.ADMIN).build();
@@ -76,10 +75,14 @@ public class ApplicationInitConfig {
                         return roleRepository.save(r);
                     });
 
-                    Role choreographyRole = roleRepository.findByName(RoleName.CHOREOGRAPHY).orElseGet(() -> {
-                        Role r = Role.builder().name(RoleName.CHOREOGRAPHY).build();
-                        return roleRepository.save(r);
-                    });
+                    Role choreographyRole = roleRepository
+                            .findByName(RoleName.CHOREOGRAPHY)
+                            .orElseGet(() -> {
+                                Role r = Role.builder()
+                                        .name(RoleName.CHOREOGRAPHY)
+                                        .build();
+                                return roleRepository.save(r);
+                            });
                     Status activeStatus = statusRepository
                             .findByStatusName("Kích hoạt")
                             .orElseGet(() -> statusRepository.save(Status.builder()
@@ -125,7 +128,7 @@ public class ApplicationInitConfig {
                             .roles(Set.of(userRole))
                             .build());
 
-                    //Tạo user với role CHOREOGRAPHY
+                    // Tạo user với role CHOREOGRAPHY
                     User choreographyUser = userRepository.save(User.builder()
                             .status(activeStatus)
                             .email(fakerUS.internet().emailAddress())
@@ -141,15 +144,12 @@ public class ApplicationInitConfig {
                             .danceTypes(Set.of(type))
                             .build());
 
-
                     areaRepository.save(Area.builder()
                             .district(fakerVN.address().cityName())
                             .ward(fakerVN.address().country())
                             .city(fakerVN.address().city())
                             .status(activeStatus)
                             .build());
-
-
                 }
                 log.info("Created default admin user");
             }

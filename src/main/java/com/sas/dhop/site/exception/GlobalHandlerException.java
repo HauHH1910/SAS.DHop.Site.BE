@@ -42,7 +42,7 @@ public class GlobalHandlerException {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ResponseError> handleAccessDeniedException(AccessDeniedException e) {
-        ErrorConstant errorConstant = ErrorConstant.UNCATEGORIZED_ERROR;
+        ErrorConstant errorConstant = ErrorConstant.UNAUTHENTICATED;
         log.error("[handle access denied] - [{}]", e.getMessage());
         return ResponseEntity.status(errorConstant.getHttpStatusCode())
                 .body(ResponseError.builder()
