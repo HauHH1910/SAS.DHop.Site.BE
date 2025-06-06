@@ -95,6 +95,60 @@ public class ApplicationInitConfig {
                             .type(fakerUS.dragonBall().character())
                             .build());
 
+                    // Create status for user subscription
+                    switch (i) {
+                        case 1: {
+                            statusRepository
+                                    .findByStatusName("Đang hoạt động")
+                                    .orElseGet(() -> statusRepository.save(Status.builder()
+                                            .statusName("Đang hoạt động")
+                                            .description("Gói dịch vụ đang hoạt động")
+                                            .statusType(StatusType.ACTIVE)
+                                            .build()));
+                            break;
+                        }
+                        case 2: {
+                            statusRepository
+                                    .findByStatusName("Đã hết hạn")
+                                    .orElseGet(() -> statusRepository.save(Status.builder()
+                                            .statusName("Đã hết hạn")
+                                            .description("Gói dịch vụ đã hết hạn")
+                                            .statusType(StatusType.ACTIVE)
+                                            .build()));
+                            break;
+                        }
+                        case 3: {
+                            statusRepository
+                                    .findByStatusName("Dùng thử miễn phí")
+                                    .orElseGet(() -> statusRepository.save(Status.builder()
+                                            .statusName("Dùng thử miễn phí")
+                                            .description("Gói dịch vụ dùng thử miễn phí")
+                                            .statusType(StatusType.ACTIVE)
+                                            .build()));
+                            break;
+                        }
+                        case 4: {
+                            statusRepository
+                                    .findByStatusName("Chờ xử lý")
+                                    .orElseGet(() -> statusRepository.save(Status.builder()
+                                            .statusName("Chờ xử lý")
+                                            .description("Gói dịch vụ đang được xử lý")
+                                            .statusType(StatusType.ACTIVE)
+                                            .build()));
+                            break;
+                        }
+                        case 5: {
+                            statusRepository
+                                    .findByStatusName("Đang gia hạn")
+                                    .orElseGet(() -> statusRepository.save(Status.builder()
+                                            .statusName("Đang gia hạn")
+                                            .description("Gói dịch vụ đang được gia hạn")
+                                            .statusType(StatusType.ACTIVE)
+                                            .build()));
+                            break;
+                        }
+                    }
+
                     if (i % 2 == 0) {
                         // Tạo user với role là DANCER
                         User userWithRoleDancer = userRepository.save(User.builder()
