@@ -16,12 +16,10 @@ import com.sas.dhop.site.repository.UserRepository;
 import com.sas.dhop.site.repository.UserSubscriptionRepository;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserSubscriptionService;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,7 +48,9 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
         List<UserSubscriptionResponse> responsesList = new ArrayList<>();
 
         list.forEach(subscription -> {
-            log.info("[get subscription status] - [{}]", subscription.getSubscription().getName());
+            log.info(
+                    "[get subscription status] - [{}]",
+                    subscription.getSubscription().getName());
             responsesList.add(mapToResponse(subscription));
         });
         return responsesList;
@@ -71,20 +71,15 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
 
         Status status = statusService.findStatusOrCreated(ACTIVE_USER_SUBSCRIPTION);
 
-        return mapToResponse(userSubscriptionRepository.save
-                (
-                        UserSubscription.builder()
-                                .user(user)
-                                .subscription(subscription)
-                                .fromDate(Instant.now())
-                                .toDate(Instant.now().plus(subscription.getDuration(), ChronoUnit.DAYS))
-                                .status(status)
-                                .build()
-                )
-        );
+        return mapToResponse(userSubscriptionRepository.save(UserSubscription.builder()
+                .user(user)
+                .subscription(subscription)
+                .fromDate(Instant.now())
+                .toDate(Instant.now().plus(subscription.getDuration(), ChronoUnit.DAYS))
+                .status(status)
+                .build()));
     }
 
     @Override
-    public void updateSubscriptionStatus() {
-    }
+    public void updateSubscriptionStatus() {}
 }

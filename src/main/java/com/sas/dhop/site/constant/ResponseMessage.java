@@ -37,4 +37,5 @@ public class ResponseMessage {
     public static final String CREATE_SUBSCRIPTION = "Tạo gói dịch vụ thành công";
     public static final String UPDATE_SUBSCRIPTION = "Cập nhật gói dịch vụ thành công";
     public static final String DELETE_SUBSCRIPTION = "Xóa gói dịch vụ thành công";
+    public static final String DELETE_ROOM = "Xóa phòng thành công";
 }

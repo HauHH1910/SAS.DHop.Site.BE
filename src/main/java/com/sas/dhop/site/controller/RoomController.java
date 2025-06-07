@@ -3,6 +3,7 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.CreateRoomRequest;
+import com.sas.dhop.site.dto.response.RoomDetailResponse;
 import com.sas.dhop.site.dto.response.RoomResponse;
 import com.sas.dhop.site.model.nosql.Message;
 import com.sas.dhop.site.model.nosql.Room;
@@ -40,8 +41,8 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    public ResponseData<Room> joinRoom(@PathVariable("roomId") String roomId) {
-        return ResponseData.<Room>builder()
+    public ResponseData<RoomDetailResponse> joinRoom(@PathVariable("roomId") String roomId) {
+        return ResponseData.<RoomDetailResponse>builder()
                 .message(ResponseMessage.JOIN_ROOM)
                 .data(roomService.joinRoom(roomId))
                 .build();

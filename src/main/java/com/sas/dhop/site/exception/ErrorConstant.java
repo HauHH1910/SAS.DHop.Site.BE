@@ -45,7 +45,8 @@ public enum ErrorConstant {
     NOT_FOUND_DANCE_TYPE(31, "Không tìm được thể loại nhảy phù hợp", HttpStatus.NOT_FOUND),
 
     SUBSCRIPTION_EXIST(32, "Gói dịch vụ đã tồn tại", HttpStatus.FORBIDDEN),
-    SUBSCRIPTION_NOT_FOUND(33, "Không tìm thấy gói dịch vụ", HttpStatus.NOT_FOUND);
+    SUBSCRIPTION_NOT_FOUND(33, "Không tìm thấy gói dịch vụ", HttpStatus.NOT_FOUND),
+    PARTICIPANT_NOT_FOUND(34, "Không tìm thấy người dùng", HttpStatus.FORBIDDEN);
 
     private final Integer code;
     private final String message;
