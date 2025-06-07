@@ -17,14 +17,13 @@ import com.sas.dhop.site.service.DanceTypeService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.ChoreographerMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -39,22 +38,24 @@ public class ChoreographerServiceImpl implements ChoreographerService {
     private final UserService userService;
 
     @Override
-    public ChoreographerResponse updateChoreographer(Integer choreographyId, ChoreographerRequest choreographerRequest) {
+    public ChoreographerResponse updateChoreographer(
+            Integer choreographyId, ChoreographerRequest choreographerRequest) {
         Choreography choreography = choreographyRepository
                 .findById(choreographyId)
-                .orElseThrow(()-> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
         User curUser = userService.getLoginUser();
-        if(!choreography.getUser().getId().equals(curUser.getId()))
+        if (!choreography.getUser().getId().equals(curUser.getId()))
             throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
 
         choreography.setAbout(choreographerRequest.about());
         choreography.setYearExperience(choreographerRequest.yearExperience());
         choreography.setPrice(choreographerRequest.price());
 
-        if(choreographerRequest.danceTypeId() != null && !choreographerRequest.danceTypeId().isEmpty()) {
+        if (choreographerRequest.danceTypeId() != null
+                && !choreographerRequest.danceTypeId().isEmpty()) {
             Set<DanceType> danceTypes = new HashSet<>();
-            for(Integer danceTypeId : choreographerRequest.danceTypeId()) {
+            for (Integer danceTypeId : choreographerRequest.danceTypeId()) {
                 DanceType danceType = danceTypeService.findDanceType(danceTypeId);
                 danceTypes.add(danceType);
             }
@@ -69,7 +70,7 @@ public class ChoreographerServiceImpl implements ChoreographerService {
     public ChoreographerResponse removeChoreographer(Integer choreographyId) {
         Choreography choreography = choreographyRepository
                 .findById(choreographyId)
-                .orElseThrow(()-> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
         Status inactiveStatus = statusService.getStatus(ChoreographerStatus.INACTIVE_CHOREOGRAPHER);
         choreography.setStatus(inactiveStatus);
@@ -82,7 +83,7 @@ public class ChoreographerServiceImpl implements ChoreographerService {
     public ChoreographerResponse getChoreographerById(Integer choreographyId) {
         Choreography choreography = choreographyRepository
                 .findById(choreographyId)
-                .orElseThrow(()-> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
         return choreographerMapper.mapToChoreographerResponse(choreography);
     }
@@ -90,10 +91,10 @@ public class ChoreographerServiceImpl implements ChoreographerService {
     @Override
     public List<ChoreographerResponse> getAllChoreography() {
         User currentUser = userService.getLoginUser();
-        boolean isStaff = currentUser.getRoles().stream()
-                .anyMatch(role -> role.getName().equals(RoleName.STAFF));
-        boolean isAdmin = currentUser.getRoles().stream()
-                .anyMatch(role -> role.getName().equals(RoleName.ADMIN));
+        boolean isStaff =
+                currentUser.getRoles().stream().anyMatch(role -> role.getName().equals(RoleName.STAFF));
+        boolean isAdmin =
+                currentUser.getRoles().stream().anyMatch(role -> role.getName().equals(RoleName.ADMIN));
 
         List<Choreography> choreographies;
         if (isStaff || isAdmin) {
@@ -122,8 +123,8 @@ public class ChoreographerServiceImpl implements ChoreographerService {
     private List<Choreography> getAllChoreographyByStatus(Status status) {
         List<Choreography> allChoreography = choreographyRepository.findAll();
         return allChoreography.stream()
-                .filter(choreography -> 
-                    choreography.getStatus() != null && choreography.getStatus().equals(status))
+                .filter(choreography -> choreography.getStatus() != null
+                        && choreography.getStatus().equals(status))
                 .collect(Collectors.toList());
     }
 }
