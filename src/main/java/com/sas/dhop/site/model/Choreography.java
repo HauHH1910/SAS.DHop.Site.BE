@@ -15,14 +15,14 @@ import lombok.*;
 @Table(name = "choreography")
 public class Choreography extends AbstractEntity<Integer> implements Serializable {
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "choreography_dance_type",
             joinColumns = @JoinColumn(name = "choreography_id"),
             inverseJoinColumns = @JoinColumn(name = "dance_type_id"))
     private Set<DanceType> danceTypes;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

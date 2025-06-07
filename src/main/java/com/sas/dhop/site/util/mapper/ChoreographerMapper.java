@@ -25,6 +25,7 @@ public interface ChoreographerMapper {
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "subscriptionId", source = "subscription.id")
     @Mapping(target = "statusId", source = "status.id")
+    @Mapping(target = "userName", source = "user.name")
     ChoreographerResponse mapToChoreographerResponse(Choreography choreography);
 
     @Named("mapDanceTypeToId")
