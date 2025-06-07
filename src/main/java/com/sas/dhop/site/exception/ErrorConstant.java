@@ -51,4 +51,3 @@ public enum ErrorConstant {
     private final String message;
     private final HttpStatusCode httpStatusCode;
 }
-

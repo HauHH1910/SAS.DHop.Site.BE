@@ -37,4 +37,9 @@ public class ResponseMessage {
     public static final String CREATE_SUBSCRIPTION = "Tạo gói dịch vụ thành công";
     public static final String UPDATE_SUBSCRIPTION = "Cập nhật gói dịch vụ thành công";
     public static final String DELETE_SUBSCRIPTION = "Xóa gói dịch vụ thành công";
+    public static final String GET_ALL_CHOREOGRAPHER = "Lấy được toàn bộ biên đạo thành công";
+    public static final String UPDATE_CHOREOGRAPHER = "Cập nhập thông tin của biên đạo thành công";
+    public static final String REMOVE_CHOREOGRAPHER = "Xóa biên đạo thành công";
+    public static final String GET_CHOREOGRAPHER = "Lấy biên đạo theo id";
+    public static final String GET_CHOREOGRAPHER_BY_DANCE_TYPE = "Lấy biên đọa bởi thể loại nhảy thành công";
 }

@@ -4,18 +4,17 @@ import com.sas.dhop.site.dto.request.ChoreographerRequest;
 import com.sas.dhop.site.dto.response.ChoreographerResponse;
 import com.sas.dhop.site.model.Choreography;
 import com.sas.dhop.site.model.DanceType;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Mapper(componentModel = "spring")
 public interface ChoreographerMapper {
-    
+
     @Mapping(target = "danceTypes", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "subscription", ignore = true)
@@ -26,6 +25,7 @@ public interface ChoreographerMapper {
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "subscriptionId", source = "subscription.id")
     @Mapping(target = "statusId", source = "status.id")
+    @Mapping(target = "userName", source = "user.name")
     ChoreographerResponse mapToChoreographerResponse(Choreography choreography);
 
     @Named("mapDanceTypeToId")

@@ -10,6 +10,5 @@ public record ChoreographerResponse(
         BigDecimal price,
         List<Integer> danceTypeId,
         Integer subscriptionId,
-        Integer statusId
-) {
-}
+        Integer statusId,
+        String userName) {}
