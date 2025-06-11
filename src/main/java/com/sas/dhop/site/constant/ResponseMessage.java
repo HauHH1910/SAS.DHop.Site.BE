@@ -41,6 +41,10 @@ public class ResponseMessage {
     public static final String UPDATE_CHOREOGRAPHER = "Cập nhập thông tin của biên đạo thành công";
     public static final String REMOVE_CHOREOGRAPHER = "Xóa biên đạo thành công";
     public static final String GET_CHOREOGRAPHER = "Lấy biên đạo theo id";
-    public static final String GET_CHOREOGRAPHER_BY_DANCE_TYPE = "Lấy biên đọa bởi thể loại nhảy thành công";
+    public static final String GET_CHOREOGRAPHER_BY_DANCE_TYPE = "Lấy biên đạo bởi thể loại nhảy thành công";
+    public static final String GET_ALL_BOOKING = "Lấy tất cả các đơn thuê thành công";
+    public static final String CANCEL_BOOKING = "Hủy đơn thuê thành công";
+    public static final String CREATE_BOOKING = "Tạo một đơn thuê thành công";
+
     public static final String DELETE_ROOM = "Xóa phòng thành công";
 }

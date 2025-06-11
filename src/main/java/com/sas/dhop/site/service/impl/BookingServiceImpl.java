@@ -149,8 +149,6 @@ public class BookingServiceImpl implements BookingService {
 
     }
 
-
-
     @Override
     public BookingResponse getBookingDetail(int bookingId) {
         Booking booking = bookingRepository
@@ -166,23 +164,34 @@ public class BookingServiceImpl implements BookingService {
                 .toList();
     }
 
+    //TODO: Hàm cancel booking đang thiếu DTO, trong DB thì thiếu reason khi hủy, và thiếu ràng buộc khi hủy.
     @Override
     public BookingResponse cancelBooking(int bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+        Booking booking =bookingRepository.findById(bookingId)
+                .orElseThrow(()-> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+        if(booking.getBookingStatus() != BookingStatus.BOOKING_PENDING
+                && booking.getBookingStatus() != BookingStatus.BOOKING_WORKING_DONE)
+            throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_CANCEL);
 
-        Status currentStatus = booking.getStatus();
-        if (!currentStatus.getStatusName().equals(BookingStatus.BOOKING_ACTIVATE)
-                && currentStatus.getStatusName().equals(BookingStatus.BOOKING_INACTIVATE)) {
-            throw new BusinessException(ErrorConstant.BOOKING_INACTIVATE);
-        }
+        Status cancleBooking = statusService.findStatusOrCreated(BookingStatus.BOOKING_CANCELED);
+        booking.setStatus(cancleBooking);
+        booking = bookingRepository.save(booking);
 
-        return null;
+        return bookingMapper.mapToBookingResponse(booking);
     }
 
     @Override
     public BookingResponse endBooking(int bookingId) {
-        return null;
+        Booking booking =bookingRepository.findById(bookingId)
+                .orElseThrow(()-> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+        if(booking.getBookingStatus() != BookingStatus.BOOKING_COMPLETED)
+            throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_COMPLETE);
+
+        Status endBooking = statusService.findStatusOrCreated(BookingStatus.BOOKING_COMPLETED);
+        booking.setStatus(endBooking);
+        booking = bookingRepository.save(booking);
+
+        return bookingMapper.mapToBookingResponse(booking);
     }
 
 
