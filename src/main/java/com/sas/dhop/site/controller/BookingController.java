@@ -53,4 +53,12 @@ public class BookingController {
                 .build();
     }
 
+    @PutMapping("/accept/{bookingId}")
+    public ResponseData<BookingResponse> acceptBookingRequest(@PathVariable Integer bookingId){
+        return ResponseData.<BookingResponse>builder()
+                .message(ResponseMessage.ACCEPT_BOOKING_SUCESSFULLY)
+                .data(bookingService.acceptBookingRequest(bookingId))
+                .build();
+    }
+
 }

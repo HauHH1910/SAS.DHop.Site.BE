@@ -8,5 +8,4 @@ public record cancleBookingResponse (
     String reason,
     String cancelPerson,
     LocalDateTime cancelDate
-)
-{}
+){}
