@@ -365,25 +365,6 @@ create index status_id
 create index to_user_id
     on booking_feedback (to_user_id);
 
-create table chat
-(
-    id         int auto_increment
-        primary key,
-    booking_id int      not null,
-    created_at datetime null,
-    updated_at datetime null,
-    status_id  int      not null,
-    constraint chat_ibfk_1
-        foreign key (booking_id) references booking (id),
-    constraint chat_ibfk_2
-        foreign key (status_id) references status (id)
-);
-
-create index booking_id
-    on chat (booking_id);
-
-create index status_id
-    on chat (status_id);
 
 create index status_id
     on performance (status_id);
