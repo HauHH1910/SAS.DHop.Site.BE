@@ -1,14 +1,16 @@
 package com.sas.dhop.site.service.impl;
 
-import com.sas.dhop.site.model.OTP;
-import com.sas.dhop.site.repository.OTPRepository;
+import com.sas.dhop.site.model.nosql.OTP;
+import com.sas.dhop.site.repository.nosql.OTPRepository;
 import com.sas.dhop.site.service.EmailService;
 import com.sas.dhop.site.service.OTPService;
 import jakarta.mail.MessagingException;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,7 @@ public class OTPServiceImpl implements OTPService {
                 .email(email)
                 .otpCode(otpCode)
                 .expiresAt(LocalDateTime.now().plusMinutes(OTP_EXPIRATION_MINUTES))
+                .isVerify(false)
                 .build();
 
         otpRepository.save(otp);
@@ -44,7 +47,7 @@ public class OTPServiceImpl implements OTPService {
 
     @Override
     public CompletableFuture<Boolean> sendOTPByEmail(String email, String name, String OTP) throws MessagingException {
-        String subject = "Mã OTP xác nhận đăng ký";
+        String subject = "Mã OTP của bạn là " + OTP;
 
         String body = String.format(
                 "<p>Chào %s,</p>" + "<p>Mã OTP của bạn là: <b>%s</b></p>" + "<p>Mã có hiệu lực trong %d phút.</p>",
@@ -75,6 +78,11 @@ public class OTPServiceImpl implements OTPService {
         if (otpEntity.getExpiresAt().isBefore(LocalDateTime.now())) {
             log.warn("OTP expired for email {}", email);
             otpRepository.delete(otpEntity);
+            return false;
+        }
+
+        if (!otpEntity.getIsVerify()) {
+            log.warn("OTP is already verify email {}", email);
             return false;
         }
 

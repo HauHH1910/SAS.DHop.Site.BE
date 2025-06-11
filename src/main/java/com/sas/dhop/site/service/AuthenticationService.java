@@ -21,6 +21,8 @@ public interface AuthenticationService {
 
     void forgotPassword(ForgotPasswordRequest request) throws MessagingException;
 
+    AuthenticationResponse verifyOTPResetPassword(VerifyOTPRequest request);
+
     AuthenticationResponse resetPassword(ResetPasswordRequest request) throws ParseException, JOSEException;
 
     AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException;

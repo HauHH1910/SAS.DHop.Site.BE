@@ -42,6 +42,14 @@ public class AuthenticationController {
                 .build();
     }
 
+    @PostMapping("/otp-reset-password")
+    public ResponseData<AuthenticationResponse> otpResetPassword(@RequestBody VerifyOTPRequest request) {
+        return ResponseData.<AuthenticationResponse>builder()
+                .message(ResponseMessage.OTP_RESET_PASSWORD)
+                .data(authenticationService.verifyOTPResetPassword(request))
+                .build();
+    }
+
     @PostMapping("/forgot-password")
     public ResponseData<Void> forgotPassword(@RequestBody ForgotPasswordRequest request) throws MessagingException {
         authenticationService.forgotPassword(request);

@@ -15,9 +15,11 @@ import com.sas.dhop.site.util.JwtUtil;
 import com.sas.dhop.site.util.mapper.UserMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
+
 import java.text.ParseException;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +36,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final OTPService oTPService;
     private final StatusService statusService;
     private final RoleService roleService;
-    private final EmailService emailService;
     private final DanceTypeService danceTypeService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -133,9 +134,30 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
         log.info("[{}] quên mật khẩu rồi sir", request.email());
-        String body = emailContent(user);
 
-        emailService.sendEmail(request.email(), "Đặt lại mật khẩu", body);
+        String otp = oTPService.generateOTP(request.email());
+        boolean success =
+                oTPService.sendOTPByEmail(request.email(), user.getName(), otp).join();
+
+        if (!success) {
+            log.error("[forgot password] Gửi OTP thất bại cho email [{}]", request.email());
+            throw new BusinessException(ErrorConstant.SENT_EMAIL_ERROR);
+        }
+
+        log.info("[forgot password] OTP đã được gửi tới [{}]", request.email());
+    }
+
+    @Override
+    public AuthenticationResponse verifyOTPResetPassword(VerifyOTPRequest request) {
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
+
+        log.info("[Verify OTP reset password] - [{}]", request.otpCode());
+        oTPService.validateOTP(user.getEmail(), request.otpCode());
+        var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
+        var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
+
+        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
     }
 
     @Override
@@ -300,18 +322,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .build()));
     }
 
-    private String emailContent(User user) {
-        String token = jwtUtil.generateToken(user, 100L, false);
 
-        String resetUrl = String.format("http://localhost:3000/reset-password?token=%s", token);
-
-        return String.format(
-                "<p>Chào bạn,</p>" + "<p>Bạn vừa yêu cầu đặt lại mật khẩu cho tài khoản của mình.</p>"
-                        + "<p>Vui lòng bấm nút bên dưới để xác nhận và đặt lại mật khẩu:</p>"
-                        + "<p style=\"text-align:center;\">"
-                        + "<a href=\"%s\" style=\"display:inline-block; padding:10px 20px; font-size:16px; color:#fff; background-color:#007bff; text-decoration:none; border-radius:5px;\">Xác nhận reset mật khẩu</a>"
-                        + "</p>"
-                        + "<p>Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>",
-                resetUrl);
-    }
 }

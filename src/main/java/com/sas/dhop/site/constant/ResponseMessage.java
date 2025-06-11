@@ -47,4 +47,5 @@ public class ResponseMessage {
     public static final String CREATE_BOOKING = "Tạo một đơn thuê thành công";
 
     public static final String DELETE_ROOM = "Xóa phòng thành công";
+    public static final String OTP_RESET_PASSWORD = "Gửi OTP đặt lại mật khẩu thành công";
 }
