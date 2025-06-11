@@ -42,6 +42,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingResponse createBookingRequestForDancer(BookingRequest bookingRequest) {
+//        // Validate time
+//        if (bookingRequest.startTime().isAfter(bookingRequest.endTime())) {
+//            throw new BusinessException(ErrorConstant.INVALID_TIME_RANGE);
+//        }
+
         User customer = userService.getLoginUser();
         
         Dancer dancer = dancerRepository.findById(bookingRequest.dancerId())
@@ -60,8 +65,8 @@ public class BookingServiceImpl implements BookingService {
                 .area(area)
                 .status(statusService.findStatusOrCreated(BookingStatus.BOOKING_PENDING))
                 .bookingDate(Instant.now())
-                .startTime(bookingRequest.startDay())
-                .endTime(bookingRequest.endTime())
+                .startTime(bookingRequest.startTime().toLocalTime())
+                .endTime(bookingRequest.endTime().toLocalTime())
                 .address(bookingRequest.address())
                 .detail(bookingRequest.detail())
                 .customerPhone(bookingRequest.customerPhone())
@@ -78,6 +83,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingResponse createBookingRequestForChoreography(BookingRequest bookingRequest) {
+//        // Validate time
+//        if (bookingRequest.startTime().isAfter(bookingRequest.endTime())) {
+//            throw new BusinessException(ErrorConstant.INVALID_TIME_RANGE);
+//        }
+
         User customer = userService.getLoginUser();
         
         Choreography choreography = choreographyRepository.findById(bookingRequest.choreographyId())
@@ -96,8 +106,8 @@ public class BookingServiceImpl implements BookingService {
                 .area(area)
                 .status(statusService.findStatusOrCreated(BookingStatus.BOOKING_PENDING))
                 .bookingDate(Instant.now())
-                .startTime(bookingRequest.startDay())
-                .endTime(bookingRequest.endTime())
+                .startTime(bookingRequest.startTime().toLocalTime())
+                .endTime(bookingRequest.endTime().toLocalTime())
                 .address(bookingRequest.address())
                 .detail(bookingRequest.detail())
                 .customerPhone(bookingRequest.customerPhone())
