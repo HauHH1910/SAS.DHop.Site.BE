@@ -2,6 +2,8 @@ package com.sas.dhop.site.service;
 
 import com.sas.dhop.site.dto.request.BookingRequest;
 import com.sas.dhop.site.dto.response.BookingResponse;
+import com.sas.dhop.site.model.Booking;
+
 import java.util.List;
 
 public interface BookingService {
@@ -23,7 +25,8 @@ public interface BookingService {
 
     List<BookingResponse> getAllBooking();
 
-    // Set booking status is Booking_WorkDone if dancer push the end work button
-    // EndBookingResponse endWork(int bookingId);
+    BookingResponse cancelBooking(int bookingId);
+
+    BookingResponse endBooking(int bookingId);
 
 }
