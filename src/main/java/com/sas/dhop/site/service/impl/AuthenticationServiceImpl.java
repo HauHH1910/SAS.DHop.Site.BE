@@ -282,8 +282,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse verifyOTPAndActiveUSer(VerifyOTPRequest request) {
-        boolean isValid = oTPService.validateOTP(request.email(), request.otpCode());
-        if (!isValid) throw new BusinessException(ErrorConstant.INVALID_OTP);
+        oTPService.validateOTP(request.email(), request.otpCode());
 
         User user = userRepository
                 .findByEmail(request.email())
