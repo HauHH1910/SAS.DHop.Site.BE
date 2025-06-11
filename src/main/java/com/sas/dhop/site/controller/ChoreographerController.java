@@ -29,6 +29,7 @@ public class ChoreographerController {
     }
 
 
+    @PatchMapping("/{choreographerId}")
     public ResponseData<ChoreographerResponse> updateChoreographer(
             @PathVariable Integer choreographerId, @RequestBody ChoreographerRequest choreographerRequest
             ) {
@@ -38,5 +39,28 @@ public class ChoreographerController {
                 .build();
     }
 
+    @DeleteMapping("/remove-choreographer/{choreographerId}")
+    public ResponseData<ChoreographerResponse> removeChoreographer(@PathVariable Integer choreographerId){
+        return ResponseData.<ChoreographerResponse>builder()
+                .message(ResponseMessage.REMOVE_CHOREOGRAPHER)
+                .data(choreographerService.removeChoreographer(choreographerId))
+                .build();
+    }
+
+    @GetMapping("/{choreographerId}")
+    public ResponseData<ChoreographerResponse> getChoreographerById(@PathVariable Integer choreographerId){
+        return ResponseData.<ChoreographerResponse>builder()
+                .message(ResponseMessage.GET_CHOREOGRAPHER)
+                .data(choreographerService.getChoreographerById(choreographerId))
+                .build();
+    }
+
+    @GetMapping("/dance-type/{dane-type-id}")
+    public ResponseData<ChoreographerResponse> getChoreographerByDanceType(@PathVariable Integer danceTypeId) {
+        return ResponseData.<ChoreographerResponse>builder()
+                .message(ResponseMessage.GET_CHOREOGRAPHER_BY_DANCE_TYPE)
+                .data(choreographerService.getChoreographerById(danceTypeId))
+                .build();
+    }
 
 }

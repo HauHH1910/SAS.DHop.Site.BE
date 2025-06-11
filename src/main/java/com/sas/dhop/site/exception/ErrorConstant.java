@@ -46,7 +46,10 @@ public enum ErrorConstant {
 
     SUBSCRIPTION_EXIST(32, "Gói dịch vụ đã tồn tại", HttpStatus.FORBIDDEN),
     SUBSCRIPTION_NOT_FOUND(33, "Không tìm thấy gói dịch vụ", HttpStatus.NOT_FOUND),
-    PARTICIPANT_NOT_FOUND(34, "Không tìm thấy người dùng", HttpStatus.FORBIDDEN);
+    PARTICIPANT_NOT_FOUND(34, "Không tìm thấy người dùng", HttpStatus.FORBIDDEN),
+
+    BOOKING_NOT_ACCEPTABLE(35, "Đơn thuê không được chấp nhận", HttpStatus.NOT_ACCEPTABLE),
+    BOOKING_INACTIVATE(36, "Đơn thuê chưa được xác nhận", HttpStatus.NOT_ACCEPTABLE);
 
     private final Integer code;
     private final String message;
