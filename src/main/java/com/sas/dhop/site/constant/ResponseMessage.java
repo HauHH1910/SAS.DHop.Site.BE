@@ -43,4 +43,5 @@ public class ResponseMessage {
     public static final String GET_CHOREOGRAPHER = "Lấy biên đạo theo id";
     public static final String GET_CHOREOGRAPHER_BY_DANCE_TYPE = "Lấy biên đọa bởi thể loại nhảy thành công";
     public static final String DELETE_ROOM = "Xóa phòng thành công";
+    public static final String OTP_RESET_PASSWORD = "Gửi OTP đặt lại mật khẩu thành công";
 }
