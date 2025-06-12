@@ -52,7 +52,11 @@ public enum ErrorConstant {
     BOOKING_INACTIVATE(36, "Đơn thuê chưa được xác nhận", HttpStatus.NOT_ACCEPTABLE),
     BOOKING_CAN_NOT_CANCEL(37, "Không thể hủy đơn thuê", HttpStatus.FORBIDDEN),
     BOOKING_CAN_NOT_COMPLETE(38, "Đơn thuê không thể hoàn thành ", HttpStatus.FORBIDDEN),
-    BOOKING_CAN_NOT_END_WORK(39, "Không thể kết thúc được công việc", HttpStatus.FORBIDDEN);
+    BOOKING_CAN_NOT_END_WORK(39, "Không thể kết thúc được công việc", HttpStatus.FORBIDDEN),
+
+    ARTICLE_NOT_FOUND(40, "Không tìm thấy bài báo", HttpStatus.NOT_FOUND),
+
+    ;
 
     private final Integer code;
     private final String message;
