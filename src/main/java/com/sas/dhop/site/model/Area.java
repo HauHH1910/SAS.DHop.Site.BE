@@ -14,6 +14,7 @@ import lombok.*;
 @Table(name = "area")
 public class Area extends AbstractEntity<Integer> implements Serializable {
 
+
     @Size(max = 100) @Column(name = "district", length = 100)
     private String district;
 

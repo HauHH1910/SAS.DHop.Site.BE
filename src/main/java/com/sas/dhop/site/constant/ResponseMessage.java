@@ -50,6 +50,11 @@ public class ResponseMessage {
     public static final String END_WORK_SUCCESSFULLY = "Kết thúc công việc thành công";
     public static final String CONFIRM_SUCCESSFULLY = "Xác nhận hoàn thành công việc thành công";
     public static final String CONFIRM_END_BOOKING = "Xác nhận hoàn thành dịch vụ thuê thành công";
+    public static final String GET_ALL_ARTICLE_SUCCESSFULLY = "Lấy được tất cả các bài báo thành công";
+    public static final String CREATE_ARTICLE_SUCCESSFULLY = "Tạo bài báo thành công";
+    public static final String UPDATE_ARTICLE_SUCCESSFULLY = "Chỉnh sửa bài báo thành công";
+    public static final String DELETE_ARTICLE_SUCCESSFULLY = "Xóa bài báo thành công";
+    public static final String GET_ARTICLE_BY_ID = "Lấy bài báo thành công";
 
     public static final String DELETE_ROOM = "Xóa phòng thành công";
     public static final String OTP_RESET_PASSWORD = "Gửi OTP đặt lại mật khẩu thành công";
