@@ -14,12 +14,10 @@ import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
 import com.sas.dhop.site.util.mapper.BookingMapper;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,27 +42,22 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingResponse createBookingRequestForDancer(BookingRequest request) {
-        Dancer dancer = dancerRepository
-                .findById(request.dancerId())
-                .orElseThrow(() -> {
-                    log.error("Dancer not found with id: {}", request.dancerId());
-                    return new BusinessException(ErrorConstant.USER_NOT_FOUND);
-                });
+        Dancer dancer = dancerRepository.findById(request.dancerId()).orElseThrow(() -> {
+            log.error("Dancer not found with id: {}", request.dancerId());
+            return new BusinessException(ErrorConstant.USER_NOT_FOUND);
+        });
         log.debug("[Booking for dancer] Fetched dancer: {}", dancer.getUser().getName());
 
         User customer = userService.getLoginUser();
         log.debug("[Booking for dancer] Fetched logged-in customer: {}", customer.getName());
 
-
         DanceType danceType = danceTypeService.findDanceType(request.danceTypeId());
         log.debug("[Booking for dancer] Fetched dance type: {}", danceType.getType());
 
-        Area area = areaRepository
-                .findById(request.areaId())
-                .orElseThrow(() -> {
-                    log.error("[Booking for dancer] Area not found with id: {}", request.areaId());
-                    return new BusinessException(ErrorConstant.AREA_NOT_FOUND);
-                });
+        Area area = areaRepository.findById(request.areaId()).orElseThrow(() -> {
+            log.error("[Booking for dancer] Area not found with id: {}", request.areaId());
+            return new BusinessException(ErrorConstant.AREA_NOT_FOUND);
+        });
         log.debug("[Booking for dancer] Fetched area: {}", area.getCity());
 
         Status status = statusService.findStatusOrCreated(BookingStatus.BOOKING_PENDING);
@@ -106,16 +99,13 @@ public class BookingServiceImpl implements BookingService {
         User customer = userService.getLoginUser();
         log.debug("[Booking for choreography] Fetched logged-in customer: {}", customer.getName());
 
-
         DanceType danceType = danceTypeService.findDanceType(request.danceTypeId());
         log.debug("[Booking for choreography] Fetched dance type: {}", danceType.getType());
 
-        Area area = areaRepository
-                .findById(request.areaId())
-                .orElseThrow(() -> {
-                    log.error("[Booking for choreography] Area not found with id: {}", request.areaId());
-                    return new BusinessException(ErrorConstant.AREA_NOT_FOUND);
-                });
+        Area area = areaRepository.findById(request.areaId()).orElseThrow(() -> {
+            log.error("[Booking for choreography] Area not found with id: {}", request.areaId());
+            return new BusinessException(ErrorConstant.AREA_NOT_FOUND);
+        });
         log.debug("[Booking for choreography] Fetched area: {}", area.getCity());
 
         Status status = statusService.findStatusOrCreated(BookingStatus.BOOKING_PENDING);
@@ -240,39 +230,37 @@ public class BookingServiceImpl implements BookingService {
         return bookingCancelMapper.mapToBookingCancelResponse(booking);
     }
 
-//    @Override
-//    public BookingResponse confirmWork(int bookingId) {
-//        Booking booking = bookingRepository
-//                .findById(bookingId)
-//                .orElseThrow(()-> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
-//
-//        if(booking.getBookingStatus() != BookingStatus.BOOKING_WORKING_DONE)
-//            throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
-//
-//        Status confirmStatus = statusService.findStatusOrCreated(BookingStatus.)
-//
-//
-//
-//
-//    }
-
+    //    @Override
+    //    public BookingResponse confirmWork(int bookingId) {
+    //        Booking booking = bookingRepository
+    //                .findById(bookingId)
+    //                .orElseThrow(()-> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+    //
+    //        if(booking.getBookingStatus() != BookingStatus.BOOKING_WORKING_DONE)
+    //            throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
+    //
+    //        Status confirmStatus = statusService.findStatusOrCreated(BookingStatus.)
+    //
+    //
+    //
+    //
+    //    }
 
     @Override
     public BookingResponse endBooking(int bookingId) {
         Booking booking = bookingRepository
                 .findById(bookingId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
-        if (!booking.getBookingStatus().equals(BookingStatus.BOOKING_IN_PROGRESS)){
+        if (!booking.getBookingStatus().equals(BookingStatus.BOOKING_IN_PROGRESS)) {
             throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_COMPLETE);
         }
-        //TODO: chuyen khoan tien truoc khi end booking
+        // TODO: chuyen khoan tien truoc khi end booking
         Status endStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_COMPLETED);
         booking.setStatus(endStatus);
         booking = bookingRepository.save(booking);
 
         return BookingResponse.mapToBookingResponse(booking);
     }
-
 
     private BigDecimal calculateCommissionPrice(BigDecimal price) {
         if (price.compareTo(new BigDecimal("200000")) >= 0 && price.compareTo(new BigDecimal("500000")) < 0) {
@@ -288,6 +276,4 @@ public class BookingServiceImpl implements BookingService {
         // Giá dưới 200k, không tính hoa hồng
         return price.setScale(2, RoundingMode.HALF_UP);
     }
-
-
 }

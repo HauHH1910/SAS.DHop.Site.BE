@@ -23,14 +23,10 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/create")
-    public ResponseData<CheckoutResponseData> createPayment(@RequestBody CreatePaymentRequest request){
+    public ResponseData<CheckoutResponseData> createPayment(@RequestBody CreatePaymentRequest request) {
         return ResponseData.<CheckoutResponseData>builder()
                 .message(ResponseMessage.CREATE_PAYMENT)
                 .data(paymentService.createPaymentLink(request))
                 .build();
     }
-
-
-
-
 }

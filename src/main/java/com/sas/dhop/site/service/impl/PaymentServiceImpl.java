@@ -3,6 +3,8 @@ package com.sas.dhop.site.service.impl;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sas.dhop.site.dto.request.CreatePaymentRequest;
 import com.sas.dhop.site.service.PaymentService;
+import java.util.Date;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,9 +12,6 @@ import vn.payos.PayOS;
 import vn.payos.type.CheckoutResponseData;
 import vn.payos.type.ItemData;
 import vn.payos.type.PaymentData;
-
-import java.util.Date;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +25,7 @@ public class PaymentServiceImpl implements PaymentService {
         try {
             String currentTimeString = String.valueOf(new Date().getTime());
 
-            long orderCode = Long.parseLong(
-                    currentTimeString.substring(currentTimeString.length() - 6)
-            );
+            long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
 
             ItemData item = ItemData.builder()
                     .name(request.name())
