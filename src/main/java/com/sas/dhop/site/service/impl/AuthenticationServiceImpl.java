@@ -1,7 +1,9 @@
 package com.sas.dhop.site.service.impl;
 
+import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
+import static com.sas.dhop.site.constant.UserStatus.INACTIVE_USER;
+
 import com.nimbusds.jose.*;
-import com.sas.dhop.site.constant.UserStatus;
 import com.sas.dhop.site.controller.client.OAuthIdentityClient;
 import com.sas.dhop.site.controller.client.OAuthUserClient;
 import com.sas.dhop.site.dto.request.*;
@@ -26,9 +28,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.stereotype.Service;
-
-import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
-import static com.sas.dhop.site.constant.UserStatus.INACTIVE_USER;
 
 @Service
 @RequiredArgsConstructor

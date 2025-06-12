@@ -1,7 +1,6 @@
 package com.sas.dhop.site.repository;
 
 import com.sas.dhop.site.model.Area;
-
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

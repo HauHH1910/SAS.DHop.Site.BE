@@ -1,5 +1,7 @@
 package com.sas.dhop.site.config;
 
+import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
+
 import com.github.javafaker.Faker;
 import com.sas.dhop.site.constant.AreaStatus;
 import com.sas.dhop.site.constant.UserSubscriptionStatus;
@@ -8,19 +10,15 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.model.enums.StatusType;
 import com.sas.dhop.site.repository.*;
 import jakarta.transaction.Transactional;
-
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
 
 @Configuration
 @RequiredArgsConstructor
@@ -97,9 +95,8 @@ public class ApplicationInitConfig {
                                     .statusType(StatusType.ACTIVE)
                                     .build()));
 
-                    DanceType type = danceTypeRepository.save(DanceType.builder()
-                            .type(fakerUS.job().title())
-                            .build());
+                    DanceType type = danceTypeRepository.save(
+                            DanceType.builder().type(fakerUS.job().title()).build());
 
                     // Create status for user subscription
                     switch (i) {

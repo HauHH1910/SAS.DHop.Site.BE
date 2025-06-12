@@ -12,16 +12,12 @@ import com.sas.dhop.site.model.User;
 import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.AreaRepository;
 import com.sas.dhop.site.service.AreaService;
-import com.sas.dhop.site.service.RoleService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.AreaMapper;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,21 +35,16 @@ public class AreaServiceImpl implements AreaService {
     public List<AreaResponse> getAllArea() {
         User currentUser = userService.getLoginUser();
 
-        Set<RoleName> collect = currentUser.getRoles().stream()
-                .map(Role::getName)
-                .collect(Collectors.toSet());
+        Set<RoleName> collect =
+                currentUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
 
         boolean isAdmin = collect.contains(RoleName.ADMIN);
 
         Status status = statusService.findStatusOrCreated(AreaStatus.ACTIVATED_AREA);
 
-        List<Area> areas = isAdmin
-                ? areaRepository.findAll()
-                : areaRepository.findAreaByStatus(status.getStatusName());
+        List<Area> areas = isAdmin ? areaRepository.findAll() : areaRepository.findAreaByStatus(status.getStatusName());
 
-        return areas.stream()
-                .map(areaMapper::mapToAreaResponse)
-                .collect(Collectors.toList());
+        return areas.stream().map(areaMapper::mapToAreaResponse).collect(Collectors.toList());
     }
 
     @Override
