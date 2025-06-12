@@ -1,3 +1,9 @@
 package com.sas.dhop.site.service;
 
-public interface PaymentService {}
+import vn.payos.type.CheckoutResponseData;
+
+public interface PaymentService {
+
+    CheckoutResponseData checkOut();
+
+}
