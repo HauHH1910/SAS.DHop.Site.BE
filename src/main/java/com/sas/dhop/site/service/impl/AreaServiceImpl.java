@@ -6,17 +6,17 @@ import com.sas.dhop.site.dto.response.AreaResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.Area;
+import com.sas.dhop.site.model.Role;
 import com.sas.dhop.site.model.Status;
 import com.sas.dhop.site.model.User;
 import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.AreaRepository;
 import com.sas.dhop.site.service.AreaService;
-import com.sas.dhop.site.service.RoleService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.AreaMapper;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 public class AreaServiceImpl implements AreaService {
     private final AreaRepository areaRepository;
     private final UserService userService;
-    private final RoleService roleService;
     private final AreaMapper areaMapper;
     private final StatusService statusService;
 
@@ -36,13 +35,14 @@ public class AreaServiceImpl implements AreaService {
     public List<AreaResponse> getAllArea() {
         User currentUser = userService.getLoginUser();
 
-        boolean isAdmin = currentUser.getRoles().stream().anyMatch(role -> role.getName() == RoleName.ADMIN);
+        Set<RoleName> collect =
+                currentUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
 
-        Status status = statusService.getStatus(AreaStatus.ACTIVATED_AREA);
+        boolean isAdmin = collect.contains(RoleName.ADMIN);
 
-        List<Area> areas = isAdmin
-                ? areaRepository.findAll()
-                : Collections.singletonList(areaRepository.findAreaByStatus(status.getStatusName()));
+        Status status = statusService.findStatusOrCreated(AreaStatus.ACTIVATED_AREA);
+
+        List<Area> areas = isAdmin ? areaRepository.findAll() : areaRepository.findAreaByStatus(status.getStatusName());
 
         return areas.stream().map(areaMapper::mapToAreaResponse).collect(Collectors.toList());
     }

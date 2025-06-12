@@ -2,8 +2,6 @@ package com.sas.dhop.site.service;
 
 import com.sas.dhop.site.dto.request.BookingRequest;
 import com.sas.dhop.site.dto.response.BookingResponse;
-import com.sas.dhop.site.model.Booking;
-
 import java.util.List;
 
 public interface BookingService {
@@ -30,5 +28,4 @@ public interface BookingService {
     BookingResponse endBooking(int bookingId);
 
     BookingResponse endWorking(int bookingId);
-
 }

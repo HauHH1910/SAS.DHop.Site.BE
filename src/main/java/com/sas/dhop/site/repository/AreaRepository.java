@@ -1,6 +1,7 @@
 package com.sas.dhop.site.repository;
 
 import com.sas.dhop.site.model.Area;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -28,8 +29,8 @@ public interface AreaRepository extends JpaRepository<Area, Integer>, JpaSpecifi
     //    @Query("SELECT a FROM Area a WHERE a.status.statusName = :statusName")
     //    List<Area> findAreaByStatus(@Param("statusName") AreaStatus areaStatusName);
 
-    @Query("SELECT a FROM Area a WHERE a.id = :id AND a.status.statusName = :status")
-    Area findAreaByStatus(@Param("status") String status);
+    @Query("SELECT a FROM Area a WHERE a.status.statusName = :status")
+    List<Area> findAreaByStatus(@Param("status") String status);
 
     @Query("SELECT a FROM Area  a WHERE a.id = :id AND a.status.statusName = :status")
     Area findAreaByIdAndStatus(@Param("id") Integer id, @Param("status") String status);
