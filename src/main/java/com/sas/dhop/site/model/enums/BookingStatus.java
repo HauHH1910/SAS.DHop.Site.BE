@@ -8,4 +8,4 @@ public enum BookingStatus {
     BOOKING_COMPLETED,
     BOOKING_END,
     BOOKING_INACTIVATE
-} 
+}

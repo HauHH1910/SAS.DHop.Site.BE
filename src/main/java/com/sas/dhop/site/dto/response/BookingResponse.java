@@ -1,24 +1,19 @@
 package com.sas.dhop.site.dto.response;
 
-import java.math.BigDecimal;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sas.dhop.site.model.Booking;
-import lombok.Builder;
-
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import lombok.Builder;
 
-//yyyy-MM-dd HH:mm
-//Title, start, end, description, id[string||int], people []
+// yyyy-MM-dd HH:mm
+// Title, start, end, description, id[string||int], people []
 @Builder
 public record BookingResponse(
         Integer id,
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-        LocalDateTime start,
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-        LocalDateTime end,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime start,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime end,
         String customer,
         String dancer,
         String choreography,
@@ -54,12 +49,13 @@ public record BookingResponse(
 
     private static String getChoreography(Booking request) {
         return request.getChoreography() != null && request.getChoreography().getUser() != null
-                ? request.getChoreography().getUser().getName() : "";
+                ? request.getChoreography().getUser().getName()
+                : "";
     }
 
     private static String getDancer(Booking request) {
-        return request.getDancer() != null && request.getDancer().getUser().getName() != null ? request.getDancer().getUser().getName() : "";
+        return request.getDancer() != null && request.getDancer().getUser().getName() != null
+                ? request.getDancer().getUser().getName()
+                : "";
     }
-
-
 }
