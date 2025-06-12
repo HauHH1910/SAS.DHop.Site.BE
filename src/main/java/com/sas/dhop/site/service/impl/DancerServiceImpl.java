@@ -13,10 +13,12 @@ import com.sas.dhop.site.service.DancerService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.DancerMapper;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -107,11 +109,13 @@ public class DancerServiceImpl implements DancerService {
     @Override
     public List<DancerResponse> getallDancer() {
         User currentUser = userService.getLoginUser();
-        boolean isStaff =
-                currentUser.getRoles().stream().anyMatch(role -> role.getName().equals(RoleName.STAFF));
 
-        boolean isAdmin =
-                currentUser.getRoles().stream().anyMatch(role -> role.getName().equals(RoleName.ADMIN));
+        Set<RoleName> collect =
+                currentUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+
+        boolean isAdmin = collect.contains(RoleName.ADMIN);
+
+        boolean isStaff = collect.contains(RoleName.STAFF);
 
         List<Dancer> dancers;
         if (isStaff || isAdmin) {
