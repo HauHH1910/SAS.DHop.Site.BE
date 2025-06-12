@@ -20,7 +20,7 @@ public class DancersController {
 
     private final DancerService dancerService;
 
-    @GetMapping
+    @GetMapping("/get-all-dancers")
     public ResponseData<List<DancerResponse>> getAllDancer() {
         return ResponseData.<List<DancerResponse>>builder()
                 .message(ResponseMessage.GET_ALL_DANCERS)
@@ -28,7 +28,7 @@ public class DancersController {
                 .build();
     }
 
-    @PatchMapping("/{dancerId}")
+    @PatchMapping("/update-dancer-profile/{dancerId}")
     public ResponseData<DancerResponse> updateDancer(
             @PathVariable Integer dancerId, @RequestBody DancerRequest dancerRequest) {
         return ResponseData.<DancerResponse>builder()
@@ -37,7 +37,7 @@ public class DancersController {
                 .build();
     }
 
-    @DeleteMapping("/{dancerId}")
+    @DeleteMapping("/remove-dancers/{dancerId}")
     public ResponseData<DancerResponse> removeDancer(@PathVariable Integer dancerId) {
         return ResponseData.<DancerResponse>builder()
                 .message(ResponseMessage.REMOVE_DANCER)
@@ -45,7 +45,7 @@ public class DancersController {
                 .build();
     }
 
-    @GetMapping("/{dancerId}")
+    @GetMapping("/get-dancer-by-Id/{dancerId}")
     public ResponseData<DancerResponse> getDancerById(@PathVariable Integer dancerId) {
         return ResponseData.<DancerResponse>builder()
                 .message(ResponseMessage.GET_DANCER)
@@ -53,7 +53,7 @@ public class DancersController {
                 .build();
     }
 
-    @GetMapping("/dance-type/{danceTypeId}")
+    @GetMapping("/get-dancer-by-dance-type/{danceTypeId}")
     public ResponseData<DancerResponse> getDancerByDanceType(@PathVariable Integer danceTypeId) {
         return ResponseData.<DancerResponse>builder()
                 .message(ResponseMessage.GET_DANCER_BY_DANCE_TYPE)

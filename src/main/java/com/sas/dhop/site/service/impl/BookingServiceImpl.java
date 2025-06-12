@@ -2,6 +2,7 @@ package com.sas.dhop.site.service.impl;
 
 import com.sas.dhop.site.constant.BookingStatus;
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
@@ -14,6 +15,7 @@ import com.sas.dhop.site.service.BookingService;
 import com.sas.dhop.site.service.DanceTypeService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
+import com.sas.dhop.site.util.mapper.BookingCancelMapper;
 import com.sas.dhop.site.util.mapper.BookingMapper;
 
 import java.math.BigDecimal;
@@ -32,6 +34,7 @@ public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
+    private final BookingCancelMapper bookingCancelMapper;
     private final UserService userService;
     private final AreaRepository areaRepository;
     private final DanceTypeService danceTypeService;
@@ -201,22 +204,44 @@ public class BookingServiceImpl implements BookingService {
 
     // TODO: Hàm cancel booking đang thiếu DTO, trong DB thì thiếu reason khi hủy, và thiếu ràng buộc khi hủy.
     @Override
-    public BookingResponse cancelBooking(int bookingId) {
+    public BookingCancelResponse cancelBooking(int bookingId) {
         Booking booking = bookingRepository
                 .findById(bookingId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
-        if (booking.getBookingStatus() != BookingStatus.BOOKING_PENDING
-                && booking.getBookingStatus() != BookingStatus.BOOKING_WORKING_DONE)
+                .orElseThrow(()-> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+        if(booking.getBookingStatus() != BookingStatus.BOOKING_PENDING
+        && booking.getBookingStatus() != BookingStatus.BOOKING_WORKING_DONE)
             throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_CANCEL);
 
-        Status cancleBooking = statusService.findStatusOrCreated(BookingStatus.BOOKING_CANCELED);
-        booking.setStatus(cancleBooking);
-        booking = bookingRepository.save(booking);
+        Status cancelStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_CANCELED);
+        booking.setStatus(cancelStatus);
 
-        return bookingMapper.mapToBookingResponse(booking);
+        User user = userService.getLoginUser();
+
+        booking.setCancelReason(booking.getCancelReason());
+        booking.setCancelPersonName(user.getName());
+
+        bookingRepository.save(booking);
+
+        return bookingCancelMapper.mapToBookingCancelResponse(booking);
     }
 
-    
+//    @Override
+//    public BookingResponse confirmWork(int bookingId) {
+//        Booking booking = bookingRepository
+//                .findById(bookingId)
+//                .orElseThrow(()-> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+//
+//        if(booking.getBookingStatus() != BookingStatus.BOOKING_WORKING_DONE)
+//            throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
+//
+//        Status confirmStatus = statusService.findStatusOrCreated(BookingStatus.)
+//
+//
+//
+//
+//    }
+
+
     @Override
     public BookingResponse endBooking(int bookingId) {
         Booking booking = bookingRepository
