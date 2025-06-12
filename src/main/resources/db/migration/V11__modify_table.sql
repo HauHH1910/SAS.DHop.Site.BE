@@ -1,0 +1,8 @@
+ALTER TABLE chat
+    DROP FOREIGN KEY `chat_ibfk_1`;
+ALTER TABLE chat
+    DROP FOREIGN KEY `chat_ibfk_2`;
+DROP TABLE chat;
+
+ALTER TABLE booking
+    ADD COLUMN price BIGINT NOT NULL;

@@ -81,4 +81,7 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
 
     @Column(name = "cancel_person_name")
     private String cancelPersonName;
+
+    @Column(name = "price")
+    private Long price;
 }
