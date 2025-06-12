@@ -224,6 +224,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = User.builder()
                 .name(request.name())
+                .phone(request.phone())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .roles(roles)

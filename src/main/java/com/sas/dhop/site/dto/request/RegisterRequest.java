@@ -10,5 +10,6 @@ public record RegisterRequest(
         @NotBlank(message = "NAME_NOT_BLANK") @NotEmpty(message = "NAME_NOT_EMPTY") @NotNull(message = "NAME_NOT_NULL") String name,
         @NotBlank(message = "PASSWORD_NOT_BLANK") @NotEmpty(message = "PASSWORD_NOT_EMPTY") @NotNull(message = "PASSWORD_NOT_NULL") String password,
         RoleName role,
+        String phone,
         ChoreographyRegisterRequest choreography,
         DancerRegisterRequest dancer) {}
