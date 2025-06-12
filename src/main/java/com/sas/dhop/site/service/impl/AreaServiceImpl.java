@@ -49,7 +49,7 @@ public class AreaServiceImpl implements AreaService {
 
         List<Area> areas = isAdmin
                 ? areaRepository.findAll()
-                : Collections.singletonList(areaRepository.findAreaByStatus(status.getStatusName()));
+                : areaRepository.findAreaByStatus(status.getStatusName());
 
         return areas.stream()
                 .map(areaMapper::mapToAreaResponse)
