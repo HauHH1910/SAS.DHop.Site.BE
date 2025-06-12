@@ -31,9 +31,7 @@ public class DancerServiceImpl implements DancerService {
     private final DancerRepository dancerRepository;
     private final DancerMapper dancerMapper;
     private final UserService userService;
-    private final StatusRepository statusRepository;
     private final StatusService statusService;
-    private final SubscriptionRepository subscriptionRepository;
     private final DanceTypeService danceTypeService;
 
     @Override
@@ -122,7 +120,7 @@ public class DancerServiceImpl implements DancerService {
             dancers = dancerRepository.findAll();
         } else {
             dancers = dancerRepository.findByStatus(
-                    statusService.getStatus(DancerStatus.ACTIVATED_DANCER)
+                    statusService.findStatusOrCreated(DancerStatus.ACTIVATED_DANCER)
             );
         }
 

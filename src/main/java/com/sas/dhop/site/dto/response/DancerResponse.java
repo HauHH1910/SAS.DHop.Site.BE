@@ -11,4 +11,6 @@ public record DancerResponse(
         int teamSize,
         BigDecimal price,
         Integer subscriptionId,
-        Integer statusId) {}
+        Integer statusId,
+        Integer dancerId,
+        String dancerPhone) {}
