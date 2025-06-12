@@ -66,15 +66,13 @@ public class OTPServiceImpl implements OTPService {
 
     @Override
     public void validateOTP(String email, String OTP) {
-        OTP otp = otpRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
 
-        if (!otp.getOtpCode().equals(OTP) && otp.getIsVerify()) {
+        OTP otp = otpRepository.findByOtpCode(OTP).orElseThrow(() -> new BusinessException(ErrorConstant.INVALID_OTP));
+
+        if (!otp.getEmail().equals(email)) {
             throw new BusinessException(ErrorConstant.INVALID_OTP);
         }
 
-        otp.setIsVerify(true);
         otpRepository.delete(otp);
     }
 }

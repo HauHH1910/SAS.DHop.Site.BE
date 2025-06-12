@@ -1,5 +1,8 @@
 package com.sas.dhop.site.service.impl;
 
+import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
+import static com.sas.dhop.site.constant.UserStatus.INACTIVE_USER;
+
 import com.nimbusds.jose.*;
 import com.sas.dhop.site.controller.client.OAuthIdentityClient;
 import com.sas.dhop.site.controller.client.OAuthUserClient;
@@ -116,7 +119,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Set<Role> roles = Set.of(role);
 
-        var status = statusService.findStatusOrCreated("Kích hoạt thành công");
+        var status = statusService.findStatusOrCreated(ACTIVE_USER);
 
         var user = onBoardUserOAuth(userInfo, status, roles);
 
@@ -214,7 +217,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BusinessException(ErrorConstant.EMAIL_ALREADY_EXIST);
         }
 
-        Status userStatus = statusService.findStatusOrCreated("Chưa kích hoạt");
+        Status userStatus = statusService.findStatusOrCreated(INACTIVE_USER);
 
         Role role = roleService.findByRoleName(request.role());
         Set<Role> roles = Set.of(role);
@@ -287,7 +290,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
 
-        var status = statusService.findStatusOrCreated("Kích hoạt thành công");
+        var status = statusService.findStatusOrCreated(ACTIVE_USER);
 
         user.setStatus(status);
         userRepository.save(user);
