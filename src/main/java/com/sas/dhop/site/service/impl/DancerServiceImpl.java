@@ -13,12 +13,10 @@ import com.sas.dhop.site.service.DancerService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.DancerMapper;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -119,9 +117,7 @@ public class DancerServiceImpl implements DancerService {
         if (isStaff || isAdmin) {
             dancers = dancerRepository.findAll();
         } else {
-            dancers = dancerRepository.findByStatus(
-                    statusService.findStatusOrCreated(DancerStatus.ACTIVATED_DANCER)
-            );
+            dancers = dancerRepository.findByStatus(statusService.findStatusOrCreated(DancerStatus.ACTIVATED_DANCER));
         }
 
         return dancers.stream().map(dancerMapper::mapToDancerResponse).collect(Collectors.toList());
@@ -138,5 +134,4 @@ public class DancerServiceImpl implements DancerService {
         // TODO: Implement getting all dancers by subscription status
         return null;
     }
-
 }

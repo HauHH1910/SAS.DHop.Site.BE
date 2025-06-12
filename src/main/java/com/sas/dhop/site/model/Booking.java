@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import lombok.*;
 
 @Getter

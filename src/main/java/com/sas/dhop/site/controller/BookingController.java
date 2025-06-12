@@ -36,7 +36,6 @@ public class BookingController {
                 .build();
     }
 
-
     @PostMapping("/create-booking-for-choreographer")
     public ResponseData<BookingResponse> createBookingForChoreographer(@RequestBody BookingRequest bookingRequest) {
         return ResponseData.<BookingResponse>builder()
@@ -62,7 +61,7 @@ public class BookingController {
     }
 
     @PutMapping("/start-work-request/{bookingId}")
-    public ResponseData<BookingResponse> startWorkRequest(@PathVariable Integer bookingId){
+    public ResponseData<BookingResponse> startWorkRequest(@PathVariable Integer bookingId) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.START_WORK_SUCCESSFULLY)
                 .data(bookingService.startWork(bookingId))
@@ -70,16 +69,13 @@ public class BookingController {
     }
 
     @PutMapping("/end-work-request/{bookingId}")
-    public ResponseData<BookingResponse> endWorkRequest(@PathVariable Integer bookingId){
+    public ResponseData<BookingResponse> endWorkRequest(@PathVariable Integer bookingId) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.END_WORK_SUCCESSFULLY)
                 .data(bookingService.startWork(bookingId))
                 .build();
     }
 
-
-
-
-//    public ResponseData<BookingResponse>
+    //    public ResponseData<BookingResponse>
 
 }

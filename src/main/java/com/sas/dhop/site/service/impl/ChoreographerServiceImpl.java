@@ -14,12 +14,10 @@ import com.sas.dhop.site.service.DanceTypeService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.ChoreographerMapper;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -91,8 +89,8 @@ public class ChoreographerServiceImpl implements ChoreographerService {
     public List<ChoreographerResponse> getAllChoreography() {
         User currentUser = userService.getLoginUser();
 
-        Set<RoleName> collect = currentUser.getRoles().stream().map(Role::getName)
-                .collect(Collectors.toSet());
+        Set<RoleName> collect =
+                currentUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
 
         boolean isAdmin = collect.contains(RoleName.ADMIN);
         boolean isStaff = collect.contains(RoleName.STAFF);
@@ -102,8 +100,7 @@ public class ChoreographerServiceImpl implements ChoreographerService {
             choreographer = choreographyRepository.findAll();
         } else {
             choreographer = choreographyRepository.findByStatus(
-                    statusService.findStatusOrCreated(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER)
-            );
+                    statusService.findStatusOrCreated(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER));
         }
 
         return choreographer.stream()
@@ -120,6 +117,4 @@ public class ChoreographerServiceImpl implements ChoreographerService {
     public ChoreographerResponse getAllChoreographerBySubscriptionStatus() {
         return null;
     }
-
-
 }
