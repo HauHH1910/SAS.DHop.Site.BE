@@ -9,5 +9,5 @@ public interface OTPService {
 
     CompletableFuture<Boolean> sendOTPByEmail(String email, String name, String OTP) throws MessagingException;
 
-    boolean validateOTP(String email, String OTP);
+    void validateOTP(String email, String OTP);
 }

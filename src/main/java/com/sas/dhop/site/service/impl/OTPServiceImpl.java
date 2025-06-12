@@ -1,5 +1,7 @@
 package com.sas.dhop.site.service.impl;
 
+import com.sas.dhop.site.exception.BusinessException;
+import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.nosql.OTP;
 import com.sas.dhop.site.repository.nosql.OTPRepository;
 import com.sas.dhop.site.service.EmailService;
@@ -7,7 +9,6 @@ import com.sas.dhop.site.service.OTPService;
 import jakarta.mail.MessagingException;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
@@ -66,33 +67,15 @@ public class OTPServiceImpl implements OTPService {
     }
 
     @Override
-    public boolean validateOTP(String email, String OTP) {
-        Optional<OTP> otpOpt = otpRepository.findByEmail(email);
-        if (otpOpt.isEmpty()) {
-            log.warn("No OTP found for email {}", email);
-            return false;
+    public void validateOTP(String email, String OTP) {
+        OTP otp = otpRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
+
+        if (!otp.getOtpCode().equals(OTP) && otp.getIsVerify()) {
+            throw new BusinessException(ErrorConstant.INVALID_OTP);
         }
 
-        OTP otpEntity = otpOpt.get();
-
-        if (otpEntity.getExpiresAt().isBefore(LocalDateTime.now())) {
-            log.warn("OTP expired for email {}", email);
-            otpRepository.delete(otpEntity);
-            return false;
-        }
-
-        if (!otpEntity.getIsVerify()) {
-            log.warn("OTP is already verify email {}", email);
-            return false;
-        }
-
-        if (!otpEntity.getOtpCode().equals(OTP)) {
-            log.warn("Invalid OTP for email {}", email);
-            return false;
-        }
-
-        otpRepository.delete(otpEntity);
-        log.info("OTP validated successfully for email {}", email);
-        return true;
+        otp.setIsVerify(true);
+        otpRepository.delete(otp);
     }
 }

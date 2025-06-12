@@ -8,6 +8,7 @@ public class BookingStatus {
     public static final String BOOKING_COMPLETED = "Đã hoàn tất";
     public static final String BOOKING_INCOMPLETE = "Chưa hoàn tất";
     public static final String BOOKING_IN_PROGRESS = "Đang thực hiện";
+    public static final String BOOKING_WORKING_DONE = "Hoàn tất công việc";
     public static final String BOOKING_JOINED = "Đã tham gia";
     public static final String BOOKING_DENY_JOIN = "Từ chối tham gia";
     public static final String BOOKING_OUT_SLOT = "Hết chỗ trống";

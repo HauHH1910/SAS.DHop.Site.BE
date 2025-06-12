@@ -3,6 +3,7 @@ package com.sas.dhop.site.model;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalTime;
 import lombok.*;
 
 @Getter
@@ -40,6 +41,12 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
 
     @Column(name = "booking_date")
     private Instant bookingDate;
+
+    @Column(name = "start_time")
+    private LocalTime startTime;
+
+    @Column(name = "end_time")
+    private LocalTime endTime;
 
     @Column(name = "address")
     private String address;
