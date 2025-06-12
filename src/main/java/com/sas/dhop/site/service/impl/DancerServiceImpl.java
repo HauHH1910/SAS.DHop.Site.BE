@@ -121,8 +121,9 @@ public class DancerServiceImpl implements DancerService {
         if (isStaff || isAdmin) {
             dancers = dancerRepository.findAll();
         } else {
-            Status activeStatus = statusService.getStatus(DancerStatus.ACTIVATED_DANCER);
-            dancers = getAllDancerByStatus(activeStatus);
+            dancers = dancerRepository.findByStatus(
+                    statusService.getStatus(DancerStatus.ACTIVATED_DANCER)
+            );
         }
 
         return dancers.stream().map(dancerMapper::mapToDancerResponse).collect(Collectors.toList());
@@ -140,12 +141,4 @@ public class DancerServiceImpl implements DancerService {
         return null;
     }
 
-    // Method to find Dancer by status
-    public List<Dancer> getAllDancerByStatus(Status status) {
-        List<Dancer> allDancer = dancerRepository.findAll();
-        return allDancer.stream()
-                .filter(dancer ->
-                        dancer.getStatus() != null && dancer.getStatus().equals(status))
-                .collect(Collectors.toList());
-    }
 }
