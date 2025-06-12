@@ -6,15 +6,25 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import static com.sas.dhop.site.exception.MessageKey.DANCER_END_TIME_NOT_NULL;
+import static com.sas.dhop.site.exception.MessageKey.DANCER_START_TIME_NOT_NULL;
+
 public record BookingRequest(
-        @JsonFormat(pattern = "dd/MM/yy HH:mm") @NotNull(message = "Start time is required")
-        LocalDateTime startTime, // Start time of the booking
-        @JsonFormat(pattern = "dd/MM/yy HH:mm") @NotNull(message = "End time is required")
-        LocalDateTime endTime, // End time of the booking
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        @NotNull(message = DANCER_START_TIME_NOT_NULL)
+        LocalDateTime startTime,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        @NotNull(message = DANCER_END_TIME_NOT_NULL)
+        LocalDateTime endTime,
         String address,
         String detail,
         Integer dancerId,
+        Integer areaId,
         Integer choreographyId,
         Integer danceTypeId,
+        Integer numberOfTrainingSessions,
         BigDecimal bookingPrice,
-        String customerPhone) {}
+        String dancerPhone,
+        String choreographyPhone,
+        String customerPhone) {
+}

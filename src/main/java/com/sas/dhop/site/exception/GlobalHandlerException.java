@@ -55,7 +55,7 @@ public class GlobalHandlerException {
     public ResponseEntity<ResponseError> handleValidation(MethodArgumentNotValidException e) {
         String enumKey = Objects.requireNonNull(e.getFieldError()).getDefaultMessage();
 
-        ErrorConstant errorConstant = ErrorConstant.INVALID_KEY;
+        ErrorConstant errorConstant;
 
         Map<String, Object> attributes = null;
 

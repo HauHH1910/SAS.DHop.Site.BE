@@ -8,7 +8,7 @@ import java.util.List;
 public interface BookingService {
 
     // create booking contract for dancer(add field to insert information in contract), set booking status is Pending
-    BookingResponse createBookingRequestForDancer(BookingRequest bookingRequest);
+    BookingResponse createBookingRequestForDancer(BookingRequest request);
 
     // create booking contract for choreography(add field to insert information in contract), set booking status is
     // Pending
@@ -25,8 +25,6 @@ public interface BookingService {
     List<BookingResponse> getAllBooking();
 
     BookingCancelResponse cancelBooking(int bookingId);
-
-
     //BookingResponse confirmWork(int bookingId);
 
     BookingResponse endBooking(int bookingId);

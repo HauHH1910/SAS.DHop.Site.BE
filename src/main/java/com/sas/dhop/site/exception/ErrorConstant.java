@@ -52,7 +52,11 @@ public enum ErrorConstant {
     BOOKING_INACTIVATE(36, "Đơn thuê chưa được xác nhận", HttpStatus.NOT_ACCEPTABLE),
     BOOKING_CAN_NOT_CANCEL(37, "Không thể hủy đơn thuê", HttpStatus.FORBIDDEN),
     BOOKING_CAN_NOT_COMPLETE(38, "Đơn thuê không thể hoàn thành ", HttpStatus.FORBIDDEN),
-    BOOKING_CAN_NOT_END_WORK(39, "Không thể kết thúc được công việc", HttpStatus.FORBIDDEN);
+    BOOKING_CAN_NOT_END_WORK(39, "Không thể kết thúc được công việc", HttpStatus.FORBIDDEN),
+    NOT_FOUND_CHOREOGRAPHY(40, "Không tìm thấy biên đạo", HttpStatus.NOT_FOUND),
+    PERFORMANCE_NOT_FOUND(41, "Không tìm thấy bằng chứng", HttpStatus.NOT_FOUND),
+    DANCER_START_TIME_NOT_NULL(42, "Thời gian bắt đầu không được trống", HttpStatus.FORBIDDEN),
+    DANCER_END_TIME_NOT_NULL(43, "Thời gian kết thúc không được trống", HttpStatus.FORBIDDEN);
 
     private final Integer code;
     private final String message;
