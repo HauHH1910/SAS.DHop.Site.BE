@@ -28,11 +28,9 @@ public class ChoreographerController {
                 .build();
     }
 
-
     @PatchMapping("/{choreographerId}")
     public ResponseData<ChoreographerResponse> updateChoreographer(
-            @PathVariable Integer choreographerId, @RequestBody ChoreographerRequest choreographerRequest
-            ) {
+            @PathVariable Integer choreographerId, @RequestBody ChoreographerRequest choreographerRequest) {
         return ResponseData.<ChoreographerResponse>builder()
                 .message(ResponseMessage.UPDATE_CHOREOGRAPHER)
                 .data(choreographerService.updateChoreographer(choreographerId, choreographerRequest))
@@ -40,7 +38,7 @@ public class ChoreographerController {
     }
 
     @DeleteMapping("/remove-choreographer/{choreographerId}")
-    public ResponseData<ChoreographerResponse> removeChoreographer(@PathVariable Integer choreographerId){
+    public ResponseData<ChoreographerResponse> removeChoreographer(@PathVariable Integer choreographerId) {
         return ResponseData.<ChoreographerResponse>builder()
                 .message(ResponseMessage.REMOVE_CHOREOGRAPHER)
                 .data(choreographerService.removeChoreographer(choreographerId))
@@ -48,7 +46,7 @@ public class ChoreographerController {
     }
 
     @GetMapping("/{choreographerId}")
-    public ResponseData<ChoreographerResponse> getChoreographerById(@PathVariable Integer choreographerId){
+    public ResponseData<ChoreographerResponse> getChoreographerById(@PathVariable Integer choreographerId) {
         return ResponseData.<ChoreographerResponse>builder()
                 .message(ResponseMessage.GET_CHOREOGRAPHER)
                 .data(choreographerService.getChoreographerById(choreographerId))
@@ -62,5 +60,4 @@ public class ChoreographerController {
                 .data(choreographerService.getChoreographerById(danceTypeId))
                 .build();
     }
-
 }
