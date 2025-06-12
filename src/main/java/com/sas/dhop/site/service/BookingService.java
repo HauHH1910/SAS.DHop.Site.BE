@@ -29,4 +29,6 @@ public interface BookingService {
 
     BookingResponse endBooking(int bookingId);
 
+    BookingResponse endWorking(int bookingId);
+
 }

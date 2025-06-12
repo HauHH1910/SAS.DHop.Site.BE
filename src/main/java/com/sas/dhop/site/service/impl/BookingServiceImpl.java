@@ -159,6 +159,26 @@ public class BookingServiceImpl implements BookingService {
 
     }
 
+    //Change status when dancer/choreographer press the end working button
+    @Override
+    public BookingResponse endWorking(int bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+
+        Status currentStatus = booking.getStatus();
+        if(!currentStatus.getStatusName().equals(BookingStatus.BOOKING_IN_PROGRESS)
+        && currentStatus.getStatusName().equals(BookingStatus.BOOKING_INACTIVATE))
+            throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
+
+        Status workingStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_WORKING_DONE);
+        booking.setStatus(workingStatus);
+        booking = bookingRepository.save(booking);
+
+        return bookingMapper.mapToBookingResponse(booking);
+
+    }
+
+
     @Override
     public BookingResponse getBookingDetail(int bookingId) {
         Booking booking = bookingRepository
@@ -190,6 +210,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.mapToBookingResponse(booking);
     }
 
+
     @Override
     public BookingResponse endBooking(int bookingId) {
         Booking booking =bookingRepository.findById(bookingId)
@@ -203,6 +224,8 @@ public class BookingServiceImpl implements BookingService {
 
         return bookingMapper.mapToBookingResponse(booking);
     }
+
+
 
 
 }
