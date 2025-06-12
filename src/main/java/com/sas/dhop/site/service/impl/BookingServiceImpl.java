@@ -6,10 +6,7 @@ import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.*;
-import com.sas.dhop.site.repository.AreaRepository;
-import com.sas.dhop.site.repository.BookingRepository;
-import com.sas.dhop.site.repository.ChoreographyRepository;
-import com.sas.dhop.site.repository.DancerRepository;
+import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.BookingService;
 import com.sas.dhop.site.service.DanceTypeService;
 import com.sas.dhop.site.service.StatusService;
@@ -35,43 +32,39 @@ public class BookingServiceImpl implements BookingService {
     private final DancerRepository dancerRepository;
     private final ChoreographyRepository choreographyRepository;
     private final StatusService statusService;
+    private final PerformanceRepository performanceRepository;
 
     // Booking is only for the dancer, the booker wants
     @Override
     @Transactional
-    public BookingResponse createBookingRequestForDancer(BookingRequest bookingRequest) {
-        //        // Validate time
-        //        if (bookingRequest.startTime().isAfter(bookingRequest.endTime())) {
-        //            throw new BusinessException(ErrorConstant.INVALID_TIME_RANGE);
-        //        }
-
+    public BookingResponse createBookingRequestForDancer(BookingRequest request) {
         User customer = userService.getLoginUser();
 
         Dancer dancer = dancerRepository
-                .findById(bookingRequest.dancerId())
+                .findById(request.dancerId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
-        DanceType danceType = danceTypeService.findDanceType(bookingRequest.danceTypeId());
+        DanceType danceType = danceTypeService.findDanceType(request.danceTypeId());
 
         Area area = areaRepository
-                .findById(customer.getArea().getId())
+                .findById(request.areaId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.AREA_NOT_FOUND));
 
         Booking booking = Booking.builder()
                 .customer(customer)
                 .dancer(dancer)
-                .choreography(null) // No choreography for dancer booking
                 .danceType(danceType)
                 .area(area)
                 .status(statusService.findStatusOrCreated(BookingStatus.BOOKING_PENDING))
                 .bookingDate(Instant.now())
-                .startTime(bookingRequest.startTime().toLocalTime())
-                .endTime(bookingRequest.endTime().toLocalTime())
-                .address(bookingRequest.address())
-                .detail(bookingRequest.detail())
-                .customerPhone(bookingRequest.customerPhone())
+                .startTime(request.startTime().toLocalTime())
+                .endTime(request.endTime().toLocalTime())
+                .address(request.address())
+                .detail(request.detail())
+                .customerPhone(request.customerPhone())
                 .dancerPhone(dancer.getUser().getPhone())
-                .choreographyPhone(null)
+                .numberOfTrainingSessions(request.numberOfTrainingSessions())
+                .price(request.price())
                 .build();
 
         booking = bookingRepository.save(booking);

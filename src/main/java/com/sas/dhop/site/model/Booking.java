@@ -19,12 +19,12 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "dancer_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dancer_id")
     private Dancer dancer;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "choreography_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "choreography_id")
     private Choreography choreography;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -63,8 +63,8 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @Column(name = "customer_phone")
     private String customerPhone;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "performance_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "performance_id")
     private Performance performance;
 
     @Column(name = "number_of_training_sessions", nullable = false)
