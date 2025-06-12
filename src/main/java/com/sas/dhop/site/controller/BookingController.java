@@ -3,6 +3,7 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.service.BookingService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,12 +29,13 @@ public class BookingController {
     }
 
     @DeleteMapping("/cancel-booking/{bookingId}")
-    public ResponseData<BookingResponse> cancelBooking(@PathVariable Integer bookingId) {
-        return ResponseData.<BookingResponse>builder()
+    public ResponseData<BookingCancelResponse> cancelBooking(@PathVariable Integer bookingId) {
+        return ResponseData.<BookingCancelResponse>builder()
                 .message(ResponseMessage.CANCEL_BOOKING)
                 .data(bookingService.cancelBooking(bookingId))
                 .build();
     }
+
 
     @PostMapping("/create-booking-for-choreographer")
     public ResponseData<BookingResponse> createBookingForChoreographer(@RequestBody BookingRequest bookingRequest) {
@@ -59,6 +61,25 @@ public class BookingController {
                 .build();
     }
 
-    //    public ResponseData<BookingResponse>
+    @PutMapping("/start-work-request/{bookingId}")
+    public ResponseData<BookingResponse> startWorkRequest(@PathVariable Integer bookingId){
+        return ResponseData.<BookingResponse>builder()
+                .message(ResponseMessage.START_WORK_SUCCESSFULLY)
+                .data(bookingService.startWork(bookingId))
+                .build();
+    }
+
+    @PutMapping("/end-work-request/{bookingId}")
+    public ResponseData<BookingResponse> endWorkRequest(@PathVariable Integer bookingId){
+        return ResponseData.<BookingResponse>builder()
+                .message(ResponseMessage.END_WORK_SUCCESSFULLY)
+                .data(bookingService.startWork(bookingId))
+                .build();
+    }
+
+
+
+
+//    public ResponseData<BookingResponse>
 
 }
