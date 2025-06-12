@@ -1,20 +1,26 @@
 package com.sas.dhop.site.config;
 
 import com.github.javafaker.Faker;
+import com.sas.dhop.site.constant.AreaStatus;
+import com.sas.dhop.site.constant.UserSubscriptionStatus;
 import com.sas.dhop.site.model.*;
 import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.model.enums.StatusType;
 import com.sas.dhop.site.repository.*;
 import jakarta.transaction.Transactional;
+
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
 
 @Configuration
 @RequiredArgsConstructor
@@ -84,24 +90,24 @@ public class ApplicationInitConfig {
                                 return roleRepository.save(r);
                             });
                     Status activeStatus = statusRepository
-                            .findByStatusName("Kích hoạt")
+                            .findByStatusName(ACTIVE_USER)
                             .orElseGet(() -> statusRepository.save(Status.builder()
-                                    .statusName("Kích hoạt")
-                                    .description("Kích hoạt")
+                                    .statusName(ACTIVE_USER)
+                                    .description(ACTIVE_USER)
                                     .statusType(StatusType.ACTIVE)
                                     .build()));
 
                     DanceType type = danceTypeRepository.save(DanceType.builder()
-                            .type(fakerUS.dragonBall().character())
+                            .type(fakerUS.job().title())
                             .build());
 
                     // Create status for user subscription
                     switch (i) {
                         case 1: {
                             statusRepository
-                                    .findByStatusName("Đang hoạt động")
+                                    .findByStatusName(UserSubscriptionStatus.ACTIVE_USER_SUBSCRIPTION)
                                     .orElseGet(() -> statusRepository.save(Status.builder()
-                                            .statusName("Đang hoạt động")
+                                            .statusName(UserSubscriptionStatus.ACTIVE_USER_SUBSCRIPTION)
                                             .description("Gói dịch vụ đang hoạt động")
                                             .statusType(StatusType.ACTIVE)
                                             .build()));
@@ -109,9 +115,9 @@ public class ApplicationInitConfig {
                         }
                         case 2: {
                             statusRepository
-                                    .findByStatusName("Đã hết hạn")
+                                    .findByStatusName(UserSubscriptionStatus.EXPIRE_USER_SUBSCRIPTION)
                                     .orElseGet(() -> statusRepository.save(Status.builder()
-                                            .statusName("Đã hết hạn")
+                                            .statusName(UserSubscriptionStatus.EXPIRE_USER_SUBSCRIPTION)
                                             .description("Gói dịch vụ đã hết hạn")
                                             .statusType(StatusType.ACTIVE)
                                             .build()));
@@ -119,9 +125,9 @@ public class ApplicationInitConfig {
                         }
                         case 3: {
                             statusRepository
-                                    .findByStatusName("Dùng thử miễn phí")
+                                    .findByStatusName(UserSubscriptionStatus.FREE_TRIAL_USER_SUBSCRIPTION)
                                     .orElseGet(() -> statusRepository.save(Status.builder()
-                                            .statusName("Dùng thử miễn phí")
+                                            .statusName(UserSubscriptionStatus.FREE_TRIAL_USER_SUBSCRIPTION)
                                             .description("Gói dịch vụ dùng thử miễn phí")
                                             .statusType(StatusType.ACTIVE)
                                             .build()));
@@ -129,9 +135,9 @@ public class ApplicationInitConfig {
                         }
                         case 4: {
                             statusRepository
-                                    .findByStatusName("Chờ xử lý")
+                                    .findByStatusName(UserSubscriptionStatus.PENDING_USER_SUBSCRIPTION)
                                     .orElseGet(() -> statusRepository.save(Status.builder()
-                                            .statusName("Chờ xử lý")
+                                            .statusName(UserSubscriptionStatus.PENDING_USER_SUBSCRIPTION)
                                             .description("Gói dịch vụ đang được xử lý")
                                             .statusType(StatusType.ACTIVE)
                                             .build()));
@@ -139,9 +145,9 @@ public class ApplicationInitConfig {
                         }
                         case 5: {
                             statusRepository
-                                    .findByStatusName("Đang gia hạn")
+                                    .findByStatusName(UserSubscriptionStatus.RENEWING_USER_SUBSCRIPTION)
                                     .orElseGet(() -> statusRepository.save(Status.builder()
-                                            .statusName("Đang gia hạn")
+                                            .statusName(UserSubscriptionStatus.RENEWING_USER_SUBSCRIPTION)
                                             .description("Gói dịch vụ đang được gia hạn")
                                             .statusType(StatusType.ACTIVE)
                                             .build()));
@@ -198,11 +204,19 @@ public class ApplicationInitConfig {
                             .danceTypes(Set.of(type))
                             .build());
 
+                    Status areaStatus = statusRepository
+                            .findByStatusName(AreaStatus.ACTIVATED_AREA)
+                            .orElseGet(() -> statusRepository.save(Status.builder()
+                                    .statusName(AreaStatus.ACTIVATED_AREA)
+                                    .description(AreaStatus.ACTIVATED_AREA)
+                                    .statusType(StatusType.ACTIVE)
+                                    .build()));
+
                     areaRepository.save(Area.builder()
                             .district(fakerVN.address().cityName())
                             .ward(fakerVN.address().country())
                             .city(fakerVN.address().city())
-                            .status(activeStatus)
+                            .status(areaStatus)
                             .build());
                 }
                 log.info("Created default admin user");

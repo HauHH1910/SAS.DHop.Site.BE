@@ -7,11 +7,9 @@ import com.sas.dhop.site.repository.nosql.OTPRepository;
 import com.sas.dhop.site.service.EmailService;
 import com.sas.dhop.site.service.OTPService;
 import jakarta.mail.MessagingException;
-
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -69,10 +67,9 @@ public class OTPServiceImpl implements OTPService {
     @Override
     public void validateOTP(String email, String OTP) {
 
-        OTP otp = otpRepository.findByOtpCode(OTP)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.INVALID_OTP));
+        OTP otp = otpRepository.findByOtpCode(OTP).orElseThrow(() -> new BusinessException(ErrorConstant.INVALID_OTP));
 
-        if(!otp.getEmail().equals(email)){
+        if (!otp.getEmail().equals(email)) {
             throw new BusinessException(ErrorConstant.INVALID_OTP);
         }
 

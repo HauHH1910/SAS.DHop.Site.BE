@@ -1,6 +1,7 @@
 package com.sas.dhop.site.service.impl;
 
 import com.nimbusds.jose.*;
+import com.sas.dhop.site.constant.UserStatus;
 import com.sas.dhop.site.controller.client.OAuthIdentityClient;
 import com.sas.dhop.site.controller.client.OAuthUserClient;
 import com.sas.dhop.site.dto.request.*;
@@ -15,11 +16,9 @@ import com.sas.dhop.site.util.JwtUtil;
 import com.sas.dhop.site.util.mapper.UserMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
-
 import java.text.ParseException;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +26,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.stereotype.Service;
+
+import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
+import static com.sas.dhop.site.constant.UserStatus.INACTIVE_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -118,7 +120,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Set<Role> roles = Set.of(role);
 
-        var status = statusService.findStatusOrCreated("Kích hoạt thành công");
+        var status = statusService.findStatusOrCreated(ACTIVE_USER);
 
         var user = onBoardUserOAuth(userInfo, status, roles);
 
@@ -149,7 +151,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse verifyOTPResetPassword(VerifyOTPRequest request) {
-        User user = userRepository.findByEmail(request.email())
+        User user = userRepository
+                .findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
 
         log.info("[Verify OTP reset password] - [{}]", request.otpCode());
@@ -215,7 +218,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BusinessException(ErrorConstant.EMAIL_ALREADY_EXIST);
         }
 
-        Status userStatus = statusService.findStatusOrCreated("Chưa kích hoạt");
+        Status userStatus = statusService.findStatusOrCreated(INACTIVE_USER);
 
         Role role = roleService.findByRoleName(request.role());
         Set<Role> roles = Set.of(role);
@@ -288,7 +291,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
 
-        var status = statusService.findStatusOrCreated("Kích hoạt thành công");
+        var status = statusService.findStatusOrCreated(ACTIVE_USER);
 
         user.setStatus(status);
         userRepository.save(user);
@@ -320,6 +323,4 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .avatar(userInfo.picture())
                         .build()));
     }
-
-
 }
