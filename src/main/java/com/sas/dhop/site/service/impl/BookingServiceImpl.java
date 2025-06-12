@@ -270,7 +270,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(endStatus);
         booking = bookingRepository.save(booking);
 
-        return bookingMapper.mapToBookingResponse(booking);
+        return BookingResponse.mapToBookingResponse(booking);
     }
 
 
