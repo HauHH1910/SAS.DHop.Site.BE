@@ -1,5 +1,6 @@
 package com.sas.dhop.site.dto.response;
 
+import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.Instant;
@@ -18,6 +19,6 @@ public record BookingResponse(
         LocalDateTime updateBookingDate,
         String bookingStatus,
         String customerPhone,
-        Long price,
-        Integer numberOfTrainingSessions) {
-}
+        BigDecimal bookingPrice,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt) {}

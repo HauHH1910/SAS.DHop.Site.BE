@@ -21,3 +21,5 @@ public record BookingRequest(
         String customerPhone,
         Long price,
         Integer numberOfTrainingSessions) {}
+        BigDecimal bookingPrice,
+        String customerPhone) {}
