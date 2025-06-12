@@ -1,8 +1,6 @@
 package com.sas.dhop.site.dto.request;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 
