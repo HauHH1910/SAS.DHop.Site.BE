@@ -1,3 +1,11 @@
 package com.sas.dhop.site.dto.response;
 
-public record AreaResponse(String district, String ward, String city) {}
+import com.sas.dhop.site.model.Area;
+
+public record AreaResponse(String district, String ward, String city) {
+
+    public static AreaResponse mapToAreaResponse(Area area){
+        return new AreaResponse(area.getDistrict(), area.getWard(), area.getCity());
+    }
+
+}
