@@ -56,6 +56,7 @@ public class ResponseMessage {
     public static final String DELETE_ARTICLE_SUCCESSFULLY = "Xóa bài báo thành công";
     public static final String GET_ARTICLE_BY_ID = "Lấy bài báo thành công";
 
+
     public static final String DELETE_ROOM = "Xóa phòng thành công";
     public static final String OTP_RESET_PASSWORD = "Gửi OTP đặt lại mật khẩu thành công";
     public static final String UPLOAD_IMAGE = "Đăng ảnh thành công";
