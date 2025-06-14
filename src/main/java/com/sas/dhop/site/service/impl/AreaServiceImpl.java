@@ -1,6 +1,7 @@
 package com.sas.dhop.site.service.impl;
 
 import com.sas.dhop.site.constant.AreaStatus;
+import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.request.AreaRequest;
 import com.sas.dhop.site.dto.response.AreaResponse;
 import com.sas.dhop.site.exception.BusinessException;
@@ -12,12 +13,15 @@ import com.sas.dhop.site.model.User;
 import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.AreaRepository;
 import com.sas.dhop.site.service.AreaService;
+import com.sas.dhop.site.service.AuthenticationService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.AreaMapper;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,15 +34,12 @@ public class AreaServiceImpl implements AreaService {
     private final UserService userService;
     private final AreaMapper areaMapper;
     private final StatusService statusService;
+    private final AuthenticationService authenticationService;
 
     @Override
     public List<AreaResponse> getAllArea() {
-        User currentUser = userService.getLoginUser();
 
-        Set<RoleName> collect =
-                currentUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
-
-        boolean isAdmin = collect.contains(RoleName.ADMIN);
+        boolean isAdmin = authenticationService.authenticationChecking(RolePrefix.ADMIN_PREFIX);
 
         Status status = statusService.findStatusOrCreated(AreaStatus.ACTIVATED_AREA);
 

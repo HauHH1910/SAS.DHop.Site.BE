@@ -5,6 +5,7 @@ import com.sas.dhop.site.dto.request.*;
 import com.sas.dhop.site.dto.response.AuthenticationResponse;
 import com.sas.dhop.site.dto.response.IntrospectResponse;
 import jakarta.mail.MessagingException;
+
 import java.text.ParseException;
 
 public interface AuthenticationService {
@@ -26,4 +27,6 @@ public interface AuthenticationService {
     AuthenticationResponse resetPassword(ResetPasswordRequest request) throws ParseException, JOSEException;
 
     AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException;
+
+    boolean authenticationChecking(String role);
 }
