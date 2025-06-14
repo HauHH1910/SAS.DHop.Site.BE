@@ -47,7 +47,7 @@ public class ResponseMessage {
     public static final String CREATE_BOOKING = "Tạo một đơn thuê thành công";
     public static final String ACCEPT_BOOKING_SUCESSFULLY = "Tạo một đơn thuê thành công";
     public static final String START_WORK_SUCCESSFULLY = "Bắt đầu công việc thành công";
-    public static final String END_WORK_SUCCESSFULLY ="Kết thúc công việc thành công";
+    public static final String END_WORK_SUCCESSFULLY = "Kết thúc công việc thành công";
     public static final String CONFIRM_SUCCESSFULLY = "Xác nhận hoàn thành công việc thành công";
     public static final String CONFIRM_END_BOOKING = "Xác nhận hoàn thành dịch vụ thuê thành công";
     public static final String GET_ALL_ARTICLE_SUCCESSFULLY = "Lấy được tất cả các bài báo thành công";
@@ -60,4 +60,5 @@ public class ResponseMessage {
     public static final String DELETE_ROOM = "Xóa phòng thành công";
     public static final String OTP_RESET_PASSWORD = "Gửi OTP đặt lại mật khẩu thành công";
     public static final String UPLOAD_IMAGE = "Đăng ảnh thành công";
+    public static final String CREATE_PAYMENT = "Tạo thanh toán thành công";
 }

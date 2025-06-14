@@ -5,10 +5,7 @@ import com.sas.dhop.site.dto.request.ChoreographerRequest;
 import com.sas.dhop.site.dto.response.ChoreographerResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
-import com.sas.dhop.site.model.Choreography;
-import com.sas.dhop.site.model.DanceType;
-import com.sas.dhop.site.model.Status;
-import com.sas.dhop.site.model.User;
+import com.sas.dhop.site.model.*;
 import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.ChoreographyRepository;
 import com.sas.dhop.site.repository.SubscriptionRepository;
@@ -91,20 +88,22 @@ public class ChoreographerServiceImpl implements ChoreographerService {
     @Override
     public List<ChoreographerResponse> getAllChoreography() {
         User currentUser = userService.getLoginUser();
-        boolean isStaff =
-                currentUser.getRoles().stream().anyMatch(role -> role.getName().equals(RoleName.STAFF));
-        boolean isAdmin =
-                currentUser.getRoles().stream().anyMatch(role -> role.getName().equals(RoleName.ADMIN));
 
-        List<Choreography> choreographies;
+        Set<RoleName> collect =
+                currentUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+
+        boolean isAdmin = collect.contains(RoleName.ADMIN);
+        boolean isStaff = collect.contains(RoleName.STAFF);
+
+        List<Choreography> choreographer;
         if (isStaff || isAdmin) {
-            choreographies = choreographyRepository.findAll();
+            choreographer = choreographyRepository.findAll();
         } else {
-            Status activeStatus = statusService.getStatus(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER);
-            choreographies = getAllChoreographyByStatus(activeStatus);
+            choreographer = choreographyRepository.findByStatus(
+                    statusService.findStatusOrCreated(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER));
         }
 
-        return choreographies.stream()
+        return choreographer.stream()
                 .map(choreographerMapper::mapToChoreographerResponse)
                 .collect(Collectors.toList());
     }
@@ -117,14 +116,5 @@ public class ChoreographerServiceImpl implements ChoreographerService {
     @Override
     public ChoreographerResponse getAllChoreographerBySubscriptionStatus() {
         return null;
-    }
-
-    // Method to find Choreography by status
-    private List<Choreography> getAllChoreographyByStatus(Status status) {
-        List<Choreography> allChoreography = choreographyRepository.findAll();
-        return allChoreography.stream()
-                .filter(choreography -> choreography.getStatus() != null
-                        && choreography.getStatus().equals(status))
-                .collect(Collectors.toList());
     }
 }

@@ -29,9 +29,7 @@ public class DancerServiceImpl implements DancerService {
     private final DancerRepository dancerRepository;
     private final DancerMapper dancerMapper;
     private final UserService userService;
-    private final StatusRepository statusRepository;
     private final StatusService statusService;
-    private final SubscriptionRepository subscriptionRepository;
     private final DanceTypeService danceTypeService;
 
     @Override
@@ -107,18 +105,19 @@ public class DancerServiceImpl implements DancerService {
     @Override
     public List<DancerResponse> getallDancer() {
         User currentUser = userService.getLoginUser();
-        boolean isStaff =
-                currentUser.getRoles().stream().anyMatch(role -> role.getName().equals(RoleName.STAFF));
 
-        boolean isAdmin =
-                currentUser.getRoles().stream().anyMatch(role -> role.getName().equals(RoleName.ADMIN));
+        Set<RoleName> collect =
+                currentUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+
+        boolean isAdmin = collect.contains(RoleName.ADMIN);
+
+        boolean isStaff = collect.contains(RoleName.STAFF);
 
         List<Dancer> dancers;
         if (isStaff || isAdmin) {
             dancers = dancerRepository.findAll();
         } else {
-            Status activeStatus = statusService.getStatus(DancerStatus.ACTIVATED_DANCER);
-            dancers = getAllDancerByStatus(activeStatus);
+            dancers = dancerRepository.findByStatus(statusService.findStatusOrCreated(DancerStatus.ACTIVATED_DANCER));
         }
 
         return dancers.stream().map(dancerMapper::mapToDancerResponse).collect(Collectors.toList());
@@ -134,14 +133,5 @@ public class DancerServiceImpl implements DancerService {
     public DancerResponse getAllDancerBySubscriptionStatus() {
         // TODO: Implement getting all dancers by subscription status
         return null;
-    }
-
-    // Method to find Dancer by status
-    public List<Dancer> getAllDancerByStatus(Status status) {
-        List<Dancer> allDancer = dancerRepository.findAll();
-        return allDancer.stream()
-                .filter(dancer ->
-                        dancer.getStatus() != null && dancer.getStatus().equals(status))
-                .collect(Collectors.toList());
     }
 }

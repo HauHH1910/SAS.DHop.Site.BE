@@ -4,6 +4,8 @@ import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
 
 import com.github.javafaker.Faker;
 import com.sas.dhop.site.constant.AreaStatus;
+import com.sas.dhop.site.constant.ChoreographerStatus;
+import com.sas.dhop.site.constant.DancerStatus;
 import com.sas.dhop.site.constant.UserSubscriptionStatus;
 import com.sas.dhop.site.model.*;
 import com.sas.dhop.site.model.enums.RoleName;
@@ -163,8 +165,16 @@ public class ApplicationInitConfig {
                                 .roles(Set.of(dancerRole))
                                 .build());
 
+                        Status dancerStatus = statusRepository
+                                .findByStatusName(DancerStatus.ACTIVATED_DANCER)
+                                .orElseGet(() -> statusRepository.save(Status.builder()
+                                        .statusName(DancerStatus.ACTIVATED_DANCER)
+                                        .description(DancerStatus.ACTIVATED_DANCER)
+                                        .statusType(StatusType.ACTIVE)
+                                        .build()));
+
                         dancerRepository.save(Dancer.builder()
-                                .status(activeStatus)
+                                .status(dancerStatus)
                                 .user(userWithRoleDancer)
                                 .danceTypes(Set.of(type))
                                 .build());
@@ -195,8 +205,16 @@ public class ApplicationInitConfig {
                             .roles(Set.of(choreographyRole))
                             .build());
 
+                    Status choreographyStatus = statusRepository
+                            .findByStatusName(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER)
+                            .orElseGet(() -> statusRepository.save(Status.builder()
+                                    .statusName(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER)
+                                    .description(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER)
+                                    .statusType(StatusType.ACTIVE)
+                                    .build()));
+
                     choreographyRepository.save(Choreography.builder()
-                            .status(activeStatus)
+                            .status(choreographyStatus)
                             .user(choreographyUser)
                             .danceTypes(Set.of(type))
                             .build());
