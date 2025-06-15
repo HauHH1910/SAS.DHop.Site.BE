@@ -3,6 +3,7 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.service.BookingService;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/Booking")
+@RequestMapping("/booking")
 @Tag(name = "[Booking Controller]")
 @Slf4j(topic = "[Booking Controller]")
 public class BookingController {
@@ -77,14 +78,14 @@ public class BookingController {
                 .build();
     }
 
-    @PutMapping("/end-work-request/{bookingId}")
-    public ResponseData<BookingResponse> endWorkRequest(@PathVariable Integer bookingId) {
+    @PutMapping("/end-work-request")
+    public ResponseData<BookingResponse> endWorkRequest(@RequestBody EndWorkRequest bookingId) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.END_WORK_SUCCESSFULLY)
-                .data(bookingService.startWork(bookingId))
+                .data(bookingService.endWorking(bookingId))
                 .build();
     }
 
-    //    public ResponseData<BookingResponse>
+    // public ResponseData<BookingResponse>
 
 }
