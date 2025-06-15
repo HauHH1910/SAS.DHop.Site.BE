@@ -1,2 +1,4 @@
 #!/usr/bin/env bash
 mvn spotless:apply
+
+chmod +x .git/hooks/pre-commit
