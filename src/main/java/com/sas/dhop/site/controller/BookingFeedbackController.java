@@ -44,7 +44,7 @@ public class BookingFeedbackController {
                 .build();
     }
 
-    @GetMapping("/get-feedback-of-choreographer/{bookingId}")
+    @GetMapping("/get-feedback-of-booking/{bookingId}")
     public ResponseData<BookingFeedbackResponse> getBookingFeedbackByBookingID (@PathVariable Integer bookingId){
         return ResponseData.<BookingFeedbackResponse>builder()
                 .message(ResponseMessage.GET_BOOKING_FEEDBACK)
