@@ -261,17 +261,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private BigDecimal calculateCommissionPrice(BigDecimal price) {
-        if (price.compareTo(new BigDecimal("200000")) >= 0 && price.compareTo(new BigDecimal("500000")) < 0) {
+        if (price.compareTo(new BigDecimal("500000")) < 0) {
+            throw new BusinessException(ErrorConstant.INVALID_MINIMUM_PRICE);
+        }
+
+        if (price.compareTo(new BigDecimal("500000")) >= 0 && price.compareTo(new BigDecimal("1000000")) < 0) {
             // Phí hoa hồng 20%
-            return price.multiply(new BigDecimal("1.2")).setScale(2, RoundingMode.HALF_UP);
-        } else if (price.compareTo(new BigDecimal("500000")) >= 0 && price.compareTo(new BigDecimal("1500000")) < 0) {
+            return price.multiply(new BigDecimal("1.20")).setScale(2, RoundingMode.HALF_UP);
+        } else if (price.compareTo(new BigDecimal("1000000")) >= 0 && price.compareTo(new BigDecimal("2000000")) < 0) {
             // Phí hoa hồng 15%
             return price.multiply(new BigDecimal("1.15")).setScale(2, RoundingMode.HALF_UP);
-        } else if (price.compareTo(new BigDecimal("1500000")) >= 0) {
-            // Phí hoa hồng 10%
-            return price.multiply(new BigDecimal("1.1")).setScale(2, RoundingMode.HALF_UP);
+        } else {
+            // Phí hoa hồng 10% (>= 2 triệu)
+            return price.multiply(new BigDecimal("1.10")).setScale(2, RoundingMode.HALF_UP);
         }
-        // Giá dưới 200k, không tính hoa hồng
-        return price.setScale(2, RoundingMode.HALF_UP);
     }
+
 }

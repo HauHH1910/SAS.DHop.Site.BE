@@ -72,7 +72,7 @@ public class BookingController {
     public ResponseData<BookingResponse> endWorkRequest(@PathVariable Integer bookingId) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.END_WORK_SUCCESSFULLY)
-                .data(bookingService.startWork(bookingId))
+                .data(bookingService.endWorking(bookingId))
                 .build();
     }
 
