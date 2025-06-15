@@ -6,11 +6,10 @@ import com.sas.dhop.site.dto.request.ArticleRequest;
 import com.sas.dhop.site.dto.response.ArticleResponse;
 import com.sas.dhop.site.service.ArticleService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +20,7 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping("/get-all-article")
-    public ResponseData<List<ArticleResponse>> getAllArticle(){
+    public ResponseData<List<ArticleResponse>> getAllArticle() {
         return ResponseData.<List<ArticleResponse>>builder()
                 .message(ResponseMessage.GET_ALL_ARTICLE_SUCCESSFULLY)
                 .data(articleService.getAllArticle())
@@ -29,7 +28,7 @@ public class ArticleController {
     }
 
     @DeleteMapping("/delete-article/{articleId}")
-    public ResponseData<ArticleResponse> removeArticle(@PathVariable Integer articleId){
+    public ResponseData<ArticleResponse> removeArticle(@PathVariable Integer articleId) {
         return ResponseData.<ArticleResponse>builder()
                 .message(ResponseMessage.DELETE_ARTICLE_SUCCESSFULLY)
                 .data(articleService.deleteArticle(articleId))
@@ -37,7 +36,7 @@ public class ArticleController {
     }
 
     @GetMapping("/get-article-by-id/{articleId}")
-    public ResponseData<ArticleResponse> getArticleById(@PathVariable Integer articleId){
+    public ResponseData<ArticleResponse> getArticleById(@PathVariable Integer articleId) {
         return ResponseData.<ArticleResponse>builder()
                 .message(ResponseMessage.GET_ARTICLE_BY_ID)
                 .data(articleService.getArticleById(articleId))
@@ -53,12 +52,11 @@ public class ArticleController {
     }
 
     @PostMapping("/update-article/{articleId}")
-    public ResponseData<ArticleResponse> updateArticle(@PathVariable Integer articleId, @RequestBody ArticleRequest articleRequest) {
+    public ResponseData<ArticleResponse> updateArticle(
+            @PathVariable Integer articleId, @RequestBody ArticleRequest articleRequest) {
         return ResponseData.<ArticleResponse>builder()
                 .message(ResponseMessage.UPDATE_ARTICLE_SUCCESSFULLY)
                 .data(articleService.updateAritcle(articleId, articleRequest))
                 .build();
     }
-
-
 }

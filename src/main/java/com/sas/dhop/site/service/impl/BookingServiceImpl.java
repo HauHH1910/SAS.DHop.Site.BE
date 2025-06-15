@@ -13,11 +13,11 @@ import com.sas.dhop.site.service.DanceTypeService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
-import com.sas.dhop.site.util.mapper.BookingMapper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
-    private final BookingMapper bookingMapper;
     private final BookingCancelMapper bookingCancelMapper;
     private final UserService userService;
     private final AreaRepository areaRepository;
@@ -51,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
         User customer = userService.getLoginUser();
         log.debug("[Booking for dancer] Fetched logged-in customer: {}", customer.getName());
 
-        DanceType danceType = danceTypeService.findDanceType(request.danceTypeId());
+        DanceType danceType = danceTypeService.findDanceTypeName(request.danceTypeName());
         log.debug("[Booking for dancer] Fetched dance type: {}", danceType.getType());
 
         Area area = areaRepository.findById(request.areaId()).orElseThrow(() -> {
@@ -65,10 +64,10 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = Booking.builder()
                 .customer(customer)
                 .dancer(dancer)
-                .danceType(danceType)
                 .area(area)
                 .choreography(null)
                 .status(status)
+                .danceType(Set.of(danceType))
                 .bookingDate(Instant.now())
                 .startTime(request.startTime())
                 .endTime(request.endTime())
@@ -99,7 +98,7 @@ public class BookingServiceImpl implements BookingService {
         User customer = userService.getLoginUser();
         log.debug("[Booking for choreography] Fetched logged-in customer: {}", customer.getName());
 
-        DanceType danceType = danceTypeService.findDanceType(request.danceTypeId());
+        DanceType danceType = danceTypeService.findDanceTypeName(request.danceTypeName());
         log.debug("[Booking for choreography] Fetched dance type: {}", danceType.getType());
 
         Area area = areaRepository.findById(request.areaId()).orElseThrow(() -> {
@@ -113,10 +112,10 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = Booking.builder()
                 .customer(customer)
                 .dancer(null)
-                .danceType(danceType)
                 .area(area)
                 .choreography(choreography)
                 .status(status)
+                .danceType(Set.of(danceType))
                 .bookingDate(Instant.now())
                 .startTime(request.startTime())
                 .endTime(request.endTime())

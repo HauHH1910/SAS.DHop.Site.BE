@@ -55,7 +55,10 @@ public class ResponseMessage {
     public static final String UPDATE_ARTICLE_SUCCESSFULLY = "Chỉnh sửa bài báo thành công";
     public static final String DELETE_ARTICLE_SUCCESSFULLY = "Xóa bài báo thành công";
     public static final String GET_ARTICLE_BY_ID = "Lấy bài báo thành công";
-
+    public static final String CREATE_BOOKING_FEEDBACK = "Tạo đánh giá cho dịch vụ thuê thành công";
+    public static final String GET_FEEBACK_FOR_DANCER = "Lấy đánh giá của nhóm nhảy thành công";
+    public static final String GET_FEEBACK_FOR_CHOREOGRAPHER = "Lấy đánh giá của biên đạo thành công";
+    public static final String GET_BOOKING_FEEDBACK = "Lấy đánh giá cho dịch vụ thuê thành công";
 
     public static final String DELETE_ROOM = "Xóa phòng thành công";
     public static final String OTP_RESET_PASSWORD = "Gửi OTP đặt lại mật khẩu thành công";

@@ -57,9 +57,10 @@ public enum ErrorConstant {
     PERFORMANCE_NOT_FOUND(41, "Không tìm thấy bằng chứng", HttpStatus.NOT_FOUND),
     DANCER_START_TIME_NOT_NULL(42, "Thời gian bắt đầu không được trống", HttpStatus.FORBIDDEN),
     DANCER_END_TIME_NOT_NULL(43, "Thời gian kết thúc không được trống", HttpStatus.FORBIDDEN),
-    ARTICLE_NOT_FOUND(40, "Không tìm thấy bài báo", HttpStatus.NOT_FOUND),
+    ARTICLE_NOT_FOUND(44, "Không tìm thấy bài báo", HttpStatus.NOT_FOUND),
 
-    ;
+    CAN_NOT_FEEDBACK(45, "Không thể đánh giá dịch vụ này", HttpStatus.NOT_ACCEPTABLE),
+    INVALID_BOOKING(46, "Dịch vụ thuê không hợp lệ", HttpStatus.NOT_ACCEPTABLE);
 
     private final Integer code;
     private final String message;

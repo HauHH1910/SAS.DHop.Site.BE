@@ -2,7 +2,6 @@ package com.sas.dhop.site.service;
 
 import com.sas.dhop.site.dto.request.ArticleRequest;
 import com.sas.dhop.site.dto.response.ArticleResponse;
-
 import java.util.List;
 
 public interface ArticleService {
@@ -16,6 +15,4 @@ public interface ArticleService {
     ArticleResponse deleteArticle(Integer id);
 
     List<ArticleResponse> getAllArticle();
-
-
 }
