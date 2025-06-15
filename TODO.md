@@ -9,3 +9,6 @@
 - [x] Thêm field cancel reason vào booking
 - [x] Chọn nhiều thể loại dance type
 - [x] Hàm endwork cần ảnh, optional
+- [ ] thanh toán subscription
+- [x] Chọn nhiều thể loại dance type
+- [x] Hàm endwork cần ảnh, optional
