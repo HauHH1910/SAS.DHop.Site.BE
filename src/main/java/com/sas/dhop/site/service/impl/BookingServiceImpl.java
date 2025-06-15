@@ -2,6 +2,7 @@ package com.sas.dhop.site.service.impl;
 
 import com.sas.dhop.site.constant.BookingStatus;
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.exception.BusinessException;
@@ -175,9 +176,9 @@ public class BookingServiceImpl implements BookingService {
 
     // Change status when dancer/choreographer press the end working button
     @Override
-    public BookingResponse endWorking(int bookingId) {
+    public BookingResponse endWorking(EndWorkRequest request) {
         Booking booking = bookingRepository
-                .findById(bookingId)
+                .findById(request.id())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         Status currentStatus = booking.getStatus();
