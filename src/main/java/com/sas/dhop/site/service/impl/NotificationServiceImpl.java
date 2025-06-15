@@ -1,12 +1,11 @@
 package com.sas.dhop.site.service.impl;
 
 import com.sas.dhop.site.service.NotificationService;
-import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -17,9 +16,7 @@ public class NotificationServiceImpl implements NotificationService {
         this.emitters.add(emitter);
 
         try {
-            emitter.send(
-                    SseEmitter.event().name("keep-alive").data("")
-            );
+            emitter.send(SseEmitter.event().name("keep-alive").data(""));
         } catch (IOException e) {
             emitter.completeWithError(e);
             emitters.remove(emitter);
