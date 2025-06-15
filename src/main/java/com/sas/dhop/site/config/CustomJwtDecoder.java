@@ -21,37 +21,36 @@ import org.springframework.stereotype.Component;
 @Slf4j(topic = "[CustomJWTDecoder]")
 public class CustomJwtDecoder implements JwtDecoder {
 
-  @Value("${sas.dhop.site.key}")
-  private String key;
+	@Value("${sas.dhop.site.key}")
+	private String key;
 
-  private NimbusJwtDecoder nimbusJwtDecoder;
+	private NimbusJwtDecoder nimbusJwtDecoder;
 
-  @Override
-  public Jwt decode(String token) throws JwtException {
-    try {
-      var signedJWT = SignedJWT.parse(token);
+	@Override
+	public Jwt decode(String token) throws JwtException {
+		try {
+			var signedJWT = SignedJWT.parse(token);
 
-      var verifier = new MACVerifier(key.getBytes());
+			var verifier = new MACVerifier(key.getBytes());
 
-      boolean verified = signedJWT.verify(verifier);
+			boolean verified = signedJWT.verify(verifier);
 
-      Date expirationDate = signedJWT.getJWTClaimsSet().getExpirationTime();
+			Date expirationDate = signedJWT.getJWTClaimsSet().getExpirationTime();
 
-      if (!verified || expirationDate.before(new Date())) {
-        throw new BusinessException(ErrorConstant.INVALID_TOKEN);
-      }
+			if (!verified || expirationDate.before(new Date())) {
+				throw new BusinessException(ErrorConstant.INVALID_TOKEN);
+			}
 
-      if (nimbusJwtDecoder == null) {
-        var keySpec = new SecretKeySpec(key.getBytes(), "HmacSHA512");
-        nimbusJwtDecoder =
-            NimbusJwtDecoder.withSecretKey(keySpec).macAlgorithm(MacAlgorithm.HS512).build();
-      }
+			if (nimbusJwtDecoder == null) {
+				var keySpec = new SecretKeySpec(key.getBytes(), "HmacSHA512");
+				nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(keySpec).macAlgorithm(MacAlgorithm.HS512).build();
+			}
 
-      return nimbusJwtDecoder.decode(token);
+			return nimbusJwtDecoder.decode(token);
 
-    } catch (Exception e) {
-      log.error("{}", e.getMessage());
-      throw new BusinessException(ErrorConstant.UNCATEGORIZED_ERROR);
-    }
-  }
+		} catch (Exception e) {
+			log.error("{}", e.getMessage());
+			throw new BusinessException(ErrorConstant.UNCATEGORIZED_ERROR);
+		}
+	}
 }

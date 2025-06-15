@@ -14,21 +14,21 @@ import lombok.*;
 @Table(name = "user_subscription")
 public class UserSubscription extends AbstractEntity<Integer> implements Serializable {
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "subscription_id", nullable = false)
-  private Subscription subscription;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "subscription_id", nullable = false)
+	private Subscription subscription;
 
-  @Column(name = "from_date")
-  private Instant fromDate;
+	@Column(name = "from_date")
+	private Instant fromDate;
 
-  @Column(name = "to_date")
-  private Instant toDate;
+	@Column(name = "to_date")
+	private Instant toDate;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "status_id", nullable = false)
-  private Status status;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "status_id", nullable = false)
+	private Status status;
 }

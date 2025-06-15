@@ -20,78 +20,65 @@ import org.springframework.stereotype.Service;
 @Slf4j(topic = "[Subscription Service]")
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-  private final SubscriptionRepository subscriptionRepository;
-  private final SubscriptionMapper subscriptionMapper;
-  private final StatusService statusService;
+	private final SubscriptionRepository subscriptionRepository;
+	private final SubscriptionMapper subscriptionMapper;
+	private final StatusService statusService;
 
-  @Override
-  public List<SubscriptionResponse> getAllSubscription() {
-    return subscriptionRepository.findAll().stream()
-        .map(subscriptionMapper::mapToResponse)
-        .toList();
-  }
+	@Override
+	public List<SubscriptionResponse> getAllSubscription() {
+		return subscriptionRepository.findAll().stream().map(subscriptionMapper::mapToResponse).toList();
+	}
 
-  @Override
-  public SubscriptionResponse createSubscription(SubscriptionRequest request) {
-    if (subscriptionRepository.findByName(request.name()).isPresent()) {
-      throw new BusinessException(ErrorConstant.SUBSCRIPTION_EXIST);
-    }
-    log.info("[{}] is being created", request.name());
-    Subscription subscription = subscriptionMapper.mapToModel(request);
+	@Override
+	public SubscriptionResponse createSubscription(SubscriptionRequest request) {
+		if (subscriptionRepository.findByName(request.name()).isPresent()) {
+			throw new BusinessException(ErrorConstant.SUBSCRIPTION_EXIST);
+		}
+		log.info("[{}] is being created", request.name());
+		Subscription subscription = subscriptionMapper.mapToModel(request);
 
-    subscription.setStatus(statusService.findStatusOrCreated(SubscriptionStatus.ACTIVE));
+		subscription.setStatus(statusService.findStatusOrCreated(SubscriptionStatus.ACTIVE));
 
-    return subscriptionMapper.mapToResponse(subscriptionRepository.save(subscription));
-  }
+		return subscriptionMapper.mapToResponse(subscriptionRepository.save(subscription));
+	}
 
-  @Override
-  public SubscriptionResponse updateSubscription(Integer id, SubscriptionRequest request) {
-    var subscription =
-        subscriptionRepository
-            .findById(id)
-            .orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND));
-    log.info("[{}] is being updated", subscription.getName());
+	@Override
+	public SubscriptionResponse updateSubscription(Integer id, SubscriptionRequest request) {
+		var subscription = subscriptionRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND));
+		log.info("[{}] is being updated", subscription.getName());
 
-    subscriptionMapper.mapToUpdateUser(subscription, request);
+		subscriptionMapper.mapToUpdateUser(subscription, request);
 
-    return subscriptionMapper.mapToResponse(subscriptionRepository.save(subscription));
-  }
+		return subscriptionMapper.mapToResponse(subscriptionRepository.save(subscription));
+	}
 
-  @Override
-  public SubscriptionResponse findSubscription(Integer id) {
-    return subscriptionMapper.mapToResponse(
-        subscriptionRepository
-            .findById(id)
-            .orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND)));
-  }
+	@Override
+	public SubscriptionResponse findSubscription(Integer id) {
+		return subscriptionMapper.mapToResponse(subscriptionRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND)));
+	}
 
-  @Override
-  public void deleteSubscription(Integer id) {
-    log.info("[{}] is being delete", id);
-    subscriptionRepository.delete(
-        subscriptionRepository
-            .findById(id)
-            .orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND)));
-  }
+	@Override
+	public void deleteSubscription(Integer id) {
+		log.info("[{}] is being delete", id);
+		subscriptionRepository.delete(subscriptionRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND)));
+	}
 
-  @Override
-  public SubscriptionResponse updateStatusSubscription(Integer id, boolean isUpdate) {
-    final Subscription subscription =
-        subscriptionRepository
-            .findById(id)
-            .orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND));
-    if (isUpdate) {
-      if (SubscriptionStatus.ACTIVE.equals(subscription.getStatus().getStatusName())) {
-        subscription.setStatus(statusService.findStatusOrCreated(SubscriptionStatus.INACTIVE));
-      } else {
-        subscription.setStatus(statusService.findStatusOrCreated(SubscriptionStatus.ACTIVE));
-      }
-      subscriptionRepository.save(subscription);
-      log.info(
-          "[{}] is being updated to [{}]",
-          subscription.getName(),
-          subscription.getStatus().getStatusName());
-    }
-    return subscriptionMapper.mapToResponse(subscription);
-  }
+	@Override
+	public SubscriptionResponse updateStatusSubscription(Integer id, boolean isUpdate) {
+		final Subscription subscription = subscriptionRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND));
+		if (isUpdate) {
+			if (SubscriptionStatus.ACTIVE.equals(subscription.getStatus().getStatusName())) {
+				subscription.setStatus(statusService.findStatusOrCreated(SubscriptionStatus.INACTIVE));
+			} else {
+				subscription.setStatus(statusService.findStatusOrCreated(SubscriptionStatus.ACTIVE));
+			}
+			subscriptionRepository.save(subscription);
+			log.info("[{}] is being updated to [{}]", subscription.getName(), subscription.getStatus().getStatusName());
+		}
+		return subscriptionMapper.mapToResponse(subscription);
+	}
 }

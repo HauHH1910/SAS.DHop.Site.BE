@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface DanceTypeMapper {
 
-  DanceType mapToModel(DanceTypeRequest request);
+	DanceType mapToModel(DanceTypeRequest request);
 
-  DanceTypeResponse mapToResponse(DanceType danceType);
+	DanceTypeResponse mapToResponse(DanceType danceType);
 }

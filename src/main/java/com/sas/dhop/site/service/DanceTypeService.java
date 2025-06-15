@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface DanceTypeService {
 
-  List<DanceTypeResponse> getAllDanceType();
+	List<DanceTypeResponse> getAllDanceType();
 
-  DanceTypeResponse createDanceType(DanceTypeRequest request);
+	DanceTypeResponse createDanceType(DanceTypeRequest request);
 
-  DanceType findDanceType(Integer type);
+	DanceType findDanceType(Integer type);
 
-  DanceType findDanceTypeName(String name);
+	DanceType findDanceTypeName(String name);
 }

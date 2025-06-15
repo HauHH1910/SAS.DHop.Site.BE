@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface BookingFeedbackService {
 
-  List<BookingFeedbackResponse> getFeedbackByDancerId(Integer dancerId);
+	List<BookingFeedbackResponse> getFeedbackByDancerId(Integer dancerId);
 
-  List<BookingFeedbackResponse> getFeedbackByChoreographer(Integer choreographerId);
+	List<BookingFeedbackResponse> getFeedbackByChoreographer(Integer choreographerId);
 
-  BookingFeedbackResponse createBookingFeedback(BookingFeedbackRequest bookingFeebackRequest);
+	BookingFeedbackResponse createBookingFeedback(BookingFeedbackRequest bookingFeebackRequest);
 
-  BookingFeedbackResponse getBookingFeedbackByBookingId(Integer bookingId);
+	BookingFeedbackResponse getBookingFeedbackByBookingId(Integer bookingId);
 }

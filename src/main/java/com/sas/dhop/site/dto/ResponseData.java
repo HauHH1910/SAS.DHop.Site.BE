@@ -9,9 +9,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ResponseData<T> {
 
-  @Builder.Default private int code = 200;
+	@Builder.Default
+	private int code = 200;
 
-  private String message;
+	private String message;
 
-  private T data;
+	private T data;
 }

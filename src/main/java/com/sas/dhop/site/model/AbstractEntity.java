@@ -18,15 +18,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 @MappedSuperclass
 public abstract class AbstractEntity<T extends Serializable> implements Serializable {
 
-  @Id
-  @GeneratedValue(strategy = IDENTITY)
-  private T id;
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	private T id;
 
-  @CreationTimestamp
-  @Column(name = "created_at", updatable = false)
-  private LocalDateTime createdAt;
+	@CreationTimestamp
+	@Column(name = "created_at", updatable = false)
+	private LocalDateTime createdAt;
 
-  @UpdateTimestamp
-  @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
+	@UpdateTimestamp
+	@Column(name = "updated_at")
+	private LocalDateTime updatedAt;
 }

@@ -8,21 +8,21 @@ import java.util.List;
 
 public interface UserService {
 
-  List<UserResponse> getAllUser();
+	List<UserResponse> getAllUser();
 
-  UserResponse getUser(Integer id);
+	UserResponse getUser(Integer id);
 
-  void deleteUser(Integer id);
+	void deleteUser(Integer id);
 
-  UserResponse updateUser(Integer id, UpdateUserRequest request);
+	UserResponse updateUser(Integer id, UpdateUserRequest request);
 
-  UserResponse createUser(CreateUserRequest request);
+	UserResponse createUser(CreateUserRequest request);
 
-  UserResponse getUserInfo();
+	UserResponse getUserInfo();
 
-  UserResponse findUser(String email);
+	UserResponse findUser(String email);
 
-  User getLoginUser();
+	User getLoginUser();
 
-  User findUserById(Integer userId);
+	User findUserById(Integer userId);
 }

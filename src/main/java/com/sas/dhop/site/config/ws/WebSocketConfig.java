@@ -13,27 +13,24 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-  private final AuthHandshakeInterceptor authHandshakeInterceptor;
-  private final AuthChannelInterceptor authChannelInterceptor;
+	private final AuthHandshakeInterceptor authHandshakeInterceptor;
+	private final AuthChannelInterceptor authChannelInterceptor;
 
-  @Override
-  public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry
-        .addEndpoint("/ws")
-        .addInterceptors(authHandshakeInterceptor)
-        .setAllowedOriginPatterns("http://localhost:3000")
-        .withSockJS();
-  }
+	@Override
+	public void registerStompEndpoints(StompEndpointRegistry registry) {
+		registry.addEndpoint("/ws").addInterceptors(authHandshakeInterceptor)
+				.setAllowedOriginPatterns("http://localhost:3000").withSockJS();
+	}
 
-  @Override
-  public void configureMessageBroker(MessageBrokerRegistry registry) {
-    registry.enableSimpleBroker("/group", "/user", "/topic");
-    registry.setApplicationDestinationPrefixes("/app");
-    registry.setUserDestinationPrefix("/user");
-  }
+	@Override
+	public void configureMessageBroker(MessageBrokerRegistry registry) {
+		registry.enableSimpleBroker("/group", "/user", "/topic");
+		registry.setApplicationDestinationPrefixes("/app");
+		registry.setUserDestinationPrefix("/user");
+	}
 
-  @Override
-  public void configureClientInboundChannel(ChannelRegistration registration) {
-    registration.interceptors(authChannelInterceptor);
-  }
+	@Override
+	public void configureClientInboundChannel(ChannelRegistration registration) {
+		registration.interceptors(authChannelInterceptor);
+	}
 }

@@ -15,24 +15,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j(topic = "[Performance Service]")
 public class PerformanceServiceImpl implements PerformanceService {
-  private final UserService userService;
-  private final PerformanceRepository performanceRepository;
+	private final UserService userService;
+	private final PerformanceRepository performanceRepository;
 
-  @Override
-  public PerformanceResponse createPerformance(PerformanceRequest request) {
-    User loginUser = userService.getLoginUser();
+	@Override
+	public PerformanceResponse createPerformance(PerformanceRequest request) {
+		User loginUser = userService.getLoginUser();
 
-    Performance performance =
-        performanceRepository.save(
-            Performance.builder().user(loginUser).mediaUrl(request.mediaUrl()).build());
-    return PerformanceResponse.mapToPerformance(performance);
-  }
+		Performance performance = performanceRepository
+				.save(Performance.builder().user(loginUser).mediaUrl(request.mediaUrl()).build());
+		return PerformanceResponse.mapToPerformance(performance);
+	}
 
-  @Override
-  public PerformanceResponse getPerformanceById(Integer id) {
-    return null;
-  }
+	@Override
+	public PerformanceResponse getPerformanceById(Integer id) {
+		return null;
+	}
 
-  @Override
-  public void deletePerformanceById(Integer id) {}
+	@Override
+	public void deletePerformanceById(Integer id) {
+	}
 }

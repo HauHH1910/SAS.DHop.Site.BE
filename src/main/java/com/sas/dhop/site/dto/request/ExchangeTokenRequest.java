@@ -6,5 +6,6 @@ import lombok.Builder;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record ExchangeTokenRequest(
-    String code, String clientId, String clientSecret, String redirectUri, String grantType) {}
+public record ExchangeTokenRequest(String code, String clientId, String clientSecret, String redirectUri,
+		String grantType) {
+}

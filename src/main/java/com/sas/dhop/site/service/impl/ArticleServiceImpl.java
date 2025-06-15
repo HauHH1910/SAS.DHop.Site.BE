@@ -28,92 +28,79 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j(topic = "[Article Service]")
 public class ArticleServiceImpl implements ArticleService {
 
-  private final CloudStorageService cloudStorageService;
-  private final StatusService statusService;
-  private final ArticleRepository articleRepository;
-  private final ArticleMapper articleMapper;
-  private final UserService userService;
+	private final CloudStorageService cloudStorageService;
+	private final StatusService statusService;
+	private final ArticleRepository articleRepository;
+	private final ArticleMapper articleMapper;
+	private final UserService userService;
 
-  @Override
-  @Transactional
-  public ArticleResponse createArticle(ArticleRequest articleRequest) {
+	@Override
+	@Transactional
+	public ArticleResponse createArticle(ArticleRequest articleRequest) {
 
-    // Upload thumbnail to cloud storage
-    List<MediaResponse> mediaRespons = cloudStorageService.uploadImage(articleRequest.thumbnail());
-    if (mediaRespons.isEmpty()) {
-      throw new BusinessException(ErrorConstant.ARTICLE_NOT_FOUND);
-    }
+		// Upload thumbnail to cloud storage
+		List<MediaResponse> mediaRespons = cloudStorageService.uploadImage(articleRequest.thumbnail());
+		if (mediaRespons.isEmpty()) {
+			throw new BusinessException(ErrorConstant.ARTICLE_NOT_FOUND);
+		}
 
-    String thumbnailUrl = mediaRespons.get(0).url();
+		String thumbnailUrl = mediaRespons.get(0).url();
 
-    Status status = statusService.findStatusOrCreated(ArticleStatus.ACTIVATED_ARTICLE);
+		Status status = statusService.findStatusOrCreated(ArticleStatus.ACTIVATED_ARTICLE);
 
-    Article article =
-        Article.builder()
-            .title(articleRequest.title())
-            .content(articleRequest.content())
-            .authorName(articleRequest.authorName())
-            .thumbnail(thumbnailUrl)
-            .status(status)
-            .build();
+		Article article = Article.builder().title(articleRequest.title()).content(articleRequest.content())
+				.authorName(articleRequest.authorName()).thumbnail(thumbnailUrl).status(status).build();
 
-    article = articleRepository.save(article);
+		article = articleRepository.save(article);
 
-    return articleMapper.mapToArticleResponse(article);
-  }
+		return articleMapper.mapToArticleResponse(article);
+	}
 
-  @Override
-  public ArticleResponse getArticleById(Integer articleId) {
-    Article article =
-        articleRepository
-            .findById(articleId)
-            .orElseThrow(() -> new BusinessException(ErrorConstant.ARTICLE_NOT_FOUND));
+	@Override
+	public ArticleResponse getArticleById(Integer articleId) {
+		Article article = articleRepository.findById(articleId)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.ARTICLE_NOT_FOUND));
 
-    return articleMapper.mapToArticleResponse(article);
-  }
+		return articleMapper.mapToArticleResponse(article);
+	}
 
-  @Override
-  public ArticleResponse updateAritcle(Integer id, ArticleRequest articleRequest) {
-    Article article =
-        articleRepository
-            .findById(id)
-            .orElseThrow(() -> new BusinessException(ErrorConstant.ARTICLE_NOT_FOUND));
+	@Override
+	public ArticleResponse updateAritcle(Integer id, ArticleRequest articleRequest) {
+		Article article = articleRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.ARTICLE_NOT_FOUND));
 
-    User currentUser = userService.getLoginUser();
-    boolean isStaff =
-        currentUser.getRoles().stream().anyMatch(role -> role.getName().equals(RoleName.STAFF));
+		User currentUser = userService.getLoginUser();
+		boolean isStaff = currentUser.getRoles().stream().anyMatch(role -> role.getName().equals(RoleName.STAFF));
 
-    if (!isStaff) {
-      throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
-    }
+		if (!isStaff) {
+			throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
+		}
 
-    article.setTitle(articleRequest.title());
-    article.setThumbnail(Arrays.toString(articleRequest.thumbnail()));
-    article.setContent(articleRequest.content());
-    article.setAuthorName(articleRequest.authorName());
+		article.setTitle(articleRequest.title());
+		article.setThumbnail(Arrays.toString(articleRequest.thumbnail()));
+		article.setContent(articleRequest.content());
+		article.setAuthorName(articleRequest.authorName());
 
-    Article updateArticle = articleRepository.save(article);
+		Article updateArticle = articleRepository.save(article);
 
-    return articleMapper.mapToArticleResponse(updateArticle);
-  }
+		return articleMapper.mapToArticleResponse(updateArticle);
+	}
 
-  @Override
-  public ArticleResponse deleteArticle(Integer id) {
-    Article article =
-        articleRepository
-            .findById(id)
-            .orElseThrow(() -> new BusinessException(ErrorConstant.ARTICLE_NOT_FOUND));
+	@Override
+	public ArticleResponse deleteArticle(Integer id) {
+		Article article = articleRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.ARTICLE_NOT_FOUND));
 
-    Status inactiveStatus = statusService.getStatus(ArticleStatus.INACTIVE_ARTICLE);
-    article.setStatus(inactiveStatus);
+		Status inactiveStatus = statusService.getStatus(ArticleStatus.INACTIVE_ARTICLE);
+		article.setStatus(inactiveStatus);
 
-    Article updateArticle = articleRepository.save(article);
+		Article updateArticle = articleRepository.save(article);
 
-    return articleMapper.mapToArticleResponse(updateArticle);
-  }
+		return articleMapper.mapToArticleResponse(updateArticle);
+	}
 
-  @Override
-  public List<ArticleResponse> getAllArticle() {
-    return articleRepository.findAll().stream().map(articleMapper::mapToArticleResponse).toList();
-  }
+	@Override
+	public List<ArticleResponse> getAllArticle() {
+		return articleRepository.findAll().stream().map(articleMapper::mapToArticleResponse).toList();
+	}
 }

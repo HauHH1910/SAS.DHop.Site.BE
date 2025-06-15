@@ -9,25 +9,23 @@ import java.text.ParseException;
 
 public interface AuthenticationService {
 
-  void register(RegisterRequest request) throws MessagingException;
+	void register(RegisterRequest request) throws MessagingException;
 
-  AuthenticationResponse verifyOTPAndActiveUSer(VerifyOTPRequest request);
+	AuthenticationResponse verifyOTPAndActiveUSer(VerifyOTPRequest request);
 
-  AuthenticationResponse login(AuthenticationRequest request);
+	AuthenticationResponse login(AuthenticationRequest request);
 
-  IntrospectResponse introspect(IntrospectRequest request);
+	IntrospectResponse introspect(IntrospectRequest request);
 
-  AuthenticationResponse oauthLogin(String code);
+	AuthenticationResponse oauthLogin(String code);
 
-  void forgotPassword(ForgotPasswordRequest request) throws MessagingException;
+	void forgotPassword(ForgotPasswordRequest request) throws MessagingException;
 
-  AuthenticationResponse verifyOTPResetPassword(VerifyOTPRequest request);
+	AuthenticationResponse verifyOTPResetPassword(VerifyOTPRequest request);
 
-  AuthenticationResponse resetPassword(ResetPasswordRequest request)
-      throws ParseException, JOSEException;
+	AuthenticationResponse resetPassword(ResetPasswordRequest request) throws ParseException, JOSEException;
 
-  AuthenticationResponse refreshToken(RefreshTokenRequest request)
-      throws ParseException, JOSEException;
+	AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException;
 
-  boolean authenticationChecking(String role);
+	boolean authenticationChecking(String role);
 }

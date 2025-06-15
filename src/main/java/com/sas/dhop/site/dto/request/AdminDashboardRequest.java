@@ -1,3 +1,4 @@
 package com.sas.dhop.site.dto.request;
 
-public record AdminDashboardRequest() {}
+public record AdminDashboardRequest() {
+}
