@@ -12,4 +12,6 @@ public interface DanceTypeService {
     DanceTypeResponse createDanceType(DanceTypeRequest request);
 
     DanceType findDanceType(Integer type);
+
+    DanceType findDanceTypeName(String name);
 }
