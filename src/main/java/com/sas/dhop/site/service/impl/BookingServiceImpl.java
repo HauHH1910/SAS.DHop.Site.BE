@@ -21,7 +21,6 @@ import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -53,7 +52,7 @@ public class BookingServiceImpl implements BookingService {
         });
         log.debug("[Booking for dancer] Fetched dancer: {}", dancer.getUser().getName());
 
-        //check conflict for dancer, team size check in same day same time
+        // check conflict for dancer, team size check in same day same time
         checkDancerBookingConflict(request, dancer);
 
         User customer = userService.getLoginUser();
@@ -104,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
 
         log.info("Starting to create booking request for dancer with request: {}", request);
 
-        //Check conflict for choreographer before work
+        // Check conflict for choreographer before work
         checkChoreographerBookingConflict(request, choreography);
 
         User customer = userService.getLoginUser();
@@ -145,10 +144,6 @@ public class BookingServiceImpl implements BookingService {
 
         return BookingResponse.mapToBookingResponse(booking);
     }
-
-
-
-
 
     // accept button for dancers and choreographer
     @Override
@@ -289,15 +284,16 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse updateBookingInformation(Integer bookingId, BookingRequest bookingRequest) {
         Booking booking = bookingRepository
                 .findById(bookingId)
-                .orElseThrow(()-> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         User currentUser = userService.getLoginUser();
-        if(currentUser.getRoles().equals(RoleName.DANCER) && currentUser.getRoles().equals(RoleName.CHOREOGRAPHY)) {
+        if (currentUser.getRoles().equals(RoleName.DANCER)
+                && currentUser.getRoles().equals(RoleName.CHOREOGRAPHY)) {
             throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
         }
 
-        if(!booking.getBookingStatus().equals(BookingStatus.BOOKING_PENDING)
-        && !booking.getBookingStatus().equals(BookingStatus.BOOKING_ACTIVATE))
+        if (!booking.getBookingStatus().equals(BookingStatus.BOOKING_PENDING)
+                && !booking.getBookingStatus().equals(BookingStatus.BOOKING_ACTIVATE))
             throw new BusinessException(ErrorConstant.CAN_NOT_UPDATE_BOOKING);
 
         booking.setAddress(bookingRequest.address());
@@ -307,8 +303,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setStartTime(bookingRequest.startTime());
         booking.setEndTime(bookingRequest.endTime());
         booking.setNumberOfTrainingSessions(bookingRequest.numberOfTrainingSessions());
-        DanceType danceTypeName = danceTypeService.findDanceTypeName(
-                bookingRequest.danceTypeName());
+        DanceType danceTypeName = danceTypeService.findDanceTypeName(bookingRequest.danceTypeName());
         booking.setDanceType(Set.of(danceTypeName));
 
         bookingRepository.save(booking);
@@ -316,8 +311,8 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(booking);
     }
 
-    //Check conflit for dancer schedules
-    private void checkDancerBookingConflict(BookingRequest bookingRequest, Dancer dancer){
+    // Check conflit for dancer schedules
+    private void checkDancerBookingConflict(BookingRequest bookingRequest, Dancer dancer) {
         // Lấy tất cả booking của dancer trong ngày
         LocalDate bookingDate = bookingRequest.startTime().toLocalDate();
         List<Booking> bookings = bookingRepository.findAll().stream()
@@ -326,21 +321,22 @@ public class BookingServiceImpl implements BookingService {
                 .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
                 .collect(Collectors.toList());
 
-        //int requestedSessions = bookingRequest.numberOfTrainingSessions() != null ? bookingRequest.numberOfTrainingSessions() : 1;
+        // int requestedSessions = bookingRequest.numberOfTrainingSessions() != null ?
+        // bookingRequest.numberOfTrainingSessions() : 1;
 
         int requestedSessions;
-        if(bookingRequest.numberOfTrainingSessions() != null){
+        if (bookingRequest.numberOfTrainingSessions() != null) {
             requestedSessions = bookingRequest.numberOfTrainingSessions();
-        }else{
+        } else {
             requestedSessions = 1;
         }
-
 
         // Tính tổng số người thuê ở các booking giao nhau
         int totalSessions = requestedSessions;
         for (Booking b : bookings) {
             // Kiểm tra giao nhau thời gian
-            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime()) || bookingRequest.startTime().isAfter(b.getEndTime()));
+            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime())
+                    || bookingRequest.startTime().isAfter(b.getEndTime()));
             if (isOverlap) {
                 int bookedSessions = b.getNumberOfTrainingSessions() != null ? b.getNumberOfTrainingSessions() : 1;
                 totalSessions += bookedSessions;
@@ -352,33 +348,35 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    //Check same time of the schedule
+    // Check same time of the schedule
     private void checkChoreographerBookingConflict(BookingRequest bookingRequest, Choreography choreography) {
         LocalDate bookingDate = bookingRequest.startTime().toLocalDate();
         List<Booking> bookings = bookingRepository.findAll().stream()
-                .filter(b -> b.getChoreography() != null && b.getChoreography().getId().equals(choreography.getId()))
+                .filter(b -> b.getChoreography() != null
+                        && b.getChoreography().getId().equals(choreography.getId()))
                 .filter(b -> !b.getStatus().getStatusName().equals(BookingStatus.BOOKING_CANCELED))
                 .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
                 .collect(Collectors.toList());
 
         for (Booking b : bookings) {
-            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime()) || bookingRequest.startTime().isAfter(b.getEndTime()));
+            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime())
+                    || bookingRequest.startTime().isAfter(b.getEndTime()));
             if (isOverlap) {
                 throw new BusinessException(ErrorConstant.CHOOREOGRAPHY_TIME_CONFLICT);
             }
         }
     }
 
-
-    //Todo: nhớ bỏ hàm này vào xử lý real time luôn
-    //Check time need to change status before begin the work (24 hour)
+    // Todo: nhớ bỏ hàm này vào xử lý real time luôn
+    // Check time need to change status before begin the work (24 hour)
     @Transactional
     public void cancelLateBookingsAutomatically() {
         Instant now = Instant.now();
 
         List<Booking> lateBookings = bookingRepository.findAll().stream()
                 .filter(b -> b.getStatus().getStatusName().equals(BookingStatus.BOOKING_ACTIVATE))
-                .filter(b -> b.getStartTime().plusSeconds(24 * 3600).isBefore(ChronoLocalDateTime.from(now))) // đã qua 24h
+                .filter(b ->
+                        b.getStartTime().plusSeconds(24 * 3600).isBefore(ChronoLocalDateTime.from(now))) // đã qua 24h
                 .collect(Collectors.toList());
 
         Status cancelStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_CANCELED);
@@ -393,9 +391,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-
-
-    //Check price after original have commission
+    // Check price after original have commission
     private BigDecimal calculateCommissionPrice(BigDecimal price) {
         if (price.compareTo(new BigDecimal("500000")) < 0) {
             throw new BusinessException(ErrorConstant.INVALID_MINIMUM_PRICE);
@@ -412,5 +408,4 @@ public class BookingServiceImpl implements BookingService {
             return price.multiply(new BigDecimal("1.10")).setScale(2, RoundingMode.HALF_UP);
         }
     }
-
 }

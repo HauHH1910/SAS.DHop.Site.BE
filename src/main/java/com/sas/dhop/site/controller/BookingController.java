@@ -37,7 +37,8 @@ public class BookingController {
     }
 
     @PutMapping("/update-booking/{bookingId}")
-    public ResponseData<BookingResponse> updateBookingInformation(@PathVariable Integer bookingId, @RequestBody BookingRequest bookingRequest) {
+    public ResponseData<BookingResponse> updateBookingInformation(
+            @PathVariable Integer bookingId, @RequestBody BookingRequest bookingRequest) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.UPDATE_BOOKING_SUCCESSFULLY)
                 .data(bookingService.updateBookingInformation(bookingId, bookingRequest))
