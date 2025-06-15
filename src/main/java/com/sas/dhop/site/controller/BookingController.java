@@ -49,7 +49,8 @@ public class BookingController {
     }
 
     @PutMapping("/update-booking/{bookingId}")
-    public ResponseData<BookingResponse> updateBookingInformation(@PathVariable Integer bookingId, @RequestBody BookingRequest bookingRequest) {
+    public ResponseData<BookingResponse> updateBookingInformation(
+            @PathVariable Integer bookingId, @RequestBody BookingRequest bookingRequest) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.UPDATE_BOOKING_SUCCESSFULLY)
                 .data(bookingService.updateBookingInformation(bookingId, bookingRequest))
@@ -97,7 +98,7 @@ public class BookingController {
     }
 
     @PutMapping("/booking-complains/{bookingId}")
-    public ResponseData<BookingCancelResponse> bookingComplains(@PathVariable Integer bookingId){
+    public ResponseData<BookingCancelResponse> bookingComplains(@PathVariable Integer bookingId) {
         return ResponseData.<BookingCancelResponse>builder()
                 .message(ResponseMessage.BOOKING_COMPLAINS_REQUEST)
                 .data(bookingService.bookingComplains(bookingId))
@@ -105,7 +106,7 @@ public class BookingController {
     }
 
     @PutMapping("/booking-complains-accept/{bookingId}")
-    public ResponseData<BookingResponse> acceptBookingComplainsProgress(@PathVariable Integer bookingId){
+    public ResponseData<BookingResponse> acceptBookingComplainsProgress(@PathVariable Integer bookingId) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.BOOKING_COMPLAINS_APPLY)
                 .data(bookingService.acceptBookingComplainsProgress(bookingId))
@@ -113,13 +114,12 @@ public class BookingController {
     }
 
     @PutMapping("/booking-complains-deny/{bookingId}")
-    public ResponseData<BookingResponse> denyBookingComplainsProgress(@PathVariable Integer bookingId){
+    public ResponseData<BookingResponse> denyBookingComplainsProgress(@PathVariable Integer bookingId) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.BOOKING_COMPLAINS_DENY)
                 .data(bookingService.denyBookingComplainsProgress(bookingId))
                 .build();
     }
-
 
     //    public ResponseData<BookingResponse>
 
