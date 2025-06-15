@@ -13,11 +13,13 @@ import com.sas.dhop.site.model.*;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -190,7 +192,7 @@ public class BookingServiceImpl implements BookingService {
         if (request.multipartFiles() != null) {
             List<MediaResponse> mediaResponses = cloudStorageService.uploadImage(request.multipartFiles());
             for (MediaResponse media : mediaResponses) {
-                performanceService.uploadPerformanceForBooking(new PerformanceRequest(media.url()));
+                performanceService.uploadPerformanceForBooking(media.url(), booking);
             }
         }
 
