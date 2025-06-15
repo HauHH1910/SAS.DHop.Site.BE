@@ -1,8 +1,8 @@
 package com.sas.dhop.site.service.impl;
 
 import com.sas.dhop.site.constant.BookingStatus;
+import com.sas.dhop.site.dto.request.BookingCancelRequest;
 import com.sas.dhop.site.dto.request.BookingRequest;
-import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
@@ -22,6 +22,7 @@ import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -46,12 +47,15 @@ public class BookingServiceImpl implements BookingService {
     // Booking is only for the dancer, the booker wants
     @Override
     @Transactional
-    public BookingResponse createBookingRequestForDancer(DancerBookingRequest request) {
+    public BookingResponse createBookingRequestForDancer(BookingRequest request) {
         Dancer dancer = dancerRepository.findById(request.dancerId()).orElseThrow(() -> {
             log.error("Dancer not found with id: {}", request.dancerId());
             return new BusinessException(ErrorConstant.USER_NOT_FOUND);
         });
         log.debug("[Booking for dancer] Fetched dancer: {}", dancer.getUser().getName());
+
+        //check conflict for dancer, team size check in same day same time
+        checkDancerBookingConflict(request, dancer);
 
         User customer = userService.getLoginUser();
         log.debug("[Booking for dancer] Fetched logged-in customer: {}", customer.getName());
@@ -63,6 +67,7 @@ public class BookingServiceImpl implements BookingService {
             log.error("[Booking for dancer] Area not found with id: {}", request.areaId());
             return new BusinessException(ErrorConstant.AREA_NOT_FOUND);
         });
+        log.debug("[Booking for dancer] Fetched area: {}", area.getCity());
 
         Status status = statusService.findStatusOrCreated(BookingStatus.BOOKING_PENDING);
 
@@ -70,6 +75,7 @@ public class BookingServiceImpl implements BookingService {
                 .customer(customer)
                 .dancer(dancer)
                 .area(area)
+                .choreography(null)
                 .status(status)
                 .danceType(Set.of(danceType))
                 .bookingDate(Instant.now())
@@ -79,10 +85,15 @@ public class BookingServiceImpl implements BookingService {
                 .detail(request.detail())
                 .customerPhone(request.customerPhone())
                 .dancerPhone(request.dancerPhone())
+                .numberOfTrainingSessions(request.numberOfTrainingSessions())
                 .price(calculateCommissionPrice(request.bookingPrice()))
                 .build();
+        log.debug("[Booking for dancer] Created booking: {}", booking);
 
-        return BookingResponse.mapToBookingResponse(bookingRepository.save(booking));
+        booking = bookingRepository.save(booking);
+        log.info("[Booking for dancer] Booking successfully saved with id: {}", booking.getId());
+
+        return BookingResponse.mapToBookingResponse(booking);
     }
 
     @Override
@@ -93,6 +104,9 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
         log.info("Starting to create booking request for dancer with request: {}", request);
+
+        //Check conflict for choreographer before work
+        checkChoreographerBookingConflict(request, choreography);
 
         User customer = userService.getLoginUser();
         log.debug("[Booking for choreography] Fetched logged-in customer: {}", customer.getName());
@@ -110,6 +124,7 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = Booking.builder()
                 .customer(customer)
+                .dancer(null)
                 .area(area)
                 .choreography(choreography)
                 .status(status)
@@ -197,6 +212,68 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(booking);
     }
 
+    //This like booking report
+    @Override
+    public BookingCancelResponse bookingComplains(Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+
+        if(booking.getBookingStatus().equals(BookingStatus.BOOKING_INACTIVATE)
+        || booking.getBookingStatus().equals(BookingStatus.BOOKING_PENDING)){
+            throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
+        }
+
+        Status complainStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_DISPUTED_REQUEST);
+        booking.setStatus(complainStatus);
+
+        User currentUser = userService.getLoginUser();
+        booking.setCancelPersonName(currentUser.getName());
+        booking.setCancelReason(booking.getCancelReason());
+
+        bookingRepository.save(booking);
+
+        return bookingCancelMapper.mapToBookingCancelResponse(booking);
+    }
+
+    @Override
+    public BookingResponse acceptBookingComplainsProgress(Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+
+        if (!booking.getBookingStatus().equals(BookingStatus.BOOKING_DISPUTED_REQUEST)) {
+            throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
+        }
+
+        Status complainStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_DISPUTED);
+        booking.setStatus(complainStatus);
+        bookingRepository.save(booking);
+        return BookingResponse.mapToBookingResponse(booking);
+    }
+
+    @Override
+    public BookingResponse denyBookingComplainsProgress(Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+
+        if (!booking.getBookingStatus().equals(BookingStatus.BOOKING_DISPUTED)) {
+            throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
+        }
+
+        // Khôi phục trạng thái trước khi khiếu nại
+        Status restoredStatus = booking.getPreviousStatus(); // cần có cột này
+        if (restoredStatus == null) {
+            throw new BusinessException(ErrorConstant.BOOKING_STATUS_NOT_FOUND);
+        }
+
+        booking.setStatus(restoredStatus);
+        booking.setPreviousStatus(null); // clear lại nếu cần
+        bookingRepository.save(booking);
+
+        return BookingResponse.mapToBookingResponse(booking);
+    }
+
+
+
     @Override
     public BookingResponse getBookingDetail(int bookingId) {
         Booking booking = bookingRepository
@@ -271,16 +348,15 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse updateBookingInformation(Integer bookingId, BookingRequest bookingRequest) {
         Booking booking = bookingRepository
                 .findById(bookingId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+                .orElseThrow(()-> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         User currentUser = userService.getLoginUser();
-        if (currentUser.getRoles().equals(RoleName.DANCER)
-                && currentUser.getRoles().equals(RoleName.CHOREOGRAPHY)) {
+        if(currentUser.getRoles().equals(RoleName.DANCER) && currentUser.getRoles().equals(RoleName.CHOREOGRAPHY)) {
             throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
         }
 
-        if (!booking.getBookingStatus().equals(BookingStatus.BOOKING_PENDING)
-                && !booking.getBookingStatus().equals(BookingStatus.BOOKING_ACTIVATE))
+        if(!booking.getBookingStatus().equals(BookingStatus.BOOKING_PENDING)
+        && !booking.getBookingStatus().equals(BookingStatus.BOOKING_ACTIVATE))
             throw new BusinessException(ErrorConstant.CAN_NOT_UPDATE_BOOKING);
 
         booking.setAddress(bookingRequest.address());
@@ -290,7 +366,8 @@ public class BookingServiceImpl implements BookingService {
         booking.setStartTime(bookingRequest.startTime());
         booking.setEndTime(bookingRequest.endTime());
         booking.setNumberOfTrainingSessions(bookingRequest.numberOfTrainingSessions());
-        DanceType danceTypeName = danceTypeService.findDanceTypeName(bookingRequest.danceTypeName());
+        DanceType danceTypeName = danceTypeService.findDanceTypeName(
+                bookingRequest.danceTypeName());
         booking.setDanceType(Set.of(danceTypeName));
 
         bookingRepository.save(booking);
@@ -298,8 +375,11 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(booking);
     }
 
-    // Check conflit for dancer schedules
-    private void checkDancerBookingConflict(BookingRequest bookingRequest, Dancer dancer) {
+
+
+
+    //Check conflit for dancer schedules
+    private void checkDancerBookingConflict(BookingRequest bookingRequest, Dancer dancer){
         // Lấy tất cả booking của dancer trong ngày
         LocalDate bookingDate = bookingRequest.startTime().toLocalDate();
         List<Booking> bookings = bookingRepository.findAll().stream()
@@ -308,22 +388,21 @@ public class BookingServiceImpl implements BookingService {
                 .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
                 .collect(Collectors.toList());
 
-        // int requestedSessions = bookingRequest.numberOfTrainingSessions() != null ?
-        // bookingRequest.numberOfTrainingSessions() : 1;
+        //int requestedSessions = bookingRequest.numberOfTrainingSessions() != null ? bookingRequest.numberOfTrainingSessions() : 1;
 
         int requestedSessions;
-        if (bookingRequest.numberOfTrainingSessions() != null) {
+        if(bookingRequest.numberOfTrainingSessions() != null){
             requestedSessions = bookingRequest.numberOfTrainingSessions();
-        } else {
+        }else{
             requestedSessions = 1;
         }
+
 
         // Tính tổng số người thuê ở các booking giao nhau
         int totalSessions = requestedSessions;
         for (Booking b : bookings) {
             // Kiểm tra giao nhau thời gian
-            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime())
-                    || bookingRequest.startTime().isAfter(b.getEndTime()));
+            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime()) || bookingRequest.startTime().isAfter(b.getEndTime()));
             if (isOverlap) {
                 int bookedSessions = b.getNumberOfTrainingSessions() != null ? b.getNumberOfTrainingSessions() : 1;
                 totalSessions += bookedSessions;
@@ -335,50 +414,48 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    // Check same time of the schedule
+    //Check same time of the schedule
     private void checkChoreographerBookingConflict(BookingRequest bookingRequest, Choreography choreography) {
         LocalDate bookingDate = bookingRequest.startTime().toLocalDate();
         List<Booking> bookings = bookingRepository.findAll().stream()
-                .filter(b -> b.getChoreography() != null
-                        && b.getChoreography().getId().equals(choreography.getId()))
+                .filter(b -> b.getChoreography() != null && b.getChoreography().getId().equals(choreography.getId()))
                 .filter(b -> !b.getStatus().getStatusName().equals(BookingStatus.BOOKING_CANCELED))
                 .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
                 .collect(Collectors.toList());
 
         for (Booking b : bookings) {
-            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime())
-                    || bookingRequest.startTime().isAfter(b.getEndTime()));
+            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime()) || bookingRequest.startTime().isAfter(b.getEndTime()));
             if (isOverlap) {
                 throw new BusinessException(ErrorConstant.CHOOREOGRAPHY_TIME_CONFLICT);
             }
         }
     }
 
-    // Todo: nhớ bỏ hàm này vào xử lý real time luôn
-    // Check time need to change status before begin the work (24 hour)
+    //Todo: nhớ bỏ hàm này vào xử lý real time luôn
+    //Check time need to change status before begin the work (24 hour)
     @Transactional
     public void cancelLateBookingsAutomatically() {
         Instant now = Instant.now();
 
+        // Lọc các booking đang ở trạng thái ACTIVATE và đã qua 24h kể từ startTime
         List<Booking> lateBookings = bookingRepository.findAll().stream()
                 .filter(b -> b.getStatus().getStatusName().equals(BookingStatus.BOOKING_ACTIVATE))
-                .filter(b ->
-                        b.getStartTime().plusSeconds(24 * 3600).isBefore(ChronoLocalDateTime.from(now))) // đã qua 24h
+                .filter(b -> b.getStartTime().plusHours(24).isBefore(ChronoLocalDateTime.from(now)))
                 .collect(Collectors.toList());
 
-        Status cancelStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_CANCELED);
+        // Lấy trạng thái INACTIVATE để set
+        Status inactivateStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_INACTIVATE);
 
         for (Booking booking : lateBookings) {
-            booking.setStatus(cancelStatus);
-            booking.setCancelReason("Tự động hủy vì không bắt đầu sau 24 giờ.");
+            booking.setStatus(inactivateStatus);
+            booking.setCancelReason("Tự động chuyển sang INACTIVATE vì đã quá 24h mà không bắt đầu.");
             booking.setCancelPersonName("Hệ thống");
 
             bookingRepository.save(booking);
-            log.info("Booking ID {} đã được hủy tự động do không bắt đầu sau 24h.", booking.getId());
         }
     }
 
-    // Check price after original have commission
+    //Check price after original have commission
     private BigDecimal calculateCommissionPrice(BigDecimal price) {
         if (price.compareTo(new BigDecimal("500000")) < 0) {
             throw new BusinessException(ErrorConstant.INVALID_MINIMUM_PRICE);
@@ -395,4 +472,7 @@ public class BookingServiceImpl implements BookingService {
             return price.multiply(new BigDecimal("1.10")).setScale(2, RoundingMode.HALF_UP);
         }
     }
+
+
+
 }
