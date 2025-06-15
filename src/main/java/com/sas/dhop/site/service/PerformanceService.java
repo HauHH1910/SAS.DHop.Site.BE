@@ -5,9 +5,11 @@ import com.sas.dhop.site.dto.response.PerformanceResponse;
 
 public interface PerformanceService {
 
-	void createPerformance(PerformanceRequest request);
+    PerformanceResponse createPerformance(PerformanceRequest request);
 
-	PerformanceResponse getPerformanceById(Integer id);
+    PerformanceResponse getPerformanceById(Integer id);
 
-	void deletePerformanceById(Integer id);
+    void deletePerformanceById(Integer id);
+
+    void uploadPerformanceForBooking(PerformanceRequest request);
 }

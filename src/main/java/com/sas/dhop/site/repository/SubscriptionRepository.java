@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface SubscriptionRepository
-		extends
-			JpaRepository<Subscription, Integer>,
-			JpaSpecificationExecutor<Subscription> {
-	Optional<Subscription> findByName(String name);
+        extends JpaRepository<Subscription, Integer>, JpaSpecificationExecutor<Subscription> {
+    Optional<Subscription> findByName(String name);
 }

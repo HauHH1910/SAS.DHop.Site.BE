@@ -22,70 +22,75 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class JwtUtil {
 
-	@Value("${sas.dhop.site.key}")
-	private String KEY;
+    @Value("${sas.dhop.site.key}")
+    private String KEY;
 
-	public String generateToken(User user, Long expireIn, Boolean isRefreshToken) {
-		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().subject(user.getEmail()).issuer("sas.dhop.site")
-				.issueTime(new Date())
-				.expirationTime(new Date(Instant.now().plus(expireIn, ChronoUnit.SECONDS).toEpochMilli()))
-				.jwtID(UUID.randomUUID().toString()).claim("scope", buildScope(user))
-				.claim("type", isRefreshToken ? "refresh" : "access").build();
+    public String generateToken(User user, Long expireIn, Boolean isRefreshToken) {
+        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+                .subject(user.getEmail())
+                .issuer("sas.dhop.site")
+                .issueTime(new Date())
+                .expirationTime(new Date(
+                        Instant.now().plus(expireIn, ChronoUnit.SECONDS).toEpochMilli()))
+                .jwtID(UUID.randomUUID().toString())
+                .claim("scope", buildScope(user))
+                .claim("type", isRefreshToken ? "refresh" : "access")
+                .build();
 
-		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS512), claimsSet);
+        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS512), claimsSet);
 
-		try {
-			signedJWT.sign(new MACSigner(KEY.getBytes(StandardCharsets.UTF_8)));
-		} catch (JOSEException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            signedJWT.sign(new MACSigner(KEY.getBytes(StandardCharsets.UTF_8)));
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
+        }
 
-		return signedJWT.serialize();
-	}
+        return signedJWT.serialize();
+    }
 
-	public JWTClaimsSet verifyToken(String token, Long durationInSeconds, boolean isRefresh)
-			throws ParseException, JOSEException {
-		JWSVerifier jwsVerifier = new MACVerifier(KEY.getBytes(StandardCharsets.UTF_8));
-		SignedJWT signedJWT = SignedJWT.parse(token);
-		if (!signedJWT.verify(jwsVerifier)) {
-			throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
-		}
+    public JWTClaimsSet verifyToken(String token, Long durationInSeconds, boolean isRefresh)
+            throws ParseException, JOSEException {
+        JWSVerifier jwsVerifier = new MACVerifier(KEY.getBytes(StandardCharsets.UTF_8));
+        SignedJWT signedJWT = SignedJWT.parse(token);
+        if (!signedJWT.verify(jwsVerifier)) {
+            throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
+        }
 
-		JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+        JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
 
-		Date now = new Date();
+        Date now = new Date();
 
-		if (isRefresh) {
-			Date issueTime = claims.getIssueTime();
-			if (issueTime == null) {
-				throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
-			}
-			Date expiryTime = Date.from(issueTime.toInstant().plus(durationInSeconds, ChronoUnit.SECONDS));
+        if (isRefresh) {
+            Date issueTime = claims.getIssueTime();
+            if (issueTime == null) {
+                throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
+            }
+            Date expiryTime = Date.from(issueTime.toInstant().plus(durationInSeconds, ChronoUnit.SECONDS));
 
-			if (now.after(expiryTime)) {
-				throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
-			}
+            if (now.after(expiryTime)) {
+                throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
+            }
 
-		} else {
-			Date expirationTime = claims.getExpirationTime();
-			if (expirationTime == null || now.after(expirationTime)) {
-				throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
-			}
-		}
+        } else {
+            Date expirationTime = claims.getExpirationTime();
+            if (expirationTime == null || now.after(expirationTime)) {
+                throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
+            }
+        }
 
-		return claims;
-	}
+        return claims;
+    }
 
-	private String buildScope(User user) {
-		StringJoiner joiner = new StringJoiner(" ");
-		if (!CollectionUtils.isEmpty(user.getRoles())) {
-			user.getRoles().forEach(role -> {
-				joiner.add("ROLE_" + role.getName());
-				if (!CollectionUtils.isEmpty(role.getPermissions())) {
-					role.getPermissions().forEach(permission -> joiner.add(permission.getName()));
-				}
-			});
-		}
-		return joiner.toString();
-	}
+    private String buildScope(User user) {
+        StringJoiner joiner = new StringJoiner(" ");
+        if (!CollectionUtils.isEmpty(user.getRoles())) {
+            user.getRoles().forEach(role -> {
+                joiner.add("ROLE_" + role.getName());
+                if (!CollectionUtils.isEmpty(role.getPermissions())) {
+                    role.getPermissions().forEach(permission -> joiner.add(permission.getName()));
+                }
+            });
+        }
+        return joiner.toString();
+    }
 }

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface PermissionRepository extends JpaRepository<Permission, Integer>, JpaSpecificationExecutor<Permission> {
-	Optional<Permission> findByName(String permissionName);
+    Optional<Permission> findByName(String permissionName);
 
-	Set<Permission> findAllByNameIn(Collection<String> names);
+    Set<Permission> findAllByNameIn(Collection<String> names);
 }

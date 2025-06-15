@@ -6,11 +6,11 @@ import java.util.Map;
 
 public interface PaymentService {
 
-	ObjectNode createPaymentLink(CreatePaymentRequest request);
+    ObjectNode createPaymentLink(CreatePaymentRequest request);
 
-	ObjectNode getOrderByID(Long orderId);
+    ObjectNode getOrderByID(Long orderId);
 
-	ObjectNode cancelOrder(Integer orderID);
+    ObjectNode cancelOrder(Integer orderID);
 
-	ObjectNode confirmWebHook(Map<String, String> request);
+    ObjectNode confirmWebHook(Map<String, String> request);
 }

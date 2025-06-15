@@ -13,14 +13,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "otp")
 public class OTP {
 
-	@Id
-	private String id;
+    @Id
+    private String id;
 
-	private String email;
+    private String email;
 
-	private String otpCode;
+    private String otpCode;
 
-	private Boolean isVerify;
+    private Boolean isVerify;
 
-	private LocalDateTime expiresAt;
+    private LocalDateTime expiresAt;
 }

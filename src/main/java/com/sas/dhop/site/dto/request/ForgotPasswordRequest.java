@@ -1,4 +1,3 @@
 package com.sas.dhop.site.dto.request;
 
-public record ForgotPasswordRequest(String email) {
-}
+public record ForgotPasswordRequest(String email) {}

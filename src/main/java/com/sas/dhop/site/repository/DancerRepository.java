@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DancerRepository extends JpaRepository<Dancer, Integer>, JpaSpecificationExecutor<Dancer> {
-	Optional<Dancer> findByUser(User user);
+    Optional<Dancer> findByUser(User user);
 
-	List<Dancer> findByStatus(Status status);
+    List<Dancer> findByStatus(Status status);
 
-	List<Dancer> findTop5ByOrderByPriceDesc();
+    List<Dancer> findTop5ByOrderByPriceDesc();
 }

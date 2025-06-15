@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 public class ResponseError {
 
-	private Integer code;
+    private Integer code;
 
-	private String message;
+    private String message;
 }

@@ -15,11 +15,14 @@ import lombok.*;
 @Table(name = "role")
 public class Role extends AbstractEntity<Integer> implements Serializable {
 
-	@Column(name = "name")
-	@Enumerated(EnumType.STRING)
-	private RoleName name;
+    @Column(name = "name")
+    @Enumerated(EnumType.STRING)
+    private RoleName name;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "roles_permissions", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
-	private Set<Permission> permissions;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "roles_permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    private Set<Permission> permissions;
 }

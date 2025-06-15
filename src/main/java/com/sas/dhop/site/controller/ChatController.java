@@ -17,13 +17,13 @@ import org.springframework.stereotype.Controller;
 @RequiredArgsConstructor
 public class ChatController {
 
-	private final ChatService chatService;
-	private final SimpMessagingTemplate messagingTemplate;
+    private final ChatService chatService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-	@MessageMapping("/sendMessage/{roomId}")
-	@SendTo("/topic/room/{roomId}")
-	public void sendMessage(@DestinationVariable String roomId, @Payload MessagePayload payload) {
-		Message savedMessage = chatService.sendMessage(roomId, payload);
-		messagingTemplate.convertAndSend("/topic/room/" + roomId, savedMessage);
-	}
+    @MessageMapping("/sendMessage/{roomId}")
+    @SendTo("/topic/room/{roomId}")
+    public void sendMessage(@DestinationVariable String roomId, @Payload MessagePayload payload) {
+        Message savedMessage = chatService.sendMessage(roomId, payload);
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, savedMessage);
+    }
 }

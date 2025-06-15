@@ -27,87 +27,94 @@ import org.springframework.stereotype.Service;
 @Slf4j(topic = "[Choreographer Service]")
 public class ChoreographerServiceImpl implements ChoreographerService {
 
-	private final ChoreographyRepository choreographyRepository;
-	private final StatusService statusService;
-	private final ChoreographerMapper choreographerMapper;
-	private final DanceTypeService danceTypeService;
-	private final SubscriptionRepository subscriptionRepository;
-	private final UserService userService;
+    private final ChoreographyRepository choreographyRepository;
+    private final StatusService statusService;
+    private final ChoreographerMapper choreographerMapper;
+    private final DanceTypeService danceTypeService;
+    private final SubscriptionRepository subscriptionRepository;
+    private final UserService userService;
 
-	@Override
-	public ChoreographerResponse updateChoreographer(Integer choreographyId,
-			ChoreographerRequest choreographerRequest) {
-		Choreography choreography = choreographyRepository.findById(choreographyId)
-				.orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+    @Override
+    public ChoreographerResponse updateChoreographer(
+            Integer choreographyId, ChoreographerRequest choreographerRequest) {
+        Choreography choreography = choreographyRepository
+                .findById(choreographyId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
-		User curUser = userService.getLoginUser();
-		if (!choreography.getUser().getId().equals(curUser.getId()))
-			throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
+        User curUser = userService.getLoginUser();
+        if (!choreography.getUser().getId().equals(curUser.getId()))
+            throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
 
-		choreography.setAbout(choreographerRequest.about());
-		choreography.setYearExperience(choreographerRequest.yearExperience());
-		choreography.setPrice(choreographerRequest.price());
+        choreography.setAbout(choreographerRequest.about());
+        choreography.setYearExperience(choreographerRequest.yearExperience());
+        choreography.setPrice(choreographerRequest.price());
 
-		if (choreographerRequest.danceTypeId() != null && !choreographerRequest.danceTypeId().isEmpty()) {
-			Set<DanceType> danceTypes = new HashSet<>();
-			for (Integer danceTypeId : choreographerRequest.danceTypeId()) {
-				DanceType danceType = danceTypeService.findDanceType(danceTypeId);
-				danceTypes.add(danceType);
-			}
-			choreography.setDanceTypes(danceTypes);
-		}
+        if (choreographerRequest.danceTypeId() != null
+                && !choreographerRequest.danceTypeId().isEmpty()) {
+            Set<DanceType> danceTypes = new HashSet<>();
+            for (Integer danceTypeId : choreographerRequest.danceTypeId()) {
+                DanceType danceType = danceTypeService.findDanceType(danceTypeId);
+                danceTypes.add(danceType);
+            }
+            choreography.setDanceTypes(danceTypes);
+        }
 
-		Choreography updateChoreography = choreographyRepository.save(choreography);
-		return choreographerMapper.mapToChoreographerResponse(updateChoreography);
-	}
+        Choreography updateChoreography = choreographyRepository.save(choreography);
+        return choreographerMapper.mapToChoreographerResponse(updateChoreography);
+    }
 
-	@Override
-	public ChoreographerResponse removeChoreographer(Integer choreographyId) {
-		Choreography choreography = choreographyRepository.findById(choreographyId)
-				.orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+    @Override
+    public ChoreographerResponse removeChoreographer(Integer choreographyId) {
+        Choreography choreography = choreographyRepository
+                .findById(choreographyId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
-		Status inactiveStatus = statusService.getStatus(ChoreographerStatus.INACTIVE_CHOREOGRAPHER);
-		choreography.setStatus(inactiveStatus);
+        Status inactiveStatus = statusService.getStatus(ChoreographerStatus.INACTIVE_CHOREOGRAPHER);
+        choreography.setStatus(inactiveStatus);
 
-		Choreography updateChoreographer = choreographyRepository.save(choreography);
-		return choreographerMapper.mapToChoreographerResponse(updateChoreographer);
-	}
+        Choreography updateChoreographer = choreographyRepository.save(choreography);
+        return choreographerMapper.mapToChoreographerResponse(updateChoreographer);
+    }
 
-	@Override
-	public ChoreographerResponse getChoreographerById(Integer choreographyId) {
-		Choreography choreography = choreographyRepository.findById(choreographyId)
-				.orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+    @Override
+    public ChoreographerResponse getChoreographerById(Integer choreographyId) {
+        Choreography choreography = choreographyRepository
+                .findById(choreographyId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
-		return choreographerMapper.mapToChoreographerResponse(choreography);
-	}
+        return choreographerMapper.mapToChoreographerResponse(choreography);
+    }
 
-	@Override
-	public List<ChoreographerResponse> getAllChoreography() {
-		User currentUser = userService.getLoginUser();
+    @Override
+    public List<ChoreographerResponse> getAllChoreography() {
+        User currentUser = userService.getLoginUser();
 
-		Set<RoleName> collect = currentUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        Set<RoleName> collect =
+                currentUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
 
-		boolean isAdmin = collect.contains(RoleName.ADMIN);
-		boolean isStaff = collect.contains(RoleName.STAFF);
+        boolean isAdmin = collect.contains(RoleName.ADMIN);
+        boolean isStaff = collect.contains(RoleName.STAFF);
 
-		List<Choreography> choreographer;
-		if (isStaff || isAdmin) {
-			choreographer = choreographyRepository.findAll();
-		} else {
-			choreographer = choreographyRepository
-					.findByStatus(statusService.findStatusOrCreated(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER));
-		}
+        List<Choreography> choreographer;
+        if (isStaff || isAdmin) {
+            choreographer = choreographyRepository.findAll();
+        } else {
+            choreographer = choreographyRepository.findByStatus(
+                    statusService.findStatusOrCreated(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER));
+        }
 
-		return choreographer.stream().map(choreographerMapper::mapToChoreographerResponse).collect(Collectors.toList());
-	}
+        return choreographer.stream()
+                .map(choreographerMapper::mapToChoreographerResponse)
+                .collect(Collectors.toList());
+    }
 
-	@Override
-	public ChoreographerResponse getChoreographerBySubscriptionStatus(Integer id) {
-		return null;
-	}
+    @Override
+    public ChoreographerResponse getChoreographerBySubscriptionStatus(Integer id) {
+        return null;
+    }
 
-	@Override
-	public ChoreographerResponse getAllChoreographerBySubscriptionStatus() {
-		return null;
-	}
+    @Override
+    public ChoreographerResponse getAllChoreographerBySubscriptionStatus() {
+        return null;
+    }
 }

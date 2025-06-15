@@ -22,29 +22,37 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[Room Controller]")
 public class RoomController {
 
-	private final RoomService roomService;
+    private final RoomService roomService;
 
-	@PostMapping
-	public ResponseData<Room> createRoom(@RequestBody CreateRoomRequest roomId) {
-		return ResponseData.<Room>builder().message(ResponseMessage.CREATE_ROOM)
-				.data(roomService.createOrGetRoom(roomId)).build();
-	}
+    @PostMapping
+    public ResponseData<Room> createRoom(@RequestBody CreateRoomRequest roomId) {
+        return ResponseData.<Room>builder()
+                .message(ResponseMessage.CREATE_ROOM)
+                .data(roomService.createOrGetRoom(roomId))
+                .build();
+    }
 
-	@GetMapping
-	public ResponseData<RoomResponse> getRoom(Principal principal) {
-		return ResponseData.<RoomResponse>builder().message(ResponseMessage.GET_ALL_ROOM)
-				.data(roomService.getRoom(principal)).build();
-	}
+    @GetMapping
+    public ResponseData<RoomResponse> getRoom(Principal principal) {
+        return ResponseData.<RoomResponse>builder()
+                .message(ResponseMessage.GET_ALL_ROOM)
+                .data(roomService.getRoom(principal))
+                .build();
+    }
 
-	@GetMapping("/{roomId}")
-	public ResponseData<RoomDetailResponse> joinRoom(@PathVariable("roomId") String roomId) {
-		return ResponseData.<RoomDetailResponse>builder().message(ResponseMessage.JOIN_ROOM)
-				.data(roomService.joinRoom(roomId)).build();
-	}
+    @GetMapping("/{roomId}")
+    public ResponseData<RoomDetailResponse> joinRoom(@PathVariable("roomId") String roomId) {
+        return ResponseData.<RoomDetailResponse>builder()
+                .message(ResponseMessage.JOIN_ROOM)
+                .data(roomService.joinRoom(roomId))
+                .build();
+    }
 
-	@GetMapping("/{roomId}/messages")
-	public ResponseData<List<Message>> getMessages(@PathVariable("roomId") String roomId) {
-		return ResponseData.<List<Message>>builder().message(ResponseMessage.LIST_MESSAGE)
-				.data(roomService.getMessages(roomId)).build();
-	}
+    @GetMapping("/{roomId}/messages")
+    public ResponseData<List<Message>> getMessages(@PathVariable("roomId") String roomId) {
+        return ResponseData.<List<Message>>builder()
+                .message(ResponseMessage.LIST_MESSAGE)
+                .data(roomService.getMessages(roomId))
+                .build();
+    }
 }

@@ -7,9 +7,9 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface AreaMapper {
-	default AreaResponse mapToAreaResponse(Area area) {
-		return AreaResponse.mapToAreaResponse(area);
-	}
+    default AreaResponse mapToAreaResponse(Area area) {
+        return AreaResponse.mapToAreaResponse(area);
+    }
 
-	Area mapToArea(AreaRequest request);
+    Area mapToArea(AreaRequest request);
 }
