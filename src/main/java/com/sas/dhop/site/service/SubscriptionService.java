@@ -6,15 +6,15 @@ import java.util.List;
 
 public interface SubscriptionService {
 
-    List<SubscriptionResponse> getAllSubscription();
+  List<SubscriptionResponse> getAllSubscription();
 
-    SubscriptionResponse createSubscription(SubscriptionRequest request);
+  SubscriptionResponse createSubscription(SubscriptionRequest request);
 
-    SubscriptionResponse updateSubscription(Integer id, SubscriptionRequest request);
+  SubscriptionResponse updateSubscription(Integer id, SubscriptionRequest request);
 
-    SubscriptionResponse findSubscription(Integer id);
+  SubscriptionResponse findSubscription(Integer id);
 
-    void deleteSubscription(Integer id);
+  void deleteSubscription(Integer id);
 
-    SubscriptionResponse updateStatusSubscription(Integer id, boolean isUpdate);
+  SubscriptionResponse updateStatusSubscription(Integer id, boolean isUpdate);
 }

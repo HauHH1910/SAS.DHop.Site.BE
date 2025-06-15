@@ -15,30 +15,30 @@ import lombok.*;
 @Table(name = "choreography")
 public class Choreography extends AbstractEntity<Integer> implements Serializable {
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "choreography_dance_type",
-            joinColumns = @JoinColumn(name = "choreography_id"),
-            inverseJoinColumns = @JoinColumn(name = "dance_type_id"))
-    private Set<DanceType> danceTypes;
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "choreography_dance_type",
+      joinColumns = @JoinColumn(name = "choreography_id"),
+      inverseJoinColumns = @JoinColumn(name = "dance_type_id"))
+  private Set<DanceType> danceTypes;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne(fetch = FetchType.EAGER, optional = false)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Subscription subscription;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Subscription subscription;
 
-    @Column(name = "about")
-    private String about;
+  @Column(name = "about")
+  private String about;
 
-    @Column(name = "year_experience")
-    private Integer yearExperience;
+  @Column(name = "year_experience")
+  private Integer yearExperience;
 
-    @Column(name = "price", precision = 10, scale = 2)
-    private BigDecimal price;
+  @Column(name = "price", precision = 10, scale = 2)
+  private BigDecimal price;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "status_id", nullable = false)
-    private Status status;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "status_id", nullable = false)
+  private Status status;
 }

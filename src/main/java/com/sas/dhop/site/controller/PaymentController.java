@@ -18,34 +18,28 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[Payment Controller]")
 public class PaymentController {
 
-    private final PaymentService paymentService;
+  private final PaymentService paymentService;
 
-    @PostMapping("/create")
-    public ResponseData<ObjectNode> createPayment(@RequestBody CreatePaymentRequest request) {
-        return ResponseData.<ObjectNode>builder()
-                .message(ResponseMessage.CREATE_PAYMENT)
-                .data(paymentService.createPaymentLink(request))
-                .build();
-    }
+  @PostMapping("/create")
+  public ResponseData<ObjectNode> createPayment(@RequestBody CreatePaymentRequest request) {
+    return ResponseData.<ObjectNode>builder()
+        .message(ResponseMessage.CREATE_PAYMENT)
+        .data(paymentService.createPaymentLink(request))
+        .build();
+  }
 
-    @GetMapping(path = "/{orderId}")
-    public ResponseData<ObjectNode> getOrderById(@PathVariable("orderId") long orderId) {
-        return ResponseData.<ObjectNode>builder()
-                .data(paymentService.getOrderByID(orderId))
-                .build();
-    }
+  @GetMapping(path = "/{orderId}")
+  public ResponseData<ObjectNode> getOrderById(@PathVariable("orderId") long orderId) {
+    return ResponseData.<ObjectNode>builder().data(paymentService.getOrderByID(orderId)).build();
+  }
 
-    @PutMapping("/{order-id}")
-    public ResponseData<ObjectNode> cancelOrder(@PathVariable("order-id") int orderId) {
-        return ResponseData.<ObjectNode>builder()
-                .data(paymentService.cancelOrder(orderId))
-                .build();
-    }
+  @PutMapping("/{order-id}")
+  public ResponseData<ObjectNode> cancelOrder(@PathVariable("order-id") int orderId) {
+    return ResponseData.<ObjectNode>builder().data(paymentService.cancelOrder(orderId)).build();
+  }
 
-    @PostMapping("/confirm-webhook")
-    public ResponseData<ObjectNode> confirmWebHook(@RequestBody Map<String, String> request) {
-        return ResponseData.<ObjectNode>builder()
-                .data(paymentService.confirmWebHook(request))
-                .build();
-    }
+  @PostMapping("/confirm-webhook")
+  public ResponseData<ObjectNode> confirmWebHook(@RequestBody Map<String, String> request) {
+    return ResponseData.<ObjectNode>builder().data(paymentService.confirmWebHook(request)).build();
+  }
 }

@@ -18,46 +18,46 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[Dancers Controller]")
 public class DancersController {
 
-    private final DancerService dancerService;
+  private final DancerService dancerService;
 
-    @GetMapping("/get-all-dancers")
-    public ResponseData<List<DancerResponse>> getAllDancer() {
-        return ResponseData.<List<DancerResponse>>builder()
-                .message(ResponseMessage.GET_ALL_DANCERS)
-                .data(dancerService.getallDancer())
-                .build();
-    }
+  @GetMapping("/get-all-dancers")
+  public ResponseData<List<DancerResponse>> getAllDancer() {
+    return ResponseData.<List<DancerResponse>>builder()
+        .message(ResponseMessage.GET_ALL_DANCERS)
+        .data(dancerService.getallDancer())
+        .build();
+  }
 
-    @PatchMapping("/update-dancer-profile/{dancerId}")
-    public ResponseData<DancerResponse> updateDancer(
-            @PathVariable Integer dancerId, @RequestBody DancerRequest dancerRequest) {
-        return ResponseData.<DancerResponse>builder()
-                .message(ResponseMessage.UPDATE_DANCER)
-                .data(dancerService.updateDancer(dancerId, dancerRequest))
-                .build();
-    }
+  @PatchMapping("/update-dancer-profile/{dancerId}")
+  public ResponseData<DancerResponse> updateDancer(
+      @PathVariable Integer dancerId, @RequestBody DancerRequest dancerRequest) {
+    return ResponseData.<DancerResponse>builder()
+        .message(ResponseMessage.UPDATE_DANCER)
+        .data(dancerService.updateDancer(dancerId, dancerRequest))
+        .build();
+  }
 
-    @DeleteMapping("/remove-dancers/{dancerId}")
-    public ResponseData<DancerResponse> removeDancer(@PathVariable Integer dancerId) {
-        return ResponseData.<DancerResponse>builder()
-                .message(ResponseMessage.REMOVE_DANCER)
-                .data(dancerService.removeDancer(dancerId))
-                .build();
-    }
+  @DeleteMapping("/remove-dancers/{dancerId}")
+  public ResponseData<DancerResponse> removeDancer(@PathVariable Integer dancerId) {
+    return ResponseData.<DancerResponse>builder()
+        .message(ResponseMessage.REMOVE_DANCER)
+        .data(dancerService.removeDancer(dancerId))
+        .build();
+  }
 
-    @GetMapping("/get-dancer-by-Id/{dancerId}")
-    public ResponseData<DancerResponse> getDancerById(@PathVariable Integer dancerId) {
-        return ResponseData.<DancerResponse>builder()
-                .message(ResponseMessage.GET_DANCER)
-                .data(dancerService.getDancerById(dancerId))
-                .build();
-    }
+  @GetMapping("/get-dancer-by-Id/{dancerId}")
+  public ResponseData<DancerResponse> getDancerById(@PathVariable Integer dancerId) {
+    return ResponseData.<DancerResponse>builder()
+        .message(ResponseMessage.GET_DANCER)
+        .data(dancerService.getDancerById(dancerId))
+        .build();
+  }
 
-    @GetMapping("/get-dancer-by-dance-type/{danceTypeId}")
-    public ResponseData<DancerResponse> getDancerByDanceType(@PathVariable Integer danceTypeId) {
-        return ResponseData.<DancerResponse>builder()
-                .message(ResponseMessage.GET_DANCER_BY_DANCE_TYPE)
-                .data(dancerService.getDancerByDanceType(danceTypeId))
-                .build();
-    }
+  @GetMapping("/get-dancer-by-dance-type/{danceTypeId}")
+  public ResponseData<DancerResponse> getDancerByDanceType(@PathVariable Integer danceTypeId) {
+    return ResponseData.<DancerResponse>builder()
+        .message(ResponseMessage.GET_DANCER_BY_DANCE_TYPE)
+        .data(dancerService.getDancerByDanceType(danceTypeId))
+        .build();
+  }
 }

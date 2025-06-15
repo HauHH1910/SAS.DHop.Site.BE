@@ -19,56 +19,55 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[Subscription Controller]")
 public class SubscriptionController {
 
-    private final SubscriptionService service;
+  private final SubscriptionService service;
 
-    @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseData<List<SubscriptionResponse>> getSubscription() {
-        return ResponseData.<List<SubscriptionResponse>>builder()
-                .data(service.getAllSubscription())
-                .message(ResponseMessage.GET_SUBSCRIPTION)
-                .build();
-    }
+  @GetMapping
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  public ResponseData<List<SubscriptionResponse>> getSubscription() {
+    return ResponseData.<List<SubscriptionResponse>>builder()
+        .data(service.getAllSubscription())
+        .message(ResponseMessage.GET_SUBSCRIPTION)
+        .build();
+  }
 
-    @PostMapping
-    public ResponseData<SubscriptionResponse> createNewSubscription(@RequestBody SubscriptionRequest request) {
-        return ResponseData.<SubscriptionResponse>builder()
-                .data(service.createSubscription(request))
-                .message(ResponseMessage.CREATE_SUBSCRIPTION)
-                .build();
-    }
+  @PostMapping
+  public ResponseData<SubscriptionResponse> createNewSubscription(
+      @RequestBody SubscriptionRequest request) {
+    return ResponseData.<SubscriptionResponse>builder()
+        .data(service.createSubscription(request))
+        .message(ResponseMessage.CREATE_SUBSCRIPTION)
+        .build();
+  }
 
-    @PatchMapping("/{id}")
-    public ResponseData<SubscriptionResponse> updateSubscriptionById(
-            @PathVariable("id") Integer id, @RequestBody SubscriptionRequest request) {
-        return ResponseData.<SubscriptionResponse>builder()
-                .data(service.updateSubscription(id, request))
-                .message(ResponseMessage.UPDATE_SUBSCRIPTION)
-                .build();
-    }
+  @PatchMapping("/{id}")
+  public ResponseData<SubscriptionResponse> updateSubscriptionById(
+      @PathVariable("id") Integer id, @RequestBody SubscriptionRequest request) {
+    return ResponseData.<SubscriptionResponse>builder()
+        .data(service.updateSubscription(id, request))
+        .message(ResponseMessage.UPDATE_SUBSCRIPTION)
+        .build();
+  }
 
-    @GetMapping("/{id}")
-    public ResponseData<SubscriptionResponse> findSubscriptionById(@PathVariable("id") Integer id) {
-        return ResponseData.<SubscriptionResponse>builder()
-                .data(service.findSubscription(id))
-                .message(ResponseMessage.FIND_SUBSCRIPTION)
-                .build();
-    }
+  @GetMapping("/{id}")
+  public ResponseData<SubscriptionResponse> findSubscriptionById(@PathVariable("id") Integer id) {
+    return ResponseData.<SubscriptionResponse>builder()
+        .data(service.findSubscription(id))
+        .message(ResponseMessage.FIND_SUBSCRIPTION)
+        .build();
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseData<Void> deleteSubscriptionById(@PathVariable("id") Integer id) {
-        service.deleteSubscription(id);
-        return ResponseData.<Void>builder()
-                .message(ResponseMessage.DELETE_SUBSCRIPTION)
-                .build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseData<Void> deleteSubscriptionById(@PathVariable("id") Integer id) {
+    service.deleteSubscription(id);
+    return ResponseData.<Void>builder().message(ResponseMessage.DELETE_SUBSCRIPTION).build();
+  }
 
-    @PatchMapping("/status/{id}")
-    public ResponseData<SubscriptionResponse> statusSubscriptionUpdate(
-            @PathVariable("id") Integer id, @RequestBody boolean isUpdate) {
-        return ResponseData.<SubscriptionResponse>builder()
-                .data(service.updateStatusSubscription(id, isUpdate))
-                .message(ResponseMessage.UPDATE_SUBSCRIPTION)
-                .build();
-    }
+  @PatchMapping("/status/{id}")
+  public ResponseData<SubscriptionResponse> statusSubscriptionUpdate(
+      @PathVariable("id") Integer id, @RequestBody boolean isUpdate) {
+    return ResponseData.<SubscriptionResponse>builder()
+        .data(service.updateStatusSubscription(id, isUpdate))
+        .message(ResponseMessage.UPDATE_SUBSCRIPTION)
+        .build();
+  }
 }

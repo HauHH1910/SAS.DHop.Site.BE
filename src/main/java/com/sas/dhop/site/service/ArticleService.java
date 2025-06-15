@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface ArticleService {
 
-    ArticleResponse createArticle(ArticleRequest articleRequest);
+  ArticleResponse createArticle(ArticleRequest articleRequest);
 
-    ArticleResponse getArticleById(Integer id);
+  ArticleResponse getArticleById(Integer id);
 
-    ArticleResponse updateAritcle(Integer id, ArticleRequest articleRequest);
+  ArticleResponse updateAritcle(Integer id, ArticleRequest articleRequest);
 
-    ArticleResponse deleteArticle(Integer id);
+  ArticleResponse deleteArticle(Integer id);
 
-    List<ArticleResponse> getAllArticle();
+  List<ArticleResponse> getAllArticle();
 }

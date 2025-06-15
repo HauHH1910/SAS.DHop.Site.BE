@@ -18,21 +18,21 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[Dance Type Controller]")
 public class DanceTypeController {
 
-    private final DanceTypeService danceTypeService;
+  private final DanceTypeService danceTypeService;
 
-    @GetMapping
-    public ResponseData<List<DanceTypeResponse>> getAllDanceType() {
-        return ResponseData.<List<DanceTypeResponse>>builder()
-                .message(ResponseMessage.GET_ALL_DANCE_TYPE)
-                .data(danceTypeService.getAllDanceType())
-                .build();
-    }
+  @GetMapping
+  public ResponseData<List<DanceTypeResponse>> getAllDanceType() {
+    return ResponseData.<List<DanceTypeResponse>>builder()
+        .message(ResponseMessage.GET_ALL_DANCE_TYPE)
+        .data(danceTypeService.getAllDanceType())
+        .build();
+  }
 
-    @PostMapping
-    public ResponseData<DanceTypeResponse> createDanceType(@RequestBody DanceTypeRequest request) {
-        return ResponseData.<DanceTypeResponse>builder()
-                .message(ResponseMessage.CREATE_DANCE_TYPE)
-                .data(danceTypeService.createDanceType(request))
-                .build();
-    }
+  @PostMapping
+  public ResponseData<DanceTypeResponse> createDanceType(@RequestBody DanceTypeRequest request) {
+    return ResponseData.<DanceTypeResponse>builder()
+        .message(ResponseMessage.CREATE_DANCE_TYPE)
+        .data(danceTypeService.createDanceType(request))
+        .build();
+  }
 }

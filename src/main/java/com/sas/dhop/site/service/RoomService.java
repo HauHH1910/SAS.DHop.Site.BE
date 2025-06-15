@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface RoomService {
 
-    Room createOrGetRoom(CreateRoomRequest roomId);
+  Room createOrGetRoom(CreateRoomRequest roomId);
 
-    RoomDetailResponse joinRoom(String roomId);
+  RoomDetailResponse joinRoom(String roomId);
 
-    List<Message> getMessages(String roomId);
+  List<Message> getMessages(String roomId);
 
-    RoomResponse getRoom(Principal principal);
+  RoomResponse getRoom(Principal principal);
 }

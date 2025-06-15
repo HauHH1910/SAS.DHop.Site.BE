@@ -6,15 +6,16 @@ import java.util.List;
 
 public interface ChoreographerService {
 
-    ChoreographerResponse updateChoreographer(Integer choreographyId, ChoreographerRequest choreographerRequest);
+  ChoreographerResponse updateChoreographer(
+      Integer choreographyId, ChoreographerRequest choreographerRequest);
 
-    ChoreographerResponse removeChoreographer(Integer choreographyId);
+  ChoreographerResponse removeChoreographer(Integer choreographyId);
 
-    ChoreographerResponse getChoreographerById(Integer choreographyId);
+  ChoreographerResponse getChoreographerById(Integer choreographyId);
 
-    List<ChoreographerResponse> getAllChoreography();
+  List<ChoreographerResponse> getAllChoreography();
 
-    ChoreographerResponse getChoreographerBySubscriptionStatus(Integer id);
+  ChoreographerResponse getChoreographerBySubscriptionStatus(Integer id);
 
-    ChoreographerResponse getAllChoreographerBySubscriptionStatus();
+  ChoreographerResponse getAllChoreographerBySubscriptionStatus();
 }

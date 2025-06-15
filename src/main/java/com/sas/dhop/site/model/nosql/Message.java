@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 public class Message {
 
-    private String sender;
-    private String content;
-    private LocalDateTime timeStamp;
+  private String sender;
+  private String content;
+  private LocalDateTime timeStamp;
 }
