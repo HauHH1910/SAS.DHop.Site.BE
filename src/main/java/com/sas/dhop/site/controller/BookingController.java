@@ -3,6 +3,7 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.service.BookingService;
@@ -33,6 +34,14 @@ public class BookingController {
         return ResponseData.<BookingCancelResponse>builder()
                 .message(ResponseMessage.CANCEL_BOOKING)
                 .data(bookingService.cancelBooking(bookingId))
+                .build();
+    }
+
+    @PutMapping("/update-booking/{bookingId}")
+    public ResponseData<BookingResponse> updateBookingInformation(@PathVariable Integer bookingId, @RequestBody BookingRequest bookingRequest) {
+        return ResponseData.<BookingResponse>builder()
+                .message(ResponseMessage.UPDATE_BOOKING_SUCCESSFULLY)
+                .data(bookingService.updateBookingInformation(bookingId, bookingRequest))
                 .build();
     }
 
@@ -68,11 +77,11 @@ public class BookingController {
                 .build();
     }
 
-    @PutMapping("/end-work-request/{bookingId}")
-    public ResponseData<BookingResponse> endWorkRequest(@PathVariable Integer bookingId) {
+    @PutMapping("/end-work-request")
+    public ResponseData<BookingResponse> endWorkRequest(@RequestBody EndWorkRequest endWorkRequest) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.END_WORK_SUCCESSFULLY)
-                .data(bookingService.endWorking(bookingId))
+                .data(bookingService.endWorking(endWorkRequest))
                 .build();
     }
 

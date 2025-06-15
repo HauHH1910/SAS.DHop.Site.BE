@@ -61,7 +61,11 @@ public enum ErrorConstant {
 
     CAN_NOT_FEEDBACK(45,"Không thể đánh giá dịch vụ này",HttpStatus.NOT_ACCEPTABLE ),
     INVALID_BOOKING(46, "Dịch vụ thuê không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
-    INVALID_MINIMUM_PRICE(47, "Số tiền tối thiểu không hợp lệ",HttpStatus.NOT_ACCEPTABLE)
+    INVALID_MINIMUM_PRICE(47, "Số tiền tối thiểu không hợp lệ",HttpStatus.NOT_ACCEPTABLE),
+    DANCER_TEAM_SIZE_CONFLICT(48,"Xung đột về số lượng thành viên", HttpStatus.CONFLICT),
+    CHOOREOGRAPHY_TIME_CONFLICT(49, "Xung đột thời gian làm việc của biên đạo", HttpStatus.CONFLICT),
+    CAN_NOT_UPDATE_BOOKING(50, "Không thể cập nhập thông tin của dịch vụ", HttpStatus.FORBIDDEN)
+
     ;
 
     private final Integer code;

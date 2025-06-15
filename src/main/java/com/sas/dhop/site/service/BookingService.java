@@ -30,5 +30,7 @@ public interface BookingService {
 
     BookingResponse endBooking(int bookingId);
 
+    BookingResponse updateBookingInformation(Integer bookingId, BookingRequest bookingRequest);
+
     BookingResponse endWorking(EndWorkRequest request);
 }
