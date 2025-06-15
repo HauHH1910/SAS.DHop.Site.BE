@@ -7,7 +7,6 @@ import com.sas.dhop.site.dto.response.AreaResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.Area;
-import com.sas.dhop.site.model.Role;
 import com.sas.dhop.site.model.Status;
 import com.sas.dhop.site.model.User;
 import com.sas.dhop.site.model.enums.RoleName;
@@ -17,11 +16,8 @@ import com.sas.dhop.site.service.AuthenticationService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.AreaMapper;
-
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

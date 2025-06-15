@@ -59,7 +59,6 @@ public class PaymentServiceImpl implements PaymentService {
             response.put("message", "fail");
             response.set("data", null);
             return response;
-
         }
     }
 

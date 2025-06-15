@@ -18,11 +18,9 @@ import com.sas.dhop.site.util.JwtUtil;
 import com.sas.dhop.site.util.mapper.UserMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
-
 import java.text.ParseException;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -313,8 +311,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return authentication != null
                 && !(authentication instanceof AnonymousAuthenticationToken)
                 && authentication.isAuthenticated()
-                && authentication.getAuthorities().stream()
-                .anyMatch(authority -> {
+                && authentication.getAuthorities().stream().anyMatch(authority -> {
                     log.info("User has the required role: {}", authority.getAuthority());
                     return role.equals(authority.getAuthority());
                 });
