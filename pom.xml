@@ -220,12 +220,12 @@
                         <includes>
                             <include>src/main/java/**/*.java</include>
                         </includes>
+                        <importOrder/>
+                        <removeUnusedImports/>
                         <googleJavaFormat>
                             <version>1.17.0</version>
                             <style>GOOGLE</style>
                         </googleJavaFormat>
-                        <importOrder/>
-                        <removeUnusedImports/>
                     </java>
                 </configuration>
                 <executions>
