@@ -3,7 +3,7 @@ package com.sas.dhop.site.service.impl;
 import com.sas.dhop.site.constant.ArticleStatus;
 import com.sas.dhop.site.dto.request.ArticleRequest;
 import com.sas.dhop.site.dto.response.ArticleResponse;
-import com.sas.dhop.site.dto.response.ImageResponse;
+import com.sas.dhop.site.dto.response.MediaResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.Article;
@@ -39,12 +39,12 @@ public class ArticleServiceImpl implements ArticleService {
     public ArticleResponse createArticle(ArticleRequest articleRequest) {
 
         // Upload thumbnail to cloud storage
-        List<ImageResponse> imageResponses = cloudStorageService.uploadImage(articleRequest.thumbnail());
-        if (imageResponses.isEmpty()) {
+        List<MediaResponse> mediaRespons = cloudStorageService.uploadImage(articleRequest.thumbnail());
+        if (mediaRespons.isEmpty()) {
             throw new BusinessException(ErrorConstant.ARTICLE_NOT_FOUND);
         }
 
-        String thumbnailUrl = imageResponses.get(0).imageUrl();
+        String thumbnailUrl = mediaRespons.get(0).url();
 
         Status status = statusService.findStatusOrCreated(ArticleStatus.ACTIVATED_ARTICLE);
 

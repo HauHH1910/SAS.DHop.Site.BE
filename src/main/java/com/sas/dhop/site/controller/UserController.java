@@ -5,6 +5,7 @@ import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.CreateUserRequest;
 import com.sas.dhop.site.dto.request.UpdateUserRequest;
 import com.sas.dhop.site.dto.response.UserResponse;
+import com.sas.dhop.site.model.User;
 import com.sas.dhop.site.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -74,5 +75,10 @@ public class UserController {
                 .message(ResponseMessage.FIND_EMAIL)
                 .data(userService.findUser(email))
                 .build();
+    }
+
+    @GetMapping("/login-user")
+    public ResponseData<User> getLoginUser() {
+        return ResponseData.<User>builder().data(userService.getLoginUser()).build();
     }
 }

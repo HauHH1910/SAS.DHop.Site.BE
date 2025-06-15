@@ -17,6 +17,10 @@ public class Performance extends AbstractEntity<Integer> implements Serializable
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booking_id")
+    private Booking booking;
+
     @Column(name = "media_url")
     private String mediaUrl;
 

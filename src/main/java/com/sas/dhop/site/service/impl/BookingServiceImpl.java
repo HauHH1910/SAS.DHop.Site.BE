@@ -5,15 +5,13 @@ import com.sas.dhop.site.dto.request.BookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
+import com.sas.dhop.site.dto.response.MediaResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.*;
 import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
-import com.sas.dhop.site.service.BookingService;
-import com.sas.dhop.site.service.DanceTypeService;
-import com.sas.dhop.site.service.StatusService;
-import com.sas.dhop.site.service.UserService;
+import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -42,6 +40,8 @@ public class BookingServiceImpl implements BookingService {
     private final DancerRepository dancerRepository;
     private final ChoreographyRepository choreographyRepository;
     private final StatusService statusService;
+    private final CloudStorageService cloudStorageService;
+    private final PerformanceService performanceService;
 
     // Booking is only for the dancer, the booker wants
     @Override
@@ -197,8 +197,16 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         Status currentStatus = booking.getStatus();
-        if (!currentStatus.getStatusName().equals(BookingStatus.BOOKING_IN_PROGRESS))
+        if (!currentStatus.getStatusName().equals(BookingStatus.BOOKING_IN_PROGRESS)) {
             throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
+        }
+
+        if (request.multipartFiles() != null) {
+            List<MediaResponse> mediaResponses = cloudStorageService.uploadImage(request.multipartFiles());
+            for (MediaResponse media : mediaResponses) {
+                performanceService.uploadPerformanceForBooking(media.url(), booking);
+            }
+        }
 
         Status workingStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_WORKING_DONE);
         booking.setStatus(workingStatus);
@@ -245,21 +253,21 @@ public class BookingServiceImpl implements BookingService {
         return bookingCancelMapper.mapToBookingCancelResponse(booking);
     }
 
-    //    @Override
-    //    public BookingResponse confirmWork(int bookingId) {
-    //        Booking booking = bookingRepository
-    //                .findById(bookingId)
-    //                .orElseThrow(()-> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+    // @Override
+    // public BookingResponse confirmWork(int bookingId) {
+    // Booking booking = bookingRepository
+    // .findById(bookingId)
+    // .orElseThrow(()-> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
     //
-    //        if(booking.getBookingStatus() != BookingStatus.BOOKING_WORKING_DONE)
-    //            throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
+    // if(booking.getBookingStatus() != BookingStatus.BOOKING_WORKING_DONE)
+    // throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
     //
-    //        Status confirmStatus = statusService.findStatusOrCreated(BookingStatus.)
-    //
-    //
+    // Status confirmStatus = statusService.findStatusOrCreated(BookingStatus.)
     //
     //
-    //    }
+    //
+    //
+    // }
 
     @Override
     public BookingResponse endBooking(int bookingId) {

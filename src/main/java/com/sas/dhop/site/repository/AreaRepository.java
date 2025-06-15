@@ -26,8 +26,8 @@ public interface AreaRepository extends JpaRepository<Area, Integer>, JpaSpecifi
     boolean existsByLocation(
             @Param("city") String city, @Param("district") String district, @Param("ward") String ward);
 
-    //    @Query("SELECT a FROM Area a WHERE a.status.statusName = :statusName")
-    //    List<Area> findAreaByStatus(@Param("statusName") AreaStatus areaStatusName);
+    // @Query("SELECT a FROM Area a WHERE a.status.statusName = :statusName")
+    // List<Area> findAreaByStatus(@Param("statusName") AreaStatus areaStatusName);
 
     @Query("SELECT a FROM Area a WHERE a.status.statusName = :status")
     List<Area> findAreaByStatus(@Param("status") String status);

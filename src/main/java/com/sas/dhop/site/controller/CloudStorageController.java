@@ -2,7 +2,7 @@ package com.sas.dhop.site.controller;
 
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
-import com.sas.dhop.site.dto.response.ImageResponse;
+import com.sas.dhop.site.dto.response.MediaResponse;
 import com.sas.dhop.site.service.CloudStorageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -23,12 +23,19 @@ public class CloudStorageController {
 
     private final CloudStorageService cloudStorageService;
 
-    @PostMapping
-    public ResponseData<List<ImageResponse>> listResponseEntity(
-            @RequestParam("images") MultipartFile[] multipartFiles) {
-        return ResponseData.<List<ImageResponse>>builder()
+    @PostMapping("/images")
+    public ResponseData<List<MediaResponse>> uploadImages(@RequestParam("images") MultipartFile[] multipartFiles) {
+        return ResponseData.<List<MediaResponse>>builder()
                 .message(ResponseMessage.UPLOAD_IMAGE)
                 .data(cloudStorageService.uploadImage(multipartFiles))
+                .build();
+    }
+
+    @PostMapping("/video")
+    public ResponseData<MediaResponse> uploadVideo(@RequestParam("video") MultipartFile multipartFile) {
+        return ResponseData.<MediaResponse>builder()
+                .message(ResponseMessage.UPLOAD_VIDEO)
+                .data(cloudStorageService.uploadVideo(multipartFile))
                 .build();
     }
 }

@@ -6,7 +6,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import com.sas.dhop.site.dto.response.ImageResponse;
+import com.sas.dhop.site.dto.response.MediaResponse;
 import com.sas.dhop.site.service.CloudStorageService;
 import java.io.*;
 import java.net.URLEncoder;
@@ -33,26 +33,25 @@ public class CloudStorageServiceImpl implements CloudStorageService {
     private String firebaseKey;
 
     @Override
-    public List<ImageResponse> uploadImage(MultipartFile[] multipartFiles) {
-        List<ImageResponse> imageResponses = new ArrayList<>();
+    public List<MediaResponse> uploadImage(MultipartFile[] multipartFiles) {
+        List<MediaResponse> responses = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             try {
-                String fileName =
-                        UUID.randomUUID().toString().concat(this.getExtension(multipartFile.getOriginalFilename()));
+                String fileName = generateUniqueFilename(multipartFile);
 
                 log.info("Uploading file: {}", fileName);
 
-                File file = this.convertToFile(multipartFile, fileName);
+                File file = convertToFile(multipartFile, fileName);
 
-                String url = this.uploadFile(file, fileName);
+                String url = uploadToFirebase(file, fileName, multipartFile.getContentType());
 
                 deleteFile(file);
 
-                imageResponses.add(new ImageResponse(url));
+                responses.add(new MediaResponse(url));
 
                 log.info("File uploaded successfully: {}", url);
 
-                if (imageResponses.size() > 3) {
+                if (responses.size() > 3) {
                     break;
                 }
             } catch (IOException e) {
@@ -60,13 +59,33 @@ public class CloudStorageServiceImpl implements CloudStorageService {
                 throw new RuntimeException(e);
             }
         }
-        return imageResponses;
+        return responses;
     }
 
-    private String uploadFile(File file, String fileName) throws IOException {
-        BlobId blobId = BlobId.of(bucketName, fileName);
+    @Override
+    public MediaResponse uploadVideo(MultipartFile multipartFile) {
+        try {
+            String fileName = generateUniqueFilename(multipartFile);
+            log.info("Uploading video: {}", fileName);
 
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("media").build();
+            File file = convertToFile(multipartFile, fileName);
+
+            String url = uploadToFirebase(file, fileName, multipartFile.getContentType());
+
+            deleteFile(file);
+
+            return new MediaResponse(url);
+        } catch (Exception e) {
+            log.error("Failed to upload video", e);
+            throw new RuntimeException("Video upload failed", e);
+        }
+    }
+
+    private String uploadToFirebase(File file, String fileName, String contentType) throws IOException {
+        BlobId blobId = BlobId.of(bucketName, fileName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                .setContentType(contentType != null ? contentType : Files.probeContentType(file.toPath()))
+                .build();
 
         Credentials credentials =
                 GoogleCredentials.fromStream(new ByteArrayInputStream(firebaseKey.getBytes(StandardCharsets.UTF_8)));
@@ -102,5 +121,9 @@ public class CloudStorageServiceImpl implements CloudStorageService {
         } else {
             log.warn("Failed to delete temporary file {}", file.getName());
         }
+    }
+
+    private String generateUniqueFilename(MultipartFile multipartFile) {
+        return UUID.randomUUID() + getExtension(multipartFile.getOriginalFilename());
     }
 }

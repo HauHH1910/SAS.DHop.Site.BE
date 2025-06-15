@@ -66,4 +66,11 @@ public class ResponseMessage {
     public static final String OTP_RESET_PASSWORD = "Gửi OTP đặt lại mật khẩu thành công";
     public static final String UPLOAD_IMAGE = "Đăng ảnh thành công";
     public static final String CREATE_PAYMENT = "Tạo thanh toán thành công";
+    public static final String UPLOAD_VIDEO = "Đăng video thành công";
+    public static final String CREATE_PERFORMANCE = "Tạo bằng chứng thành công";
+    public static final String GET_PERFORMANCE = "Lấy bằng chứng thành công";
+    public static final String GET_ALL_PERFORMANCE_BELONG_TO_BOOKING = "Lấy bằng chứng thuộc về hợp đồng";
+    public static final String GET_ALL_PERFORMANCE_BELONG_TO_CURRENT_USER =
+            "Lấy bằng chứng thuộc về người dùng hịện tại";
+    public static final String DELETE_PERFORMANCE = "Xóa bằng chứng thành công";
 }
