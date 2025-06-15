@@ -13,6 +13,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -76,9 +77,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getLoginUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!authentication.isAuthenticated()) {
-			throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
+
+		if (authentication == null || !authentication.isAuthenticated()
+				|| authentication instanceof AnonymousAuthenticationToken) {
+			throw new BusinessException(ErrorConstant.USER_NOT_FOUND);
 		}
+
 		return userRepository.findByEmail(authentication.getName())
 				.orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 	}

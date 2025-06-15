@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/Area")
+@RequestMapping("/area")
 @Tag(name = "[Area Controller]")
 @Slf4j(topic = "[Area Controller]")
 public class AreaController {
