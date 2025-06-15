@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface RoleService {
 
-	RoleResponse createRole(RoleRequest request);
+    RoleResponse createRole(RoleRequest request);
 
-	List<RoleResponse> getAll();
+    List<RoleResponse> getAll();
 
-	void deleteRole(Integer id);
+    void deleteRole(Integer id);
 
-	// void checkRole(Integer id, RoleName... allowedRoles);
+    // void checkRole(Integer id, RoleName... allowedRoles);
 
-	Role findByRoleName(RoleName role);
+    Role findByRoleName(RoleName role);
 }

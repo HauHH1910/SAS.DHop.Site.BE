@@ -194,22 +194,7 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.rudikershaw.gitbuildhook</groupId>
-                <artifactId>git-build-hook-maven-plugin</artifactId>
-                <version>3.4.1</version>
-                <configuration>
-                    <preCommit>mvn spotless:apply</preCommit>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>install</goal>
-                        </goals>
-                        <phase>initialize</phase>
-                    </execution>
-                </executions>
-            </plugin>
+
             <plugin>
                 <groupId>io.github.git-commit-id</groupId>
                 <artifactId>git-commit-id-maven-plugin</artifactId>
@@ -225,7 +210,8 @@
                 </executions>
                 <configuration>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
+                    </generateGitPropertiesFilename>
                     <includeOnlyProperties>
                         <includeOnlyProperty>^git.branch$</includeOnlyProperty>
                         <includeOnlyProperty>^git.commit.id$</includeOnlyProperty>
@@ -245,8 +231,10 @@
                         </includes>
                         <importOrder/>
                         <removeUnusedImports/>
-                        <eclipse/>
                         <formatAnnotations/>
+                        <palantirJavaFormat>
+                            <version>2.35.0</version>
+                        </palantirJavaFormat>
                     </java>
                 </configuration>
                 <executions>

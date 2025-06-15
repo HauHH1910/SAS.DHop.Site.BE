@@ -15,20 +15,32 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-	@Bean
-	public GroupedOpenApi groupedOpenAPI(@Value("${group.open.api.docs}") String docs,
-			@Value("${group.package}") String packageToScan) {
-		return GroupedOpenApi.builder().group(docs).packagesToScan(packageToScan).build();
-	}
+    @Bean
+    public GroupedOpenApi groupedOpenAPI(
+            @Value("${group.open.api.docs}") String docs, @Value("${group.package}") String packageToScan) {
+        return GroupedOpenApi.builder()
+                .group(docs)
+                .packagesToScan(packageToScan)
+                .build();
+    }
 
-	@Bean
-	public OpenAPI openAPI(@Value("${open-api.title}") String title, @Value("${open-api.version}") String version,
-			@Value("${open-api.description}") String description, @Value("${open-api.server}") String server,
-			@Value("${open-api.server-name}") String serverName) {
-		return new OpenAPI().servers(List.of(new Server().url(server).description(serverName)))
-				.info(new Info().title(title).description(description).version(version))
-				.components(new Components().addSecuritySchemes("bearerAuth",
-						new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
-				.security(List.of(new SecurityRequirement().addList("bearerAuth")));
-	}
+    @Bean
+    public OpenAPI openAPI(
+            @Value("${open-api.title}") String title,
+            @Value("${open-api.version}") String version,
+            @Value("${open-api.description}") String description,
+            @Value("${open-api.server}") String server,
+            @Value("${open-api.server-name}") String serverName) {
+        return new OpenAPI()
+                .servers(List.of(new Server().url(server).description(serverName)))
+                .info(new Info().title(title).description(description).version(version))
+                .components(new Components()
+                        .addSecuritySchemes(
+                                "bearerAuth",
+                                new SecurityScheme()
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")))
+                .security(List.of(new SecurityRequirement().addList("bearerAuth")));
+    }
 }

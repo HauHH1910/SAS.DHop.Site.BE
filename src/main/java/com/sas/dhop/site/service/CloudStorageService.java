@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface CloudStorageService {
-	List<MediaResponse> uploadImage(MultipartFile[] multipartFiles);
+    List<MediaResponse> uploadImage(MultipartFile[] multipartFiles);
 
-	MediaResponse uploadVideo(MultipartFile multipartFile);
+    MediaResponse uploadVideo(MultipartFile multipartFile);
 }

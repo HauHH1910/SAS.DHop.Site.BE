@@ -12,17 +12,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthChannelInterceptor implements ChannelInterceptor {
-	@Override
-	public Message<?> preSend(Message<?> message, MessageChannel channel) {
-		StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+    @Override
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-		if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-			Authentication auth = (Authentication) accessor.getSessionAttributes().get("auth");
-			if (auth != null) {
-				accessor.setUser(auth);
-				SecurityContextHolder.getContext().setAuthentication(auth);
-			}
-		}
-		return message;
-	}
+        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+            Authentication auth =
+                    (Authentication) accessor.getSessionAttributes().get("auth");
+            if (auth != null) {
+                accessor.setUser(auth);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+        }
+        return message;
+    }
 }

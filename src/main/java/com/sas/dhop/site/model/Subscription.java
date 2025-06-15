@@ -14,19 +14,19 @@ import lombok.*;
 @Table(name = "subscription")
 public class Subscription extends AbstractEntity<Integer> implements Serializable {
 
-	@Column(name = "name", length = 100)
-	private String name;
+    @Column(name = "name", length = 100)
+    private String name;
 
-	@Column(name = "duration")
-	private Integer duration;
+    @Column(name = "duration")
+    private Integer duration;
 
-	@Column(name = "content")
-	private String content;
+    @Column(name = "content")
+    private String content;
 
-	@Column(name = "price", precision = 10, scale = 2)
-	private BigDecimal price;
+    @Column(name = "price", precision = 10, scale = 2)
+    private BigDecimal price;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "status_id", nullable = false)
-	private Status status;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "status_id", nullable = false)
+    private Status status;
 }

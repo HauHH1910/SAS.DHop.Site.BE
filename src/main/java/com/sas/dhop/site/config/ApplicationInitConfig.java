@@ -27,153 +27,215 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Slf4j(topic = "[Application Init Configuration]")
 public class ApplicationInitConfig {
 
-	private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-	@Bean
-	@Transactional
-	ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository,
-			StatusRepository statusRepository, AreaRepository areaRepository, DanceTypeRepository danceTypeRepository,
-			DancerRepository dancerRepository, ChoreographyRepository choreographyRepository,
-			PerformanceRepository performanceRepository) {
-		return args -> {
-			Role role = roleRepository.findByName(RoleName.ADMIN).orElseGet(() -> {
-				Role r = Role.builder().name(RoleName.ADMIN).build();
-				return roleRepository.save(r);
-			});
+    @Bean
+    @Transactional
+    ApplicationRunner applicationRunner(
+            UserRepository userRepository,
+            RoleRepository roleRepository,
+            StatusRepository statusRepository,
+            AreaRepository areaRepository,
+            DanceTypeRepository danceTypeRepository,
+            DancerRepository dancerRepository,
+            ChoreographyRepository choreographyRepository,
+            PerformanceRepository performanceRepository) {
+        return args -> {
+            Role role = roleRepository.findByName(RoleName.ADMIN).orElseGet(() -> {
+                Role r = Role.builder().name(RoleName.ADMIN).build();
+                return roleRepository.save(r);
+            });
 
-			Status status = statusRepository.findByStatusName("ADMIN").orElseGet(() -> {
-				Status s = Status.builder().statusName("ADMIN").statusType(StatusType.ACTIVE).description("DESCRIPTION")
-						.build();
+            Status status = statusRepository.findByStatusName("ADMIN").orElseGet(() -> {
+                Status s = Status.builder()
+                        .statusName("ADMIN")
+                        .statusType(StatusType.ACTIVE)
+                        .description("DESCRIPTION")
+                        .build();
 
-				return statusRepository.save(s);
-			});
+                return statusRepository.save(s);
+            });
 
-			if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
-				Set<Role> roles = new HashSet<>();
-				roles.add(role);
-				User admin = User.builder().name("admin").email("admin@gmail.com")
-						.password(passwordEncoder.encode("123456")).roles(roles).status(status).build();
-				userRepository.save(admin);
-				Faker fakerVN = new Faker(new Locale("vi"));
-				Faker fakerUS = new Faker(new Locale("en-US"));
+            if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+                Set<Role> roles = new HashSet<>();
+                roles.add(role);
+                User admin = User.builder()
+                        .name("admin")
+                        .email("admin@gmail.com")
+                        .password(passwordEncoder.encode("123456"))
+                        .roles(roles)
+                        .status(status)
+                        .build();
+                userRepository.save(admin);
+                Faker fakerVN = new Faker(new Locale("vi"));
+                Faker fakerUS = new Faker(new Locale("en-US"));
 
-				for (int i = 0; i < 10; i++) {
-					Role userRole = roleRepository.findByName(RoleName.USER).orElseGet(() -> {
-						Role r = Role.builder().name(RoleName.USER).build();
-						return roleRepository.save(r);
-					});
+                for (int i = 0; i < 10; i++) {
+                    Role userRole = roleRepository.findByName(RoleName.USER).orElseGet(() -> {
+                        Role r = Role.builder().name(RoleName.USER).build();
+                        return roleRepository.save(r);
+                    });
 
-					Role dancerRole = roleRepository.findByName(RoleName.DANCER).orElseGet(() -> {
-						Role r = Role.builder().name(RoleName.DANCER).build();
-						return roleRepository.save(r);
-					});
+                    Role dancerRole = roleRepository.findByName(RoleName.DANCER).orElseGet(() -> {
+                        Role r = Role.builder().name(RoleName.DANCER).build();
+                        return roleRepository.save(r);
+                    });
 
-					Role choreographyRole = roleRepository.findByName(RoleName.CHOREOGRAPHY).orElseGet(() -> {
-						Role r = Role.builder().name(RoleName.CHOREOGRAPHY).build();
-						return roleRepository.save(r);
-					});
-					Status activeStatus = statusRepository.findByStatusName(ACTIVE_USER)
-							.orElseGet(() -> statusRepository.save(Status.builder().statusName(ACTIVE_USER)
-									.description(ACTIVE_USER).statusType(StatusType.ACTIVE).build()));
+                    Role choreographyRole = roleRepository
+                            .findByName(RoleName.CHOREOGRAPHY)
+                            .orElseGet(() -> {
+                                Role r = Role.builder()
+                                        .name(RoleName.CHOREOGRAPHY)
+                                        .build();
+                                return roleRepository.save(r);
+                            });
+                    Status activeStatus = statusRepository
+                            .findByStatusName(ACTIVE_USER)
+                            .orElseGet(() -> statusRepository.save(Status.builder()
+                                    .statusName(ACTIVE_USER)
+                                    .description(ACTIVE_USER)
+                                    .statusType(StatusType.ACTIVE)
+                                    .build()));
 
-					DanceType type = danceTypeRepository.save(DanceType.builder().type(fakerUS.job().title()).build());
+                    DanceType type = danceTypeRepository.save(
+                            DanceType.builder().type(fakerUS.job().title()).build());
 
-					// Create status for user subscription
-					switch (i) {
-						case 1 : {
-							statusRepository.findByStatusName(UserSubscriptionStatus.ACTIVE_USER_SUBSCRIPTION)
-									.orElseGet(() -> statusRepository.save(
-											Status.builder().statusName(UserSubscriptionStatus.ACTIVE_USER_SUBSCRIPTION)
-													.description("Gói dịch vụ đang hoạt động")
-													.statusType(StatusType.ACTIVE).build()));
-							break;
-						}
-						case 2 : {
-							statusRepository.findByStatusName(UserSubscriptionStatus.EXPIRE_USER_SUBSCRIPTION)
-									.orElseGet(() -> statusRepository.save(
-											Status.builder().statusName(UserSubscriptionStatus.EXPIRE_USER_SUBSCRIPTION)
-													.description("Gói dịch vụ đã hết hạn").statusType(StatusType.ACTIVE)
-													.build()));
-							break;
-						}
-						case 3 : {
-							statusRepository.findByStatusName(UserSubscriptionStatus.FREE_TRIAL_USER_SUBSCRIPTION)
-									.orElseGet(() -> statusRepository.save(Status.builder()
-											.statusName(UserSubscriptionStatus.FREE_TRIAL_USER_SUBSCRIPTION)
-											.description("Gói dịch vụ dùng thử miễn phí").statusType(StatusType.ACTIVE)
-											.build()));
-							break;
-						}
-						case 4 : {
-							statusRepository.findByStatusName(UserSubscriptionStatus.PENDING_USER_SUBSCRIPTION)
-									.orElseGet(() -> statusRepository.save(Status.builder()
-											.statusName(UserSubscriptionStatus.PENDING_USER_SUBSCRIPTION)
-											.description("Gói dịch vụ đang được xử lý").statusType(StatusType.ACTIVE)
-											.build()));
-							break;
-						}
-						case 5 : {
-							statusRepository.findByStatusName(UserSubscriptionStatus.RENEWING_USER_SUBSCRIPTION)
-									.orElseGet(() -> statusRepository.save(Status.builder()
-											.statusName(UserSubscriptionStatus.RENEWING_USER_SUBSCRIPTION)
-											.description("Gói dịch vụ đang được gia hạn").statusType(StatusType.ACTIVE)
-											.build()));
-							break;
-						}
-					}
+                    // Create status for user subscription
+                    switch (i) {
+                        case 1: {
+                            statusRepository
+                                    .findByStatusName(UserSubscriptionStatus.ACTIVE_USER_SUBSCRIPTION)
+                                    .orElseGet(() -> statusRepository.save(Status.builder()
+                                            .statusName(UserSubscriptionStatus.ACTIVE_USER_SUBSCRIPTION)
+                                            .description("Gói dịch vụ đang hoạt động")
+                                            .statusType(StatusType.ACTIVE)
+                                            .build()));
+                            break;
+                        }
+                        case 2: {
+                            statusRepository
+                                    .findByStatusName(UserSubscriptionStatus.EXPIRE_USER_SUBSCRIPTION)
+                                    .orElseGet(() -> statusRepository.save(Status.builder()
+                                            .statusName(UserSubscriptionStatus.EXPIRE_USER_SUBSCRIPTION)
+                                            .description("Gói dịch vụ đã hết hạn")
+                                            .statusType(StatusType.ACTIVE)
+                                            .build()));
+                            break;
+                        }
+                        case 3: {
+                            statusRepository
+                                    .findByStatusName(UserSubscriptionStatus.FREE_TRIAL_USER_SUBSCRIPTION)
+                                    .orElseGet(() -> statusRepository.save(Status.builder()
+                                            .statusName(UserSubscriptionStatus.FREE_TRIAL_USER_SUBSCRIPTION)
+                                            .description("Gói dịch vụ dùng thử miễn phí")
+                                            .statusType(StatusType.ACTIVE)
+                                            .build()));
+                            break;
+                        }
+                        case 4: {
+                            statusRepository
+                                    .findByStatusName(UserSubscriptionStatus.PENDING_USER_SUBSCRIPTION)
+                                    .orElseGet(() -> statusRepository.save(Status.builder()
+                                            .statusName(UserSubscriptionStatus.PENDING_USER_SUBSCRIPTION)
+                                            .description("Gói dịch vụ đang được xử lý")
+                                            .statusType(StatusType.ACTIVE)
+                                            .build()));
+                            break;
+                        }
+                        case 5: {
+                            statusRepository
+                                    .findByStatusName(UserSubscriptionStatus.RENEWING_USER_SUBSCRIPTION)
+                                    .orElseGet(() -> statusRepository.save(Status.builder()
+                                            .statusName(UserSubscriptionStatus.RENEWING_USER_SUBSCRIPTION)
+                                            .description("Gói dịch vụ đang được gia hạn")
+                                            .statusType(StatusType.ACTIVE)
+                                            .build()));
+                            break;
+                        }
+                    }
 
-					if (i % 2 == 0) {
-						// Tạo user với role là DANCER
-						User userWithRoleDancer = userRepository
-								.save(User.builder().status(activeStatus).email(fakerUS.internet().emailAddress())
-										.password(passwordEncoder.encode("123456")).name(fakerUS.name().fullName())
-										.phone(fakerUS.phoneNumber().phoneNumber()).roles(Set.of(dancerRole)).build());
+                    if (i % 2 == 0) {
+                        // Tạo user với role là DANCER
+                        User userWithRoleDancer = userRepository.save(User.builder()
+                                .status(activeStatus)
+                                .email(fakerUS.internet().emailAddress())
+                                .password(passwordEncoder.encode("123456"))
+                                .name(fakerUS.name().fullName())
+                                .phone(fakerUS.phoneNumber().phoneNumber())
+                                .roles(Set.of(dancerRole))
+                                .build());
 
-						Status dancerStatus = statusRepository.findByStatusName(DancerStatus.ACTIVATED_DANCER)
-								.orElseGet(() -> statusRepository
-										.save(Status.builder().statusName(DancerStatus.ACTIVATED_DANCER)
-												.description(DancerStatus.ACTIVATED_DANCER)
-												.statusType(StatusType.ACTIVE).build()));
+                        Status dancerStatus = statusRepository
+                                .findByStatusName(DancerStatus.ACTIVATED_DANCER)
+                                .orElseGet(() -> statusRepository.save(Status.builder()
+                                        .statusName(DancerStatus.ACTIVATED_DANCER)
+                                        .description(DancerStatus.ACTIVATED_DANCER)
+                                        .statusType(StatusType.ACTIVE)
+                                        .build()));
 
-						dancerRepository.save(Dancer.builder().status(dancerStatus).user(userWithRoleDancer)
-								.danceTypes(Set.of(type)).build());
+                        dancerRepository.save(Dancer.builder()
+                                .status(dancerStatus)
+                                .user(userWithRoleDancer)
+                                .danceTypes(Set.of(type))
+                                .build());
 
-						performanceRepository
-								.save(Performance.builder().user(userWithRoleDancer).status(activeStatus).build());
-					}
+                        performanceRepository.save(Performance.builder()
+                                .user(userWithRoleDancer)
+                                .status(activeStatus)
+                                .build());
+                    }
 
-					// Tạo user với role là USER
-					userRepository.save(User.builder().status(activeStatus).email(fakerUS.internet().emailAddress())
-							.password(passwordEncoder.encode("123456")).name(fakerUS.name().fullName())
-							.phone(fakerUS.phoneNumber().phoneNumber()).roles(Set.of(userRole)).build());
+                    // Tạo user với role là USER
+                    userRepository.save(User.builder()
+                            .status(activeStatus)
+                            .email(fakerUS.internet().emailAddress())
+                            .password(passwordEncoder.encode("123456"))
+                            .name(fakerUS.name().fullName())
+                            .phone(fakerUS.phoneNumber().phoneNumber())
+                            .roles(Set.of(userRole))
+                            .build());
 
-					// Tạo user với role CHOREOGRAPHY
-					User choreographyUser = userRepository.save(User.builder().status(activeStatus)
-							.email(fakerUS.internet().emailAddress()).password(passwordEncoder.encode("123456"))
-							.name(fakerUS.name().fullName()).phone(fakerUS.phoneNumber().phoneNumber())
-							.roles(Set.of(choreographyRole)).build());
+                    // Tạo user với role CHOREOGRAPHY
+                    User choreographyUser = userRepository.save(User.builder()
+                            .status(activeStatus)
+                            .email(fakerUS.internet().emailAddress())
+                            .password(passwordEncoder.encode("123456"))
+                            .name(fakerUS.name().fullName())
+                            .phone(fakerUS.phoneNumber().phoneNumber())
+                            .roles(Set.of(choreographyRole))
+                            .build());
 
-					Status choreographyStatus = statusRepository
-							.findByStatusName(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER)
-							.orElseGet(() -> statusRepository
-									.save(Status.builder().statusName(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER)
-											.description(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER)
-											.statusType(StatusType.ACTIVE).build()));
+                    Status choreographyStatus = statusRepository
+                            .findByStatusName(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER)
+                            .orElseGet(() -> statusRepository.save(Status.builder()
+                                    .statusName(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER)
+                                    .description(ChoreographerStatus.ACTIVATED_CHOREOGRAPHER)
+                                    .statusType(StatusType.ACTIVE)
+                                    .build()));
 
-					choreographyRepository.save(Choreography.builder().status(choreographyStatus).user(choreographyUser)
-							.danceTypes(Set.of(type)).build());
+                    choreographyRepository.save(Choreography.builder()
+                            .status(choreographyStatus)
+                            .user(choreographyUser)
+                            .danceTypes(Set.of(type))
+                            .build());
 
-					Status areaStatus = statusRepository.findByStatusName(AreaStatus.ACTIVATED_AREA)
-							.orElseGet(() -> statusRepository.save(Status.builder()
-									.statusName(AreaStatus.ACTIVATED_AREA).description(AreaStatus.ACTIVATED_AREA)
-									.statusType(StatusType.ACTIVE).build()));
+                    Status areaStatus = statusRepository
+                            .findByStatusName(AreaStatus.ACTIVATED_AREA)
+                            .orElseGet(() -> statusRepository.save(Status.builder()
+                                    .statusName(AreaStatus.ACTIVATED_AREA)
+                                    .description(AreaStatus.ACTIVATED_AREA)
+                                    .statusType(StatusType.ACTIVE)
+                                    .build()));
 
-					areaRepository.save(
-							Area.builder().district(fakerVN.address().cityName()).ward(fakerVN.address().country())
-									.city(fakerVN.address().city()).status(areaStatus).build());
-				}
-				log.info("Created default admin user");
-			}
-		};
-	}
+                    areaRepository.save(Area.builder()
+                            .district(fakerVN.address().cityName())
+                            .ward(fakerVN.address().country())
+                            .city(fakerVN.address().city())
+                            .status(areaStatus)
+                            .build());
+                }
+                log.info("Created default admin user");
+            }
+        };
+    }
 }

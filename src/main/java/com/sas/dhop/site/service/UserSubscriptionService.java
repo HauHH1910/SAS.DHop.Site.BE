@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface UserSubscriptionService {
 
-	List<UserSubscriptionResponse> getSubscriptionStatus();
+    List<UserSubscriptionResponse> getSubscriptionStatus();
 
-	UserSubscriptionResponse addSubscriptionToUser(UserSubscriptionRequest request);
+    UserSubscriptionResponse addSubscriptionToUser(UserSubscriptionRequest request);
 
-	void updateSubscriptionStatus();
+    void updateSubscriptionStatus();
 }
