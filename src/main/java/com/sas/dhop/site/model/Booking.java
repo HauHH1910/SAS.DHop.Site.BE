@@ -1,15 +1,12 @@
 package com.sas.dhop.site.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Set;
-
 import lombok.*;
 
 @Getter
@@ -99,5 +96,4 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
 
     @Column(name = "number_of_team_member")
     private Integer numberOfTeamMember;
-
 }

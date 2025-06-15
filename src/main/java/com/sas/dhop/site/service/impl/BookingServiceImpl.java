@@ -14,7 +14,6 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
@@ -23,7 +22,6 @@ import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,13 +47,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingResponse createBookingRequestForDancer(DancerBookingRequest request) {
-        return BookingResponse.mapToBookingResponse(
-                bookingRepository.save(
-                        mapToBooking(request)
-                )
-        );
+        return BookingResponse.mapToBookingResponse(bookingRepository.save(mapToBooking(request)));
     }
-
 
     @Override
     @Transactional
@@ -366,14 +359,16 @@ public class BookingServiceImpl implements BookingService {
 
     private Booking mapToBooking(DancerBookingRequest request) {
 
-        Dancer dancer = dancerRepository.findById(request.dancerId())
+        Dancer dancer = dancerRepository
+                .findById(request.dancerId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
         User customer = userService.getLoginUser();
 
         DanceType danceType = danceTypeService.findDanceTypeName(request.danceTypeName());
 
-        Area area = areaRepository.findById(request.areaId())
+        Area area = areaRepository
+                .findById(request.areaId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.AREA_NOT_FOUND));
 
         Status status = statusService.findStatusOrCreated(BookingStatus.BOOKING_PENDING);
