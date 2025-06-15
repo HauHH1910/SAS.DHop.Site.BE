@@ -18,25 +18,27 @@ import org.springframework.stereotype.Service;
 @Slf4j(topic = "[Chat Service]")
 public class ChatServiceImpl implements ChatService {
 
-    private final RoomRepository roomRepository;
+  private final RoomRepository roomRepository;
 
-    @Override
-    public Message sendMessage(String roomId, MessagePayload payload) {
-        Room room = roomRepository
-                .findByRoomId(roomId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.ROOM_NOT_FOUND));
-        Message message = Message.builder()
-                .content(payload.getContent())
-                .sender(payload.getSender())
-                .timeStamp(LocalDateTime.now())
-                .build();
+  @Override
+  public Message sendMessage(String roomId, MessagePayload payload) {
+    Room room =
+        roomRepository
+            .findByRoomId(roomId)
+            .orElseThrow(() -> new BusinessException(ErrorConstant.ROOM_NOT_FOUND));
+    Message message =
+        Message.builder()
+            .content(payload.getContent())
+            .sender(payload.getSender())
+            .timeStamp(LocalDateTime.now())
+            .build();
 
-        if (room != null) {
-            room.getMessages().add(message);
-            roomRepository.save(room);
-        } else {
-            throw new BusinessException(ErrorConstant.ROOM_NOT_FOUND);
-        }
-        return message;
+    if (room != null) {
+      room.getMessages().add(message);
+      roomRepository.save(room);
+    } else {
+      throw new BusinessException(ErrorConstant.ROOM_NOT_FOUND);
     }
+    return message;
+  }
 }

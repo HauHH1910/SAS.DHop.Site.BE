@@ -26,112 +26,117 @@ import org.springframework.stereotype.Service;
 @Slf4j(topic = "[Dancer Service]")
 public class DancerServiceImpl implements DancerService {
 
-    private final DancerRepository dancerRepository;
-    private final DancerMapper dancerMapper;
-    private final UserService userService;
-    private final StatusService statusService;
-    private final DanceTypeService danceTypeService;
+  private final DancerRepository dancerRepository;
+  private final DancerMapper dancerMapper;
+  private final UserService userService;
+  private final StatusService statusService;
+  private final DanceTypeService danceTypeService;
 
-    @Override
-    public DancerResponse updateDancer(Integer dancerId, DancerRequest dancerRequest) {
-        Dancer dancer = dancerRepository
-                .findById(dancerId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+  @Override
+  public DancerResponse updateDancer(Integer dancerId, DancerRequest dancerRequest) {
+    Dancer dancer =
+        dancerRepository
+            .findById(dancerId)
+            .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
-        // Validate user is updating their own profile
-        User currentUser = userService.getLoginUser();
-        if (!dancer.getUser().getId().equals(currentUser.getId())) {
-            throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
-        }
-
-        // Update basic dancer profile information
-        dancer.setDancerNickName(dancerRequest.dancerNickName());
-        dancer.setYearExperience(dancerRequest.yearExperience());
-        dancer.setTeamSize(dancerRequest.teamSize());
-        dancer.setPrice(dancerRequest.price());
-        // Update dance types
-        if (dancerRequest.danceTypeId() != null && !dancerRequest.danceTypeId().isEmpty()) {
-            Set<DanceType> danceTypes = new HashSet<>();
-            for (Integer danceTypeId : dancerRequest.danceTypeId()) {
-                DanceType danceType = danceTypeService.findDanceType(danceTypeId);
-                danceTypes.add(danceType);
-            }
-            dancer.setDanceTypes(danceTypes);
-        }
-
-        Dancer updatedDancer = dancerRepository.save(dancer);
-
-        return dancerMapper.mapToDancerResponse(updatedDancer);
+    // Validate user is updating their own profile
+    User currentUser = userService.getLoginUser();
+    if (!dancer.getUser().getId().equals(currentUser.getId())) {
+      throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
     }
 
-    @Override
-    public DancerResponse removeDancer(Integer dancerId) {
-        Dancer dancer = dancerRepository
-                .findById(dancerId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
-
-        // Set status to inactive
-        Status inactiveStatus = statusService.getStatus(DancerStatus.INACTIVE_DANCER);
-        dancer.setStatus(inactiveStatus);
-
-        Dancer updatedDancer = dancerRepository.save(dancer);
-
-        return dancerMapper.mapToDancerResponse(updatedDancer);
-    }
-
-    @Override
-    public DancerResponse getDancerById(Integer dancerId) {
-        Dancer dancer = dancerRepository
-                .findById(dancerId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
-        return dancerMapper.mapToDancerResponse(dancer);
-    }
-
-    @Override
-    public DancerResponse getDancerByDanceType(Integer danceTypeId) {
+    // Update basic dancer profile information
+    dancer.setDancerNickName(dancerRequest.dancerNickName());
+    dancer.setYearExperience(dancerRequest.yearExperience());
+    dancer.setTeamSize(dancerRequest.teamSize());
+    dancer.setPrice(dancerRequest.price());
+    // Update dance types
+    if (dancerRequest.danceTypeId() != null && !dancerRequest.danceTypeId().isEmpty()) {
+      Set<DanceType> danceTypes = new HashSet<>();
+      for (Integer danceTypeId : dancerRequest.danceTypeId()) {
         DanceType danceType = danceTypeService.findDanceType(danceTypeId);
-        if (danceType == null) throw new BusinessException(ErrorConstant.NOT_FOUND_DANCE_TYPE);
-
-        List<Dancer> allDancers = dancerRepository.findAll();
-
-        for (Dancer dancer : allDancers) {
-            if (dancer.getDanceTypes() != null && dancer.getDanceTypes().contains(danceType)) {
-                return dancerMapper.mapToDancerResponse(dancer);
-            }
-        }
-        throw new BusinessException(ErrorConstant.USER_NOT_FOUND);
+        danceTypes.add(danceType);
+      }
+      dancer.setDanceTypes(danceTypes);
     }
 
-    @Override
-    public List<DancerResponse> getallDancer() {
-        User currentUser = userService.getLoginUser();
+    Dancer updatedDancer = dancerRepository.save(dancer);
 
-        Set<RoleName> collect =
-                currentUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+    return dancerMapper.mapToDancerResponse(updatedDancer);
+  }
 
-        boolean isAdmin = collect.contains(RoleName.ADMIN);
+  @Override
+  public DancerResponse removeDancer(Integer dancerId) {
+    Dancer dancer =
+        dancerRepository
+            .findById(dancerId)
+            .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
-        boolean isStaff = collect.contains(RoleName.STAFF);
+    // Set status to inactive
+    Status inactiveStatus = statusService.getStatus(DancerStatus.INACTIVE_DANCER);
+    dancer.setStatus(inactiveStatus);
 
-        List<Dancer> dancers;
-        if (isStaff || isAdmin) {
-            dancers = dancerRepository.findAll();
-        } else {
-            dancers = dancerRepository.findByStatus(statusService.findStatusOrCreated(DancerStatus.ACTIVATED_DANCER));
-        }
+    Dancer updatedDancer = dancerRepository.save(dancer);
 
-        return dancers.stream().map(dancerMapper::mapToDancerResponse).collect(Collectors.toList());
+    return dancerMapper.mapToDancerResponse(updatedDancer);
+  }
+
+  @Override
+  public DancerResponse getDancerById(Integer dancerId) {
+    Dancer dancer =
+        dancerRepository
+            .findById(dancerId)
+            .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+    return dancerMapper.mapToDancerResponse(dancer);
+  }
+
+  @Override
+  public DancerResponse getDancerByDanceType(Integer danceTypeId) {
+    DanceType danceType = danceTypeService.findDanceType(danceTypeId);
+    if (danceType == null) throw new BusinessException(ErrorConstant.NOT_FOUND_DANCE_TYPE);
+
+    List<Dancer> allDancers = dancerRepository.findAll();
+
+    for (Dancer dancer : allDancers) {
+      if (dancer.getDanceTypes() != null && dancer.getDanceTypes().contains(danceType)) {
+        return dancerMapper.mapToDancerResponse(dancer);
+      }
+    }
+    throw new BusinessException(ErrorConstant.USER_NOT_FOUND);
+  }
+
+  @Override
+  public List<DancerResponse> getallDancer() {
+    User currentUser = userService.getLoginUser();
+
+    Set<RoleName> collect =
+        currentUser.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+
+    boolean isAdmin = collect.contains(RoleName.ADMIN);
+
+    boolean isStaff = collect.contains(RoleName.STAFF);
+
+    List<Dancer> dancers;
+    if (isStaff || isAdmin) {
+      dancers = dancerRepository.findAll();
+    } else {
+      dancers =
+          dancerRepository.findByStatus(
+              statusService.findStatusOrCreated(DancerStatus.ACTIVATED_DANCER));
     }
 
-    @Override
-    public DancerResponse getDancerBySubscriptionStatus(Integer id) {
-        // TODO: Implement getting dancer by subscription status
-        return null;
-    }
+    return dancers.stream().map(dancerMapper::mapToDancerResponse).collect(Collectors.toList());
+  }
 
-    @Override
-    public DancerResponse getAllDancerBySubscriptionStatus() {
-        // TODO: Implement getting all dancers by subscription status
-        return null;
-    }
+  @Override
+  public DancerResponse getDancerBySubscriptionStatus(Integer id) {
+    // TODO: Implement getting dancer by subscription status
+    return null;
+  }
+
+  @Override
+  public DancerResponse getAllDancerBySubscriptionStatus() {
+    // TODO: Implement getting all dancers by subscription status
+    return null;
+  }
 }

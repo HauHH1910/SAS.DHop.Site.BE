@@ -19,60 +19,60 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[User Controller]")
 public class UserController {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    @GetMapping
-    public ResponseData<List<UserResponse>> getAllUser() {
-        return ResponseData.<List<UserResponse>>builder()
-                .message(ResponseMessage.GET_ALL_USER)
-                .data(userService.getAllUser())
-                .build();
-    }
+  @GetMapping
+  public ResponseData<List<UserResponse>> getAllUser() {
+    return ResponseData.<List<UserResponse>>builder()
+        .message(ResponseMessage.GET_ALL_USER)
+        .data(userService.getAllUser())
+        .build();
+  }
 
-    @GetMapping("/info")
-    public ResponseData<UserResponse> getUserInfo() {
-        return ResponseData.<UserResponse>builder()
-                .message(ResponseMessage.GET_USER_INFO)
-                .data(userService.getUserInfo())
-                .build();
-    }
+  @GetMapping("/info")
+  public ResponseData<UserResponse> getUserInfo() {
+    return ResponseData.<UserResponse>builder()
+        .message(ResponseMessage.GET_USER_INFO)
+        .data(userService.getUserInfo())
+        .build();
+  }
 
-    @PostMapping
-    public ResponseData<UserResponse> createUser(@RequestBody CreateUserRequest request) {
-        return ResponseData.<UserResponse>builder()
-                .message(ResponseMessage.CREATE_USER)
-                .data(userService.createUser(request))
-                .build();
-    }
+  @PostMapping
+  public ResponseData<UserResponse> createUser(@RequestBody CreateUserRequest request) {
+    return ResponseData.<UserResponse>builder()
+        .message(ResponseMessage.CREATE_USER)
+        .data(userService.createUser(request))
+        .build();
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseData<Void> deleteUser(@PathVariable("id") Integer id) {
-        userService.deleteUser(id);
-        return ResponseData.<Void>builder().message(ResponseMessage.DELETE_USER).build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseData<Void> deleteUser(@PathVariable("id") Integer id) {
+    userService.deleteUser(id);
+    return ResponseData.<Void>builder().message(ResponseMessage.DELETE_USER).build();
+  }
 
-    @PatchMapping("/{id}")
-    public ResponseData<UserResponse> updateUser(
-            @PathVariable("id") Integer id, @RequestBody UpdateUserRequest request) {
-        return ResponseData.<UserResponse>builder()
-                .message(ResponseMessage.UPDATE_USER)
-                .data(userService.updateUser(id, request))
-                .build();
-    }
+  @PatchMapping("/{id}")
+  public ResponseData<UserResponse> updateUser(
+      @PathVariable("id") Integer id, @RequestBody UpdateUserRequest request) {
+    return ResponseData.<UserResponse>builder()
+        .message(ResponseMessage.UPDATE_USER)
+        .data(userService.updateUser(id, request))
+        .build();
+  }
 
-    @GetMapping("/{id}")
-    public ResponseData<UserResponse> getUser(@PathVariable("id") Integer id) {
-        return ResponseData.<UserResponse>builder()
-                .message(ResponseMessage.GET_USER)
-                .data(userService.getUser(id))
-                .build();
-    }
+  @GetMapping("/{id}")
+  public ResponseData<UserResponse> getUser(@PathVariable("id") Integer id) {
+    return ResponseData.<UserResponse>builder()
+        .message(ResponseMessage.GET_USER)
+        .data(userService.getUser(id))
+        .build();
+  }
 
-    @GetMapping("/search")
-    public ResponseData<UserResponse> findByEmail(@RequestParam String email) {
-        return ResponseData.<UserResponse>builder()
-                .message(ResponseMessage.FIND_EMAIL)
-                .data(userService.findUser(email))
-                .build();
-    }
+  @GetMapping("/search")
+  public ResponseData<UserResponse> findByEmail(@RequestParam String email) {
+    return ResponseData.<UserResponse>builder()
+        .message(ResponseMessage.FIND_EMAIL)
+        .data(userService.findUser(email))
+        .build();
+  }
 }

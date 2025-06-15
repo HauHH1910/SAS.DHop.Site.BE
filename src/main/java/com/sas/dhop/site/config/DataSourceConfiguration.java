@@ -15,8 +15,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories(basePackages = "com.sas.dhop.site.repository.nosql")
 public class DataSourceConfiguration {
 
-    @Bean
-    public MongoTemplate mongoTemplate(MongoDatabaseFactory factory, MappingMongoConverter converter) {
-        return new MongoTemplate(factory, converter);
-    }
+  @Bean
+  public MongoTemplate mongoTemplate(
+      MongoDatabaseFactory factory, MappingMongoConverter converter) {
+    return new MongoTemplate(factory, converter);
+  }
 }

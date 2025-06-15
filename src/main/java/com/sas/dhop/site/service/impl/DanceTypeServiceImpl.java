@@ -18,40 +18,37 @@ import org.springframework.stereotype.Service;
 @Slf4j(topic = "[Dance Type Service]")
 public class DanceTypeServiceImpl implements DanceTypeService {
 
-    private final DanceTypeRepository danceTypeRepository;
-    private final DanceTypeMapper danceTypeMapper;
+  private final DanceTypeRepository danceTypeRepository;
+  private final DanceTypeMapper danceTypeMapper;
 
-    @Override
-    public List<DanceTypeResponse> getAllDanceType() {
-        return danceTypeRepository.findAll().stream()
-                .map(danceTypeMapper::mapToResponse)
-                .toList();
+  @Override
+  public List<DanceTypeResponse> getAllDanceType() {
+    return danceTypeRepository.findAll().stream().map(danceTypeMapper::mapToResponse).toList();
+  }
+
+  @Override
+  public DanceTypeResponse createDanceType(DanceTypeRequest request) {
+    if (danceTypeRepository.findByType(request.type()).isPresent()) {
+      throw new BusinessException(ErrorConstant.DANCE_TYPE_ALREADY_EXISTS);
     }
 
-    @Override
-    public DanceTypeResponse createDanceType(DanceTypeRequest request) {
-        if (danceTypeRepository.findByType(request.type()).isPresent()) {
-            throw new BusinessException(ErrorConstant.DANCE_TYPE_ALREADY_EXISTS);
-        }
+    var type =
+        danceTypeRepository.save(
+            DanceType.builder().type(request.type()).description(request.description()).build());
+    return danceTypeMapper.mapToResponse(type);
+  }
 
-        var type = danceTypeRepository.save(DanceType.builder()
-                .type(request.type())
-                .description(request.description())
-                .build());
-        return danceTypeMapper.mapToResponse(type);
-    }
+  @Override
+  public DanceType findDanceType(Integer id) {
+    return danceTypeRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(ErrorConstant.DANCE_TYPE_NOT_FOUND));
+  }
 
-    @Override
-    public DanceType findDanceType(Integer id) {
-        return danceTypeRepository
-                .findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.DANCE_TYPE_NOT_FOUND));
-    }
-
-    @Override
-    public DanceType findDanceTypeName(String name) {
-        return danceTypeRepository
-                .findByType(name)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.DANCE_TYPE_NOT_FOUND));
-    }
+  @Override
+  public DanceType findDanceTypeName(String name) {
+    return danceTypeRepository
+        .findByType(name)
+        .orElseThrow(() -> new BusinessException(ErrorConstant.DANCE_TYPE_NOT_FOUND));
+  }
 }

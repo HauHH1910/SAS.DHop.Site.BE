@@ -15,6 +15,6 @@ import lombok.*;
 @Table(name = "permission")
 public class Permission extends AbstractEntity<Integer> implements Serializable {
 
-    @Column(name = "name")
-    private String name;
+  @Column(name = "name")
+  private String name;
 }

@@ -5,17 +5,17 @@ import com.sas.dhop.site.dto.response.DancerResponse;
 import java.util.List;
 
 public interface DancerService {
-    DancerResponse updateDancer(Integer dancerId, DancerRequest dancerRequest);
+  DancerResponse updateDancer(Integer dancerId, DancerRequest dancerRequest);
 
-    DancerResponse removeDancer(Integer dancerId);
+  DancerResponse removeDancer(Integer dancerId);
 
-    DancerResponse getDancerById(Integer dancerId);
+  DancerResponse getDancerById(Integer dancerId);
 
-    DancerResponse getDancerByDanceType(Integer dancerId);
+  DancerResponse getDancerByDanceType(Integer dancerId);
 
-    List<DancerResponse> getallDancer();
+  List<DancerResponse> getallDancer();
 
-    DancerResponse getDancerBySubscriptionStatus(Integer id);
+  DancerResponse getDancerBySubscriptionStatus(Integer id);
 
-    DancerResponse getAllDancerBySubscriptionStatus();
+  DancerResponse getAllDancerBySubscriptionStatus();
 }

@@ -10,10 +10,10 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface SubscriptionMapper {
 
-    @Mapping(target = "status", source = "status.statusName")
-    SubscriptionResponse mapToResponse(Subscription request);
+  @Mapping(target = "status", source = "status.statusName")
+  SubscriptionResponse mapToResponse(Subscription request);
 
-    Subscription mapToModel(SubscriptionRequest request);
+  Subscription mapToModel(SubscriptionRequest request);
 
-    void mapToUpdateUser(@MappingTarget Subscription subscription, SubscriptionRequest request);
+  void mapToUpdateUser(@MappingTarget Subscription subscription, SubscriptionRequest request);
 }

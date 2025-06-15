@@ -14,13 +14,13 @@ import lombok.*;
 @Table(name = "status")
 public class Status extends AbstractEntity<Integer> implements Serializable {
 
-    @Column(name = "status_name", length = 100)
-    private String statusName;
+  @Column(name = "status_name", length = 100)
+  private String statusName;
 
-    @Column(name = "status_type")
-    @Enumerated(EnumType.STRING)
-    private StatusType statusType;
+  @Column(name = "status_type")
+  @Enumerated(EnumType.STRING)
+  private StatusType statusType;
 
-    @Column(name = "description")
-    private String description;
+  @Column(name = "description")
+  private String description;
 }

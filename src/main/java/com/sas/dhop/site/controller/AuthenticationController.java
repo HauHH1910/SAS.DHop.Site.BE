@@ -23,81 +23,81 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[Authentication Controller]")
 public class AuthenticationController {
 
-    private final AuthenticationService authenticationService;
+  private final AuthenticationService authenticationService;
 
-    @PostMapping("/authenticate")
-    public ResponseData<AuthenticationResponse> oauthAuthenticate(@RequestParam("code") String code) {
-        return ResponseData.<AuthenticationResponse>builder()
-                .message(ResponseMessage.AUTHENTICATION_LOGIN)
-                .data(authenticationService.oauthLogin(code))
-                .build();
-    }
+  @PostMapping("/authenticate")
+  public ResponseData<AuthenticationResponse> oauthAuthenticate(@RequestParam("code") String code) {
+    return ResponseData.<AuthenticationResponse>builder()
+        .message(ResponseMessage.AUTHENTICATION_LOGIN)
+        .data(authenticationService.oauthLogin(code))
+        .build();
+  }
 
-    @PostMapping("/reset-password")
-    public ResponseData<AuthenticationResponse> resetPassword(@RequestBody ResetPasswordRequest request)
-            throws ParseException, JOSEException {
-        return ResponseData.<AuthenticationResponse>builder()
-                .message(ResponseMessage.RESET_PASSWORD)
-                .data(authenticationService.resetPassword(request))
-                .build();
-    }
+  @PostMapping("/reset-password")
+  public ResponseData<AuthenticationResponse> resetPassword(
+      @RequestBody ResetPasswordRequest request) throws ParseException, JOSEException {
+    return ResponseData.<AuthenticationResponse>builder()
+        .message(ResponseMessage.RESET_PASSWORD)
+        .data(authenticationService.resetPassword(request))
+        .build();
+  }
 
-    @PostMapping("/otp-reset-password")
-    public ResponseData<AuthenticationResponse> otpResetPassword(@RequestBody VerifyOTPRequest request) {
-        return ResponseData.<AuthenticationResponse>builder()
-                .message(ResponseMessage.OTP_RESET_PASSWORD)
-                .data(authenticationService.verifyOTPResetPassword(request))
-                .build();
-    }
+  @PostMapping("/otp-reset-password")
+  public ResponseData<AuthenticationResponse> otpResetPassword(
+      @RequestBody VerifyOTPRequest request) {
+    return ResponseData.<AuthenticationResponse>builder()
+        .message(ResponseMessage.OTP_RESET_PASSWORD)
+        .data(authenticationService.verifyOTPResetPassword(request))
+        .build();
+  }
 
-    @PostMapping("/forgot-password")
-    public ResponseData<Void> forgotPassword(@RequestBody ForgotPasswordRequest request) throws MessagingException {
-        authenticationService.forgotPassword(request);
-        return ResponseData.<Void>builder()
-                .message(ResponseMessage.FORGOT_PASSWORD)
-                .build();
-    }
+  @PostMapping("/forgot-password")
+  public ResponseData<Void> forgotPassword(@RequestBody ForgotPasswordRequest request)
+      throws MessagingException {
+    authenticationService.forgotPassword(request);
+    return ResponseData.<Void>builder().message(ResponseMessage.FORGOT_PASSWORD).build();
+  }
 
-    @PostMapping("/register")
-    public ResponseData<Void> register(@RequestBody RegisterRequest request) throws MessagingException {
-        authenticationService.register(request);
-        return ResponseData.<Void>builder()
-                .message(ResponseMessage.REGISTER_SUCCESS)
-                .build();
-    }
+  @PostMapping("/register")
+  public ResponseData<Void> register(@RequestBody RegisterRequest request)
+      throws MessagingException {
+    authenticationService.register(request);
+    return ResponseData.<Void>builder().message(ResponseMessage.REGISTER_SUCCESS).build();
+  }
 
-    @PostMapping("/verify-otp")
-    public ResponseData<AuthenticationResponse> verifyOTP(@RequestBody VerifyOTPRequest request) {
-        return ResponseData.<AuthenticationResponse>builder()
-                .data(authenticationService.verifyOTPAndActiveUSer(request))
-                .message(ResponseMessage.VERIFICATION_OTP_SUCCESS)
-                .build();
-    }
+  @PostMapping("/verify-otp")
+  public ResponseData<AuthenticationResponse> verifyOTP(@RequestBody VerifyOTPRequest request) {
+    return ResponseData.<AuthenticationResponse>builder()
+        .data(authenticationService.verifyOTPAndActiveUSer(request))
+        .message(ResponseMessage.VERIFICATION_OTP_SUCCESS)
+        .build();
+  }
 
-    @PostMapping("/login")
-    @Operation(description = "API to login to the system", summary = "API to login to the system")
-    public ResponseData<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
-        log.info("User try to login: {}", request.email());
-        return ResponseData.<AuthenticationResponse>builder()
-                .message(ResponseMessage.AUTHENTICATION_LOGIN)
-                .data(authenticationService.login(request))
-                .build();
-    }
+  @PostMapping("/login")
+  @Operation(description = "API to login to the system", summary = "API to login to the system")
+  public ResponseData<AuthenticationResponse> login(
+      @Valid @RequestBody AuthenticationRequest request) {
+    log.info("User try to login: {}", request.email());
+    return ResponseData.<AuthenticationResponse>builder()
+        .message(ResponseMessage.AUTHENTICATION_LOGIN)
+        .data(authenticationService.login(request))
+        .build();
+  }
 
-    @PostMapping("/introspect")
-    public ResponseData<IntrospectResponse> introspect(@RequestBody IntrospectRequest request) {
-        return ResponseData.<IntrospectResponse>builder()
-                .message(ResponseMessage.INTROSPECT_TOKEN)
-                .data(authenticationService.introspect(request))
-                .build();
-    }
+  @PostMapping("/introspect")
+  public ResponseData<IntrospectResponse> introspect(@RequestBody IntrospectRequest request) {
+    return ResponseData.<IntrospectResponse>builder()
+        .message(ResponseMessage.INTROSPECT_TOKEN)
+        .data(authenticationService.introspect(request))
+        .build();
+  }
 
-    @PostMapping("/refresh")
-    public ResponseData<AuthenticationResponse> refresh(@RequestBody RefreshTokenRequest request)
-            throws ParseException, JOSEException {
-        return ResponseData.<AuthenticationResponse>builder()
-                .message(ResponseMessage.REFRESH_TOKEN)
-                .data(authenticationService.refreshToken(request))
-                .build();
-    }
+  @PostMapping("/refresh")
+  public ResponseData<AuthenticationResponse> refresh(@RequestBody RefreshTokenRequest request)
+      throws ParseException, JOSEException {
+    return ResponseData.<AuthenticationResponse>builder()
+        .message(ResponseMessage.REFRESH_TOKEN)
+        .data(authenticationService.refreshToken(request))
+        .build();
+  }
 }

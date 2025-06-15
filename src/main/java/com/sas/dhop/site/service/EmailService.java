@@ -5,5 +5,6 @@ import java.util.concurrent.CompletableFuture;
 
 public interface EmailService {
 
-    CompletableFuture<Void> sendEmail(String to, String subject, String text) throws MessagingException;
+  CompletableFuture<Void> sendEmail(String to, String subject, String text)
+      throws MessagingException;
 }

@@ -17,33 +17,36 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 @RequiredArgsConstructor
 public class AuthHandshakeInterceptor implements HandshakeInterceptor {
 
-    private final CustomJwtDecoder customJwtDecoder;
+  private final CustomJwtDecoder customJwtDecoder;
 
-    @Override
-    public boolean beforeHandshake(
-            ServerHttpRequest request,
-            ServerHttpResponse response,
-            WebSocketHandler wsHandler,
-            Map<String, Object> attributes)
-            throws Exception {
-        if (request instanceof ServletServerHttpRequest serverHttpRequest) {
-            String token = serverHttpRequest.getServletRequest().getParameter("token");
+  @Override
+  public boolean beforeHandshake(
+      ServerHttpRequest request,
+      ServerHttpResponse response,
+      WebSocketHandler wsHandler,
+      Map<String, Object> attributes)
+      throws Exception {
+    if (request instanceof ServletServerHttpRequest serverHttpRequest) {
+      String token = serverHttpRequest.getServletRequest().getParameter("token");
 
-            if (token != null && !token.isBlank()) {
-                try {
-                    Jwt jwt = customJwtDecoder.decode(token);
-                    JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(jwt);
-                    attributes.put("auth", authenticationToken);
-                    return true;
-                } catch (JwtException e) {
-                    return false;
-                }
-            }
+      if (token != null && !token.isBlank()) {
+        try {
+          Jwt jwt = customJwtDecoder.decode(token);
+          JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(jwt);
+          attributes.put("auth", authenticationToken);
+          return true;
+        } catch (JwtException e) {
+          return false;
         }
-        return false;
+      }
     }
+    return false;
+  }
 
-    @Override
-    public void afterHandshake(
-            ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {}
+  @Override
+  public void afterHandshake(
+      ServerHttpRequest request,
+      ServerHttpResponse response,
+      WebSocketHandler wsHandler,
+      Exception exception) {}
 }

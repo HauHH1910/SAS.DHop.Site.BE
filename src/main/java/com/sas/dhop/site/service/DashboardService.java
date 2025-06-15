@@ -8,9 +8,9 @@ import com.sas.dhop.site.dto.response.ChoreographerDashboardResponse;
 import com.sas.dhop.site.dto.response.DancerDashboardResponse;
 
 public interface DashboardService {
-    AdminDashboardResponse getAdminDashboard(AdminDashboardRequest request);
+  AdminDashboardResponse getAdminDashboard(AdminDashboardRequest request);
 
-    DancerDashboardResponse getDancerDashboard(DancerDashboardRequest request);
+  DancerDashboardResponse getDancerDashboard(DancerDashboardRequest request);
 
-    ChoreographerDashboardResponse getChoreographerDashboard(ChoreographerDashboardRequest request);
+  ChoreographerDashboardResponse getChoreographerDashboard(ChoreographerDashboardRequest request);
 }
