@@ -37,6 +37,15 @@ public class BookingController {
                 .build();
     }
 
+    @PutMapping("/update-booking/{bookingId}")
+    public ResponseData<BookingResponse> updateBookingInformation(
+            @PathVariable Integer bookingId, @RequestBody BookingRequest bookingRequest) {
+        return ResponseData.<BookingResponse>builder()
+                .message(ResponseMessage.UPDATE_BOOKING_SUCCESSFULLY)
+                .data(bookingService.updateBookingInformation(bookingId, bookingRequest))
+                .build();
+    }
+
     @PostMapping("/create-booking-for-choreographer")
     public ResponseData<BookingResponse> createBookingForChoreographer(@RequestBody BookingRequest bookingRequest) {
         return ResponseData.<BookingResponse>builder()
