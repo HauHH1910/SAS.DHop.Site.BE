@@ -14,6 +14,7 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
@@ -22,6 +23,7 @@ import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,43 +49,13 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingResponse createBookingRequestForDancer(DancerBookingRequest request) {
-        Dancer dancer = dancerRepository.findById(request.dancerId()).orElseThrow(() -> {
-            log.error("Dancer not found with id: {}", request.dancerId());
-            return new BusinessException(ErrorConstant.USER_NOT_FOUND);
-        });
-        log.debug("[Booking for dancer] Fetched dancer: {}", dancer.getUser().getName());
-
-        User customer = userService.getLoginUser();
-        log.debug("[Booking for dancer] Fetched logged-in customer: {}", customer.getName());
-
-        DanceType danceType = danceTypeService.findDanceTypeName(request.danceTypeName());
-        log.debug("[Booking for dancer] Fetched dance type: {}", danceType.getType());
-
-        Area area = areaRepository.findById(request.areaId()).orElseThrow(() -> {
-            log.error("[Booking for dancer] Area not found with id: {}", request.areaId());
-            return new BusinessException(ErrorConstant.AREA_NOT_FOUND);
-        });
-
-        Status status = statusService.findStatusOrCreated(BookingStatus.BOOKING_PENDING);
-
-        Booking booking = Booking.builder()
-                .customer(customer)
-                .dancer(dancer)
-                .area(area)
-                .status(status)
-                .danceType(Set.of(danceType))
-                .bookingDate(Instant.now())
-                .startTime(request.startTime())
-                .endTime(request.endTime())
-                .address(request.address())
-                .detail(request.detail())
-                .customerPhone(request.customerPhone())
-                .dancerPhone(request.dancerPhone())
-                .price(calculateCommissionPrice(request.bookingPrice()))
-                .build();
-
-        return BookingResponse.mapToBookingResponse(bookingRepository.save(booking));
+        return BookingResponse.mapToBookingResponse(
+                bookingRepository.save(
+                        mapToBooking(request)
+                )
+        );
     }
+
 
     @Override
     @Transactional
@@ -298,7 +270,6 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(booking);
     }
 
-    // Check conflit for dancer schedules
     private void checkDancerBookingConflict(BookingRequest bookingRequest, Dancer dancer) {
         // Lấy tất cả booking của dancer trong ngày
         LocalDate bookingDate = bookingRequest.startTime().toLocalDate();
@@ -306,10 +277,7 @@ public class BookingServiceImpl implements BookingService {
                 .filter(b -> b.getDancer() != null && b.getDancer().getId().equals(dancer.getId()))
                 .filter(b -> !b.getStatus().getStatusName().equals(BookingStatus.BOOKING_CANCELED))
                 .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
-                .collect(Collectors.toList());
-
-        // int requestedSessions = bookingRequest.numberOfTrainingSessions() != null ?
-        // bookingRequest.numberOfTrainingSessions() : 1;
+                .toList();
 
         int requestedSessions;
         if (bookingRequest.numberOfTrainingSessions() != null) {
@@ -394,5 +362,36 @@ public class BookingServiceImpl implements BookingService {
             // Phí hoa hồng 10% (>= 2 triệu)
             return price.multiply(new BigDecimal("1.10")).setScale(2, RoundingMode.HALF_UP);
         }
+    }
+
+    private Booking mapToBooking(DancerBookingRequest request) {
+
+        Dancer dancer = dancerRepository.findById(request.dancerId())
+                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+
+        User customer = userService.getLoginUser();
+
+        DanceType danceType = danceTypeService.findDanceTypeName(request.danceTypeName());
+
+        Area area = areaRepository.findById(request.areaId())
+                .orElseThrow(() -> new BusinessException(ErrorConstant.AREA_NOT_FOUND));
+
+        Status status = statusService.findStatusOrCreated(BookingStatus.BOOKING_PENDING);
+        return Booking.builder()
+                .startTime(request.startTime())
+                .endTime(request.endTime())
+                .address(request.address())
+                .detail(request.detail())
+                .area(area)
+                .bookingDate(Instant.now())
+                .customer(customer)
+                .numberOfTeamMember(request.numberOfTeamMember())
+                .danceType(Set.of(danceType))
+                .dancer(dancer)
+                .status(status)
+                .customerPhone(request.customerPhone())
+                .dancerPhone(request.dancerPhone())
+                .price(calculateCommissionPrice(request.bookingPrice()))
+                .build();
     }
 }
