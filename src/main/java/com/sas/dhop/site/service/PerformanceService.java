@@ -2,6 +2,9 @@ package com.sas.dhop.site.service;
 
 import com.sas.dhop.site.dto.request.PerformanceRequest;
 import com.sas.dhop.site.dto.response.PerformanceResponse;
+import com.sas.dhop.site.model.Booking;
+
+import java.util.List;
 
 public interface PerformanceService {
 
@@ -11,5 +14,9 @@ public interface PerformanceService {
 
     void deletePerformanceById(Integer id);
 
-    void uploadPerformanceForBooking(PerformanceRequest request);
+    void uploadPerformanceForBooking(String url, Booking booking);
+
+    List<PerformanceResponse> getAllPerformanceBelongToCurrentUser();
+
+    List<PerformanceResponse> getAllPerformanceBelongToBooking(Integer bookingId);
 }

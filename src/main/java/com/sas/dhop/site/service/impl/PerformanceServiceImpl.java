@@ -7,7 +7,9 @@ import com.sas.dhop.site.dto.request.PerformanceRequest;
 import com.sas.dhop.site.dto.response.PerformanceResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
+import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.Performance;
+import com.sas.dhop.site.model.User;
 import com.sas.dhop.site.repository.PerformanceRepository;
 import com.sas.dhop.site.service.PerformanceService;
 import com.sas.dhop.site.service.StatusService;
@@ -15,6 +17,8 @@ import com.sas.dhop.site.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -46,8 +50,7 @@ public class PerformanceServiceImpl implements PerformanceService {
                 .findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.PERFORMANCE_NOT_FOUND));
 
-        if (PerformanceStatus.PERFORMANCE_BELONG_TO_BOOKING.equals(
-                performance.getStatus().getStatusName())) {
+        if (performance.getBooking() != null) {
             throw new BusinessException(ErrorConstant.PERFORMANCE_CAN_NOT_BE_DELETED);
         }
 
@@ -55,11 +58,25 @@ public class PerformanceServiceImpl implements PerformanceService {
     }
 
     @Override
-    public void uploadPerformanceForBooking(PerformanceRequest request) {
+    public void uploadPerformanceForBooking(String url, Booking booking) {
         performanceRepository.save(Performance.builder()
-                .status(statusService.findStatusOrCreated(PerformanceStatus.PERFORMANCE_BELONG_TO_BOOKING))
+                .status(statusService.findStatusOrCreated(CREATE_PERFORMANCE))
                 .user(userService.getLoginUser())
-                .mediaUrl(request.mediaUrl())
+                .mediaUrl(url)
+                .booking(booking)
                 .build());
+    }
+
+    @Override
+    public List<PerformanceResponse> getAllPerformanceBelongToCurrentUser() {
+        return performanceRepository.findByUser(userService.getLoginUser())
+                .stream()
+                .map(PerformanceResponse::mapToPerformance)
+                .toList();
+    }
+
+    @Override
+    public List<PerformanceResponse> getAllPerformanceBelongToBooking(Integer bookingId) {
+        return performanceRepository.findByBooking(bookingId).stream().map(PerformanceResponse::mapToPerformance).toList();
     }
 }

@@ -1,7 +1,9 @@
 package com.sas.dhop.site.model;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
+
 import lombok.*;
 
 @Getter
@@ -16,6 +18,10 @@ public class Performance extends AbstractEntity<Integer> implements Serializable
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booking_id")
+    private Booking booking;
 
     @Column(name = "media_url")
     private String mediaUrl;
