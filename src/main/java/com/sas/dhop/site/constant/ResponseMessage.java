@@ -68,6 +68,7 @@ public class ResponseMessage {
     public static final String CREATE_PERFORMANCE = "Tạo bằng chứng thành công";
     public static final String GET_PERFORMANCE = "Lấy bằng chứng thành công";
     public static final String GET_ALL_PERFORMANCE_BELONG_TO_BOOKING = "Lấy bằng chứng thuộc về hợp đồng";
-    public static final String GET_ALL_PERFORMANCE_BELONG_TO_CURRENT_USER = "Lấy bằng chứng thuộc về người dùng hịện tại";
+    public static final String GET_ALL_PERFORMANCE_BELONG_TO_CURRENT_USER =
+            "Lấy bằng chứng thuộc về người dùng hịện tại";
     public static final String DELETE_PERFORMANCE = "Xóa bằng chứng thành công";
 }

@@ -2,23 +2,20 @@ package com.sas.dhop.site.service.impl;
 
 import static com.sas.dhop.site.constant.PerformanceStatus.CREATE_PERFORMANCE;
 
-import com.sas.dhop.site.constant.PerformanceStatus;
 import com.sas.dhop.site.dto.request.PerformanceRequest;
 import com.sas.dhop.site.dto.response.PerformanceResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.Performance;
-import com.sas.dhop.site.model.User;
 import com.sas.dhop.site.repository.PerformanceRepository;
 import com.sas.dhop.site.service.PerformanceService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -69,14 +66,15 @@ public class PerformanceServiceImpl implements PerformanceService {
 
     @Override
     public List<PerformanceResponse> getAllPerformanceBelongToCurrentUser() {
-        return performanceRepository.findByUser(userService.getLoginUser())
-                .stream()
+        return performanceRepository.findByUser(userService.getLoginUser()).stream()
                 .map(PerformanceResponse::mapToPerformance)
                 .toList();
     }
 
     @Override
     public List<PerformanceResponse> getAllPerformanceBelongToBooking(Integer bookingId) {
-        return performanceRepository.findByBooking(bookingId).stream().map(PerformanceResponse::mapToPerformance).toList();
+        return performanceRepository.findByBooking(bookingId).stream()
+                .map(PerformanceResponse::mapToPerformance)
+                .toList();
     }
 }

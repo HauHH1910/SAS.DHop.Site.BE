@@ -1,9 +1,7 @@
 package com.sas.dhop.site.model;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
-
 import lombok.*;
 
 @Getter

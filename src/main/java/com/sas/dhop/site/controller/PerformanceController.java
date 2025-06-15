@@ -6,11 +6,10 @@ import com.sas.dhop.site.dto.request.PerformanceRequest;
 import com.sas.dhop.site.dto.response.PerformanceResponse;
 import com.sas.dhop.site.service.PerformanceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,7 +37,7 @@ public class PerformanceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseData<Void> deletePerformance(@PathVariable("id") Integer id){
+    public ResponseData<Void> deletePerformance(@PathVariable("id") Integer id) {
         performanceService.deletePerformanceById(id);
         return ResponseData.<Void>builder()
                 .message(ResponseMessage.DELETE_PERFORMANCE)
@@ -60,5 +59,4 @@ public class PerformanceController {
                 .data(performanceService.getAllPerformanceBelongToBooking(id))
                 .build();
     }
-
 }
