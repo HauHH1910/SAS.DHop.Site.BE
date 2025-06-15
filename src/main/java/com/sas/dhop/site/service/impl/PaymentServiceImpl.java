@@ -1,5 +1,6 @@
 package com.sas.dhop.site.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sas.dhop.site.dto.request.CreatePaymentRequest;
 import com.sas.dhop.site.service.PaymentService;
@@ -12,6 +13,7 @@ import vn.payos.PayOS;
 import vn.payos.type.CheckoutResponseData;
 import vn.payos.type.ItemData;
 import vn.payos.type.PaymentData;
+import vn.payos.type.PaymentLinkData;
 
 @Service
 @RequiredArgsConstructor
@@ -19,9 +21,11 @@ import vn.payos.type.PaymentData;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PayOS payOS;
+    private final ObjectMapper objectMapper;
 
     @Override
-    public CheckoutResponseData createPaymentLink(CreatePaymentRequest request) {
+    public ObjectNode createPaymentLink(CreatePaymentRequest request) {
+        ObjectNode response = objectMapper.createObjectNode();
         try {
             String currentTimeString = String.valueOf(new Date().getTime());
 
@@ -42,24 +46,76 @@ public class PaymentServiceImpl implements PaymentService {
                     .cancelUrl(request.cancelUrl())
                     .build();
 
-            return payOS.createPaymentLink(paymentData);
+            CheckoutResponseData data = payOS.createPaymentLink(paymentData);
+
+            response.put("error", 0);
+            response.put("message", "success");
+            response.set("data", objectMapper.valueToTree(data));
+            return response;
+
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            response.put("error", -1);
+            response.put("message", "fail");
+            response.set("data", null);
+            return response;
+
         }
     }
 
     @Override
     public ObjectNode getOrderByID(Long orderId) {
-        return null;
+        ObjectNode response = objectMapper.createObjectNode();
+
+        try {
+            PaymentLinkData order = payOS.getPaymentLinkInformation(orderId);
+
+            response.set("data", objectMapper.valueToTree(order));
+            response.put("error", 0);
+            response.put("message", "ok");
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("error", -1);
+            response.put("message", e.getMessage());
+            response.set("data", null);
+            return response;
+        }
     }
 
     @Override
     public ObjectNode cancelOrder(Integer orderID) {
-        return null;
+        ObjectNode response = objectMapper.createObjectNode();
+        try {
+            PaymentLinkData order = payOS.cancelPaymentLink(orderID, null);
+            response.set("data", objectMapper.valueToTree(order));
+            response.put("error", 0);
+            response.put("message", "ok");
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("error", -1);
+            response.put("message", e.getMessage());
+            response.set("data", null);
+            return response;
+        }
     }
 
     @Override
     public ObjectNode confirmWebHook(Map<String, String> request) {
-        return null;
+        ObjectNode response = objectMapper.createObjectNode();
+        try {
+            String str = payOS.confirmWebhook(request.get("webhookUrl"));
+            response.set("data", objectMapper.valueToTree(str));
+            response.put("error", 0);
+            response.put("message", "ok");
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("error", -1);
+            response.put("message", e.getMessage());
+            response.set("data", null);
+            return response;
+        }
     }
 }

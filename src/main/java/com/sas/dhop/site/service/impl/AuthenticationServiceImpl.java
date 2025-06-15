@@ -18,13 +18,18 @@ import com.sas.dhop.site.util.JwtUtil;
 import com.sas.dhop.site.util.mapper.UserMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
+
 import java.text.ParseException;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.stereotype.Service;
@@ -224,6 +229,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = User.builder()
                 .name(request.name())
+                .phone(request.phone())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .roles(roles)
@@ -299,6 +305,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
         return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+    }
+
+    @Override
+    public boolean authenticationChecking(String role) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null
+                && !(authentication instanceof AnonymousAuthenticationToken)
+                && authentication.isAuthenticated()
+                && authentication.getAuthorities().stream()
+                .anyMatch(authority -> {
+                    log.info("User has the required role: {}", authority.getAuthority());
+                    return role.equals(authority.getAuthority());
+                });
     }
 
     private ExchangeTokenResponse getTokenResponse(String code) {
