@@ -2,6 +2,7 @@ package com.sas.dhop.site.service.impl;
 
 import com.sas.dhop.site.constant.BookingStatus;
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
@@ -45,15 +46,12 @@ public class BookingServiceImpl implements BookingService {
     // Booking is only for the dancer, the booker wants
     @Override
     @Transactional
-    public BookingResponse createBookingRequestForDancer(BookingRequest request) {
+    public BookingResponse createBookingRequestForDancer(DancerBookingRequest request) {
         Dancer dancer = dancerRepository.findById(request.dancerId()).orElseThrow(() -> {
             log.error("Dancer not found with id: {}", request.dancerId());
             return new BusinessException(ErrorConstant.USER_NOT_FOUND);
         });
         log.debug("[Booking for dancer] Fetched dancer: {}", dancer.getUser().getName());
-
-        // check conflict for dancer, team size check in same day same time
-        checkDancerBookingConflict(request, dancer);
 
         User customer = userService.getLoginUser();
         log.debug("[Booking for dancer] Fetched logged-in customer: {}", customer.getName());
@@ -65,7 +63,6 @@ public class BookingServiceImpl implements BookingService {
             log.error("[Booking for dancer] Area not found with id: {}", request.areaId());
             return new BusinessException(ErrorConstant.AREA_NOT_FOUND);
         });
-        log.debug("[Booking for dancer] Fetched area: {}", area.getCity());
 
         Status status = statusService.findStatusOrCreated(BookingStatus.BOOKING_PENDING);
 
@@ -73,7 +70,6 @@ public class BookingServiceImpl implements BookingService {
                 .customer(customer)
                 .dancer(dancer)
                 .area(area)
-                .choreography(null)
                 .status(status)
                 .danceType(Set.of(danceType))
                 .bookingDate(Instant.now())
@@ -83,15 +79,10 @@ public class BookingServiceImpl implements BookingService {
                 .detail(request.detail())
                 .customerPhone(request.customerPhone())
                 .dancerPhone(request.dancerPhone())
-                .numberOfTrainingSessions(request.numberOfTrainingSessions())
                 .price(calculateCommissionPrice(request.bookingPrice()))
                 .build();
-        log.debug("[Booking for dancer] Created booking: {}", booking);
 
-        booking = bookingRepository.save(booking);
-        log.info("[Booking for dancer] Booking successfully saved with id: {}", booking.getId());
-
-        return BookingResponse.mapToBookingResponse(booking);
+        return BookingResponse.mapToBookingResponse(bookingRepository.save(booking));
     }
 
     @Override
@@ -102,9 +93,6 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
         log.info("Starting to create booking request for dancer with request: {}", request);
-
-        // Check conflict for choreographer before work
-        checkChoreographerBookingConflict(request, choreography);
 
         User customer = userService.getLoginUser();
         log.debug("[Booking for choreography] Fetched logged-in customer: {}", customer.getName());
@@ -122,7 +110,6 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = Booking.builder()
                 .customer(customer)
-                .dancer(null)
                 .area(area)
                 .choreography(choreography)
                 .status(status)
