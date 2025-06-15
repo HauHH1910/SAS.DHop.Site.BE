@@ -3,6 +3,7 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
@@ -55,7 +56,7 @@ public class BookingController {
     }
 
     @PostMapping("/create-booking-for-dancers")
-    public ResponseData<BookingResponse> createBookingForDancers(@RequestBody BookingRequest bookingRequest) {
+    public ResponseData<BookingResponse> createBookingForDancers(@RequestBody DancerBookingRequest bookingRequest) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.CREATE_BOOKING)
                 .data(bookingService.createBookingRequestForDancer(bookingRequest))
