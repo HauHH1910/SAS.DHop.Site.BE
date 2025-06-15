@@ -93,4 +93,9 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
 
     @Column(name = "price")
     private BigDecimal price;
+
+    @ManyToOne
+    @JoinColumn(name = "previous_status_id")
+    private Status previousStatus;
+
 }

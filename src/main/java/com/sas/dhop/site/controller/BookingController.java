@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[Booking Controller]")
 public class BookingController {
     private final BookingService bookingService;
+    private final BuildProperties buildProperties;
 
     @GetMapping("/get-all-booking")
     public ResponseData<List<BookingResponse>> getAllBooking() {
@@ -92,6 +94,31 @@ public class BookingController {
                 .data(bookingService.endWorking(endWorkRequest))
                 .build();
     }
+
+    @PutMapping("/booking-complains/{bookingId}")
+    public ResponseData<BookingCancelResponse> bookingComplains(@PathVariable Integer bookingId){
+        return ResponseData.<BookingCancelResponse>builder()
+                .message(ResponseMessage.BOOKING_COMPLAINS_REQUEST)
+                .data(bookingService.bookingComplains(bookingId))
+                .build();
+    }
+
+    @PutMapping("/booking-complains-accept/{bookingId}")
+    public ResponseData<BookingResponse> acceptBookingComplainsProgress(@PathVariable Integer bookingId){
+        return ResponseData.<BookingResponse>builder()
+                .message(ResponseMessage.BOOKING_COMPLAINS_APPLY)
+                .data(bookingService.acceptBookingComplainsProgress(bookingId))
+                .build();
+    }
+
+    @PutMapping("/booking-complains-deny/{bookingId}")
+    public ResponseData<BookingResponse> denyBookingComplainsProgress(@PathVariable Integer bookingId){
+        return ResponseData.<BookingResponse>builder()
+                .message(ResponseMessage.BOOKING_COMPLAINS_DENY)
+                .data(bookingService.denyBookingComplainsProgress(bookingId))
+                .build();
+    }
+
 
     //    public ResponseData<BookingResponse>
 

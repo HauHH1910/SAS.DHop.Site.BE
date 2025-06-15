@@ -13,4 +13,5 @@ public class BookingStatus {
     public static final String BOOKING_DENY_JOIN = "Từ chối tham gia";
     public static final String BOOKING_OUT_SLOT = "Hết chỗ trống";
     public static final String BOOKING_DISPUTED = "Đang xử lý tranh chấp";
+    public static final String BOOKING_DISPUTED_REQUEST = "Yêu cầu nền tảng xử lý tranh chấp của đôi bên";
 }

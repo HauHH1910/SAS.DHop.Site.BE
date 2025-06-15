@@ -1,6 +1,7 @@
 package com.sas.dhop.site.service.impl;
 
 import com.sas.dhop.site.constant.BookingStatus;
+import com.sas.dhop.site.dto.request.BookingCancelRequest;
 import com.sas.dhop.site.dto.request.BookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
@@ -146,7 +147,6 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(booking);
     }
 
-
     // accept button for dancers and choreographer
     @Override
     @Transactional
@@ -211,6 +211,68 @@ public class BookingServiceImpl implements BookingService {
 
         return BookingResponse.mapToBookingResponse(booking);
     }
+
+    //This like booking report
+    @Override
+    public BookingCancelResponse bookingComplains(Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+
+        if(booking.getBookingStatus().equals(BookingStatus.BOOKING_INACTIVATE)
+        || booking.getBookingStatus().equals(BookingStatus.BOOKING_PENDING)){
+            throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
+        }
+
+        Status complainStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_DISPUTED_REQUEST);
+        booking.setStatus(complainStatus);
+
+        User currentUser = userService.getLoginUser();
+        booking.setCancelPersonName(currentUser.getName());
+        booking.setCancelReason(booking.getCancelReason());
+
+        bookingRepository.save(booking);
+
+        return bookingCancelMapper.mapToBookingCancelResponse(booking);
+    }
+
+    @Override
+    public BookingResponse acceptBookingComplainsProgress(Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+
+        if (!booking.getBookingStatus().equals(BookingStatus.BOOKING_DISPUTED_REQUEST)) {
+            throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
+        }
+
+        Status complainStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_DISPUTED);
+        booking.setStatus(complainStatus);
+        bookingRepository.save(booking);
+        return BookingResponse.mapToBookingResponse(booking);
+    }
+
+    @Override
+    public BookingResponse denyBookingComplainsProgress(Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+
+        if (!booking.getBookingStatus().equals(BookingStatus.BOOKING_DISPUTED)) {
+            throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
+        }
+
+        // Khôi phục trạng thái trước khi khiếu nại
+        Status restoredStatus = booking.getPreviousStatus(); // cần có cột này
+        if (restoredStatus == null) {
+            throw new BusinessException(ErrorConstant.BOOKING_STATUS_NOT_FOUND);
+        }
+
+        booking.setStatus(restoredStatus);
+        booking.setPreviousStatus(null); // clear lại nếu cần
+        bookingRepository.save(booking);
+
+        return BookingResponse.mapToBookingResponse(booking);
+    }
+
+
 
     @Override
     public BookingResponse getBookingDetail(int bookingId) {
@@ -313,6 +375,9 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(booking);
     }
 
+
+
+
     //Check conflit for dancer schedules
     private void checkDancerBookingConflict(BookingRequest bookingRequest, Dancer dancer){
         // Lấy tất cả booking của dancer trong ngày
@@ -366,31 +431,29 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-
     //Todo: nhớ bỏ hàm này vào xử lý real time luôn
     //Check time need to change status before begin the work (24 hour)
     @Transactional
     public void cancelLateBookingsAutomatically() {
         Instant now = Instant.now();
 
+        // Lọc các booking đang ở trạng thái ACTIVATE và đã qua 24h kể từ startTime
         List<Booking> lateBookings = bookingRepository.findAll().stream()
                 .filter(b -> b.getStatus().getStatusName().equals(BookingStatus.BOOKING_ACTIVATE))
-                .filter(b -> b.getStartTime().plusSeconds(24 * 3600).isBefore(ChronoLocalDateTime.from(now))) // đã qua 24h
+                .filter(b -> b.getStartTime().plusHours(24).isBefore(ChronoLocalDateTime.from(now)))
                 .collect(Collectors.toList());
 
-        Status cancelStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_CANCELED);
+        // Lấy trạng thái INACTIVATE để set
+        Status inactivateStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_INACTIVATE);
 
         for (Booking booking : lateBookings) {
-            booking.setStatus(cancelStatus);
-            booking.setCancelReason("Tự động hủy vì không bắt đầu sau 24 giờ.");
+            booking.setStatus(inactivateStatus);
+            booking.setCancelReason("Tự động chuyển sang INACTIVATE vì đã quá 24h mà không bắt đầu.");
             booking.setCancelPersonName("Hệ thống");
 
             bookingRepository.save(booking);
-            log.info("Booking ID {} đã được hủy tự động do không bắt đầu sau 24h.", booking.getId());
         }
     }
-
-
 
     //Check price after original have commission
     private BigDecimal calculateCommissionPrice(BigDecimal price) {
@@ -409,5 +472,7 @@ public class BookingServiceImpl implements BookingService {
             return price.multiply(new BigDecimal("1.10")).setScale(2, RoundingMode.HALF_UP);
         }
     }
+
+
 
 }

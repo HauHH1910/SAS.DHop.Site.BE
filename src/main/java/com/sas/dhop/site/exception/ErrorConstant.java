@@ -2,6 +2,7 @@ package com.sas.dhop.site.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.http.protocol.HTTP;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
@@ -65,7 +66,11 @@ public enum ErrorConstant {
     DANCER_TEAM_SIZE_CONFLICT(48,"Xung đột về số lượng thành viên", HttpStatus.CONFLICT),
     CHOOREOGRAPHY_TIME_CONFLICT(49, "Xung đột thời gian làm việc của biên đạo", HttpStatus.CONFLICT),
     CAN_NOT_UPDATE_BOOKING(50, "Không thể cập nhập thông tin của dịch vụ", HttpStatus.FORBIDDEN),
-    PERFORMANCE_CAN_NOT_BE_DELETED(51, "Không thể xóa được vì thuộc về một phần của hợp đồng", HttpStatus.FORBIDDEN);
+    PERFORMANCE_CAN_NOT_BE_DELETED(51, "Không thể xóa được vì thuộc về một phần của hợp đồng", HttpStatus.FORBIDDEN),
+    CAN_NOT_COMPLAIN(52, "Không thể khiếu nại", HttpStatus.NOT_ACCEPTABLE),
+    BOOKING_STATUS_NOT_FOUND(53,"Không tìm thấy trạng thái", HttpStatus.NOT_FOUND);
+
+
 
     private final Integer code;
     private final String message;
