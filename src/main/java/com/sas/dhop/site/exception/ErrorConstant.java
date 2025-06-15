@@ -66,6 +66,8 @@ public enum ErrorConstant {
     CHOOREOGRAPHY_TIME_CONFLICT(49, "Xung đột thời gian làm việc của biên đạo", HttpStatus.CONFLICT),
     CAN_NOT_UPDATE_BOOKING(50, "Không thể cập nhập thông tin của dịch vụ", HttpStatus.FORBIDDEN),
     PERFORMANCE_CAN_NOT_BE_DELETED(51, "Không thể xóa được vì thuộc về một phần của hợp đồng", HttpStatus.FORBIDDEN),
+    CAN_NOT_COMPLAIN(52, "Không thể khiếu nại", HttpStatus.NOT_ACCEPTABLE),
+    BOOKING_STATUS_NOT_FOUND(53,"Không tìm thấy trạng thái", HttpStatus.NOT_FOUND),
     SUBSCRIPTION_ENDED(52, "Hết số lượt sử dụng thử", HttpStatus.FORBIDDEN);
 
     private final Integer code;

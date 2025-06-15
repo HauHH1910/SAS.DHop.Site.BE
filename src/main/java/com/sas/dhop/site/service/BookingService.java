@@ -1,10 +1,13 @@
 package com.sas.dhop.site.service;
 
+import com.sas.dhop.site.dto.request.BookingCancelRequest;
 import com.sas.dhop.site.dto.request.BookingRequest;
 import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
+import com.sas.dhop.site.model.Booking;
+
 import java.util.List;
 
 public interface BookingService {
@@ -39,4 +42,14 @@ public interface BookingService {
     BookingResponse updateBookingInformation(Integer bookingId, BookingRequest bookingRequest);
 
     BookingResponse endWorking(EndWorkRequest request);
+
+    //For user(booker, dancers, choreographer) use
+    BookingCancelResponse bookingComplains(Integer bookingId);
+
+    //For Staff process complains and change booking status
+    BookingResponse acceptBookingComplainsProgress(Integer bookingId);
+
+    //For Staff process complains and change booking status
+    BookingResponse denyBookingComplainsProgress(Integer bookingId);
+
 }
