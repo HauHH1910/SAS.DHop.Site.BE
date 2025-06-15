@@ -98,4 +98,7 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @JoinColumn(name = "previous_status_id")
     private Status previousStatus;
 
+
+    @Column(name = "number_of_team_member")
+    private Integer numberOfTeamMember;
 }

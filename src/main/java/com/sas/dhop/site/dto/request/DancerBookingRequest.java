@@ -9,8 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record DancerBookingRequest(
-        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm") @NotNull(message = DANCER_START_TIME_NOT_NULL)
-                LocalDateTime startTime,
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm") @NotNull(message = DANCER_START_TIME_NOT_NULL) LocalDateTime startTime,
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm") @NotNull(message = DANCER_END_TIME_NOT_NULL) LocalDateTime endTime,
         String address,
         String detail,
@@ -20,4 +19,4 @@ public record DancerBookingRequest(
         BigDecimal bookingPrice,
         String dancerPhone,
         String customerPhone,
-        Integer teamSize) {}
+        Integer numberOfTeamMember) {}
