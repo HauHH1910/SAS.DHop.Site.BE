@@ -18,27 +18,23 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[Role Controller]")
 public class RoleController {
 
-  private final RoleService roleService;
+	private final RoleService roleService;
 
-  @GetMapping
-  public ResponseData<List<RoleResponse>> getAllRole() {
-    return ResponseData.<List<RoleResponse>>builder()
-        .message(ResponseMessage.GET_ALL_ROLE)
-        .data(roleService.getAll())
-        .build();
-  }
+	@GetMapping
+	public ResponseData<List<RoleResponse>> getAllRole() {
+		return ResponseData.<List<RoleResponse>>builder().message(ResponseMessage.GET_ALL_ROLE)
+				.data(roleService.getAll()).build();
+	}
 
-  @PostMapping
-  public ResponseData<RoleResponse> createRole(@RequestBody RoleRequest request) {
-    return ResponseData.<RoleResponse>builder()
-        .message(ResponseMessage.CREATE_ROLE)
-        .data(roleService.createRole(request))
-        .build();
-  }
+	@PostMapping
+	public ResponseData<RoleResponse> createRole(@RequestBody RoleRequest request) {
+		return ResponseData.<RoleResponse>builder().message(ResponseMessage.CREATE_ROLE)
+				.data(roleService.createRole(request)).build();
+	}
 
-  @DeleteMapping("/{id}")
-  public ResponseData<Void> deleteRole(@PathVariable("id") Integer id) {
-    roleService.deleteRole(id);
-    return ResponseData.<Void>builder().message(ResponseMessage.DELETE_ROLE).build();
-  }
+	@DeleteMapping("/{id}")
+	public ResponseData<Void> deleteRole(@PathVariable("id") Integer id) {
+		roleService.deleteRole(id);
+		return ResponseData.<Void>builder().message(ResponseMessage.DELETE_ROLE).build();
+	}
 }

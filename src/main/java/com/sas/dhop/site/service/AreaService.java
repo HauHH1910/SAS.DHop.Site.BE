@@ -5,13 +5,13 @@ import com.sas.dhop.site.dto.response.AreaResponse;
 import java.util.List;
 
 public interface AreaService {
-  List<AreaResponse> getAllArea();
+	List<AreaResponse> getAllArea();
 
-  AreaResponse getAreaById(int areaId);
+	AreaResponse getAreaById(int areaId);
 
-  AreaResponse createNewArea(AreaRequest areaRequest);
+	AreaResponse createNewArea(AreaRequest areaRequest);
 
-  AreaResponse updateArea(int areaId, AreaRequest areaRequest);
+	AreaResponse updateArea(int areaId, AreaRequest areaRequest);
 
-  AreaResponse updateAreaStatus(int areaId);
+	AreaResponse updateAreaStatus(int areaId);
 }

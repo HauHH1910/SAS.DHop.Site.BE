@@ -30,87 +30,76 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  @Lazy private final CustomJwtDecoder customJwtDecoder;
+	@Lazy
+	private final CustomJwtDecoder customJwtDecoder;
 
-  private final String[] PUBLIC_ENDPOINTS = {"/auth/**", "/users", "/dance-type", "/ws/**"};
+	private final String[] PUBLIC_ENDPOINTS = {"/auth/**", "/users", "/dance-type", "/ws/**"};
 
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity.authorizeHttpRequests(
-        requests ->
-            requests.requestMatchers(PUBLIC_ENDPOINTS).permitAll().anyRequest().authenticated());
-    httpSecurity.headers(
-        headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
-    httpSecurity.oauth2ResourceServer(
-        oauth2 ->
-            oauth2
-                .jwt(
-                    jwtConfigurer ->
-                        jwtConfigurer
-                            .decoder(customJwtDecoder)
-                            .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+		httpSecurity.authorizeHttpRequests(
+				requests -> requests.requestMatchers(PUBLIC_ENDPOINTS).permitAll().anyRequest().authenticated());
+		httpSecurity.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
+		httpSecurity.oauth2ResourceServer(oauth2 -> oauth2
+				.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
+						.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+				.authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 
-    httpSecurity.cors(Customizer.withDefaults());
-    httpSecurity.sessionManagement(
-        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		httpSecurity.cors(Customizer.withDefaults());
+		httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-    httpSecurity.csrf(AbstractHttpConfigurer::disable);
+		httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
-    return httpSecurity.build();
-  }
+		return httpSecurity.build();
+	}
 
-  @Bean
-  public CorsFilter corsFilter() {
-    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	@Bean
+	public CorsFilter corsFilter() {
+		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-    final CorsConfiguration configuration = new CorsConfiguration();
+		final CorsConfiguration configuration = new CorsConfiguration();
 
-    configuration.setAllowCredentials(true);
+		configuration.setAllowCredentials(true);
 
-    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-    configuration.setAllowedHeaders(
-        Arrays.asList(
-            HttpHeaders.ORIGIN,
-            HttpHeaders.CONTENT_TYPE,
-            HttpHeaders.ACCEPT,
-            HttpHeaders.AUTHORIZATION));
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH"));
-    source.registerCorsConfiguration("/**", configuration);
+		configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+		configuration.setAllowedHeaders(Arrays.asList(HttpHeaders.ORIGIN, HttpHeaders.CONTENT_TYPE, HttpHeaders.ACCEPT,
+				HttpHeaders.AUTHORIZATION));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH"));
+		source.registerCorsConfiguration("/**", configuration);
 
-    return new CorsFilter(source);
-  }
+		return new CorsFilter(source);
+	}
 
-  @Bean
-  public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOriginPatterns(List.of("http://localhost:3000"));
-    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    configuration.setAllowedHeaders(List.of("*"));
-    configuration.setExposedHeaders(List.of("*"));
-    configuration.setAllowCredentials(true);
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOriginPatterns(List.of("http://localhost:3000"));
+		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setAllowedHeaders(List.of("*"));
+		configuration.setExposedHeaders(List.of("*"));
+		configuration.setAllowCredentials(true);
 
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration);
-    return source;
-  }
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
 
-  @Bean
-  public JwtAuthenticationConverter jwtAuthenticationConverter() {
-    JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
-    authoritiesConverter.setAuthorityPrefix("");
-    JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-    converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
-    return converter;
-  }
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+		JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+		authoritiesConverter.setAuthorityPrefix("");
+		JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+		converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+		return converter;
+	}
 
-  @Bean
-  public WebSecurityCustomizer webSecurityCustomizer() {
-    return (web) -> web.ignoring().requestMatchers("/swagger-ui/**", "/v3/api-docs*/**");
-  }
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer() {
+		return (web) -> web.ignoring().requestMatchers("/swagger-ui/**", "/v3/api-docs*/**");
+	}
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder(10);
-  }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder(10);
+	}
 }

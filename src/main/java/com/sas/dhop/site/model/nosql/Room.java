@@ -13,11 +13,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @Document(collection = "rooms")
 public class Room {
-  @Id private String id;
+	@Id
+	private String id;
 
-  private String roomId;
+	private String roomId;
 
-  private String name;
+	private String name;
 
-  @Builder.Default private List<Message> messages = new ArrayList<>();
+	@Builder.Default
+	private List<Message> messages = new ArrayList<>();
 }

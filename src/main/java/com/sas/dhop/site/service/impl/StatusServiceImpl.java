@@ -15,26 +15,17 @@ import org.springframework.stereotype.Service;
 @Slf4j(topic = "[Status Service]")
 public class StatusServiceImpl implements StatusService {
 
-  private final StatusRepository statusRepository;
+	private final StatusRepository statusRepository;
 
-  @Override
-  public Status findStatusOrCreated(String status) {
-    return statusRepository
-        .findByStatusName(status)
-        .orElseGet(
-            () ->
-                statusRepository.save(
-                    Status.builder()
-                        .statusName(status)
-                        .statusType(StatusType.ACTIVE)
-                        .description(status)
-                        .build()));
-  }
+	@Override
+	public Status findStatusOrCreated(String status) {
+		return statusRepository.findByStatusName(status).orElseGet(() -> statusRepository
+				.save(Status.builder().statusName(status).statusType(StatusType.ACTIVE).description(status).build()));
+	}
 
-  @Override
-  public Status getStatus(String status) {
-    return statusRepository
-        .findByStatusName(status)
-        .orElseThrow(() -> new BusinessException(ErrorConstant.STATUS_NOT_FOUND));
-  }
+	@Override
+	public Status getStatus(String status) {
+		return statusRepository.findByStatusName(status)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.STATUS_NOT_FOUND));
+	}
 }

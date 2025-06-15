@@ -21,23 +21,17 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j(topic = "[Cloud Storage Controller]")
 public class CloudStorageController {
 
-  private final CloudStorageService cloudStorageService;
+	private final CloudStorageService cloudStorageService;
 
-  @PostMapping("/images")
-  public ResponseData<List<MediaResponse>> uploadImages(
-      @RequestParam("images") MultipartFile[] multipartFiles) {
-    return ResponseData.<List<MediaResponse>>builder()
-        .message(ResponseMessage.UPLOAD_IMAGE)
-        .data(cloudStorageService.uploadImage(multipartFiles))
-        .build();
-  }
+	@PostMapping("/images")
+	public ResponseData<List<MediaResponse>> uploadImages(@RequestParam("images") MultipartFile[] multipartFiles) {
+		return ResponseData.<List<MediaResponse>>builder().message(ResponseMessage.UPLOAD_IMAGE)
+				.data(cloudStorageService.uploadImage(multipartFiles)).build();
+	}
 
-  @PostMapping("/video")
-  public ResponseData<MediaResponse> uploadVideo(
-      @RequestParam("video") MultipartFile multipartFile) {
-    return ResponseData.<MediaResponse>builder()
-        .message(ResponseMessage.UPLOAD_VIDEO)
-        .data(cloudStorageService.uploadVideo(multipartFile))
-        .build();
-  }
+	@PostMapping("/video")
+	public ResponseData<MediaResponse> uploadVideo(@RequestParam("video") MultipartFile multipartFile) {
+		return ResponseData.<MediaResponse>builder().message(ResponseMessage.UPLOAD_VIDEO)
+				.data(cloudStorageService.uploadVideo(multipartFile)).build();
+	}
 }

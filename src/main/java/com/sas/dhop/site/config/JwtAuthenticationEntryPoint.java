@@ -15,28 +15,22 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 
 @Slf4j(topic = "[JWT AUTHENTICATION ENTRY POINT]")
 class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-  @Override
-  public void commence(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      AuthenticationException authException)
-      throws IOException, ServletException {
-    ErrorConstant errorConstant = ErrorConstant.UNAUTHENTICATED;
+	@Override
+	public void commence(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException authException) throws IOException, ServletException {
+		ErrorConstant errorConstant = ErrorConstant.UNAUTHENTICATED;
 
-    response.setStatus(errorConstant.getHttpStatusCode().value());
-    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setStatus(errorConstant.getHttpStatusCode().value());
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-    ResponseData<ResponseError> responseData =
-        ResponseData.<ResponseError>builder()
-            .code(errorConstant.getCode())
-            .message(errorConstant.getMessage())
-            .build();
+		ResponseData<ResponseError> responseData = ResponseData.<ResponseError>builder().code(errorConstant.getCode())
+				.message(errorConstant.getMessage()).build();
 
-    ObjectMapper mapper = new ObjectMapper();
-    log.info("JwtAuthenticationEntryPoint {}", mapper.writeValueAsString(responseData));
+		ObjectMapper mapper = new ObjectMapper();
+		log.info("JwtAuthenticationEntryPoint {}", mapper.writeValueAsString(responseData));
 
-    response.getWriter().write(mapper.writeValueAsString(responseData));
+		response.getWriter().write(mapper.writeValueAsString(responseData));
 
-    response.flushBuffer();
-  }
+		response.flushBuffer();
+	}
 }

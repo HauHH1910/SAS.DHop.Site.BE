@@ -8,10 +8,10 @@ import org.springframework.data.mongodb.repository.Query;
 
 public interface RoomRepository extends MongoRepository<Room, String> {
 
-  Optional<Room> findByRoomId(String roomId);
+	Optional<Room> findByRoomId(String roomId);
 
-  @Query("{ 'roomId' : {$regex:  ?0}}")
-  List<Room> findByRoomIdRegex(String regex);
+	@Query("{ 'roomId' : {$regex:  ?0}}")
+	List<Room> findByRoomIdRegex(String regex);
 
-  List<Room> findByRoomIdContaining(String roomId);
+	List<Room> findByRoomIdContaining(String roomId);
 }

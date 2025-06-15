@@ -22,77 +22,70 @@ import org.springframework.stereotype.Service;
 @Slf4j(topic = "[User Service]")
 public class UserServiceImpl implements UserService {
 
-  private final UserRepository userRepository;
-  private final UserMapper userMapper;
+	private final UserRepository userRepository;
+	private final UserMapper userMapper;
 
-  @Override
-  public List<UserResponse> getAllUser() {
-    log.info("[get all user]");
-    return userRepository.findAll().stream().map(userMapper::mapToUserResponse).toList();
-  }
+	@Override
+	public List<UserResponse> getAllUser() {
+		log.info("[get all user]");
+		return userRepository.findAll().stream().map(userMapper::mapToUserResponse).toList();
+	}
 
-  @Override
-  public UserResponse getUser(Integer id) {
-    log.info("[get user] - [{}]", id);
-    return userMapper.mapToUserResponse(findUserById(id));
-  }
+	@Override
+	public UserResponse getUser(Integer id) {
+		log.info("[get user] - [{}]", id);
+		return userMapper.mapToUserResponse(findUserById(id));
+	}
 
-  @Override
-  @PreAuthorize("hasRole('ADMIN')")
-  public void deleteUser(Integer id) {
-    log.info("[delete user] - [{}]", id);
-    userRepository.delete(findUserById(id));
-  }
+	@Override
+	@PreAuthorize("hasRole('ADMIN')")
+	public void deleteUser(Integer id) {
+		log.info("[delete user] - [{}]", id);
+		userRepository.delete(findUserById(id));
+	}
 
-  @Override
-  public UserResponse updateUser(Integer id, UpdateUserRequest request) {
-    User user = findUserById(id);
-    userMapper.mapToUpdateUser(user, request);
-    log.info("[update user] - [{}]", id);
-    return userMapper.mapToUserResponse(user);
-  }
+	@Override
+	public UserResponse updateUser(Integer id, UpdateUserRequest request) {
+		User user = findUserById(id);
+		userMapper.mapToUpdateUser(user, request);
+		log.info("[update user] - [{}]", id);
+		return userMapper.mapToUserResponse(user);
+	}
 
-  @Override
-  public UserResponse createUser(CreateUserRequest request) {
-    log.info("[create user] - [{}]", request.email());
-    return userMapper.mapToUserResponse(userRepository.save(userMapper.mapToUser(request)));
-  }
+	@Override
+	public UserResponse createUser(CreateUserRequest request) {
+		log.info("[create user] - [{}]", request.email());
+		return userMapper.mapToUserResponse(userRepository.save(userMapper.mapToUser(request)));
+	}
 
-  @Override
-  public UserResponse getUserInfo() {
-    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    log.info("[get user info] - [{}]", email);
+	@Override
+	public UserResponse getUserInfo() {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		log.info("[get user info] - [{}]", email);
 
-    return userMapper.mapToUserResponse(
-        userRepository
-            .findByEmail(email)
-            .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND)));
-  }
+		return userMapper.mapToUserResponse(userRepository.findByEmail(email)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND)));
+	}
 
-  @Override
-  public UserResponse findUser(String email) {
-    return userMapper.mapToUserResponse(
-        userRepository
-            .findByEmail(email)
-            .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND)));
-  }
+	@Override
+	public UserResponse findUser(String email) {
+		return userMapper.mapToUserResponse(userRepository.findByEmail(email)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND)));
+	}
 
-  @Override
-  public User getLoginUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (!authentication.isAuthenticated()) {
-      throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
-    }
-    return userRepository
-        .findByEmail(authentication.getName())
-        .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
-  }
+	@Override
+	public User getLoginUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (!authentication.isAuthenticated()) {
+			throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
+		}
+		return userRepository.findByEmail(authentication.getName())
+				.orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+	}
 
-  @Override
-  public User findUserById(Integer id) {
-    log.info("[find user] - [{}]", id);
-    return userRepository
-        .findById(id)
-        .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
-  }
+	@Override
+	public User findUserById(Integer id) {
+		log.info("[find user] - [{}]", id);
+		return userRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+	}
 }

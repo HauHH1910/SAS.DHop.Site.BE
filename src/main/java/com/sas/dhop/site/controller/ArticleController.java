@@ -17,46 +17,36 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "[Article Controller]")
 @Slf4j(topic = "[Article Controller]")
 public class ArticleController {
-  private final ArticleService articleService;
+	private final ArticleService articleService;
 
-  @GetMapping("/get-all-article")
-  public ResponseData<List<ArticleResponse>> getAllArticle() {
-    return ResponseData.<List<ArticleResponse>>builder()
-        .message(ResponseMessage.GET_ALL_ARTICLE_SUCCESSFULLY)
-        .data(articleService.getAllArticle())
-        .build();
-  }
+	@GetMapping("/get-all-article")
+	public ResponseData<List<ArticleResponse>> getAllArticle() {
+		return ResponseData.<List<ArticleResponse>>builder().message(ResponseMessage.GET_ALL_ARTICLE_SUCCESSFULLY)
+				.data(articleService.getAllArticle()).build();
+	}
 
-  @DeleteMapping("/delete-article/{articleId}")
-  public ResponseData<ArticleResponse> removeArticle(@PathVariable Integer articleId) {
-    return ResponseData.<ArticleResponse>builder()
-        .message(ResponseMessage.DELETE_ARTICLE_SUCCESSFULLY)
-        .data(articleService.deleteArticle(articleId))
-        .build();
-  }
+	@DeleteMapping("/delete-article/{articleId}")
+	public ResponseData<ArticleResponse> removeArticle(@PathVariable Integer articleId) {
+		return ResponseData.<ArticleResponse>builder().message(ResponseMessage.DELETE_ARTICLE_SUCCESSFULLY)
+				.data(articleService.deleteArticle(articleId)).build();
+	}
 
-  @GetMapping("/get-article-by-id/{articleId}")
-  public ResponseData<ArticleResponse> getArticleById(@PathVariable Integer articleId) {
-    return ResponseData.<ArticleResponse>builder()
-        .message(ResponseMessage.GET_ARTICLE_BY_ID)
-        .data(articleService.getArticleById(articleId))
-        .build();
-  }
+	@GetMapping("/get-article-by-id/{articleId}")
+	public ResponseData<ArticleResponse> getArticleById(@PathVariable Integer articleId) {
+		return ResponseData.<ArticleResponse>builder().message(ResponseMessage.GET_ARTICLE_BY_ID)
+				.data(articleService.getArticleById(articleId)).build();
+	}
 
-  @PostMapping("/create-article")
-  public ResponseData<ArticleResponse> creatArticle(@RequestBody ArticleRequest articleRequest) {
-    return ResponseData.<ArticleResponse>builder()
-        .message(ResponseMessage.CREATE_ARTICLE_SUCCESSFULLY)
-        .data(articleService.createArticle(articleRequest))
-        .build();
-  }
+	@PostMapping("/create-article")
+	public ResponseData<ArticleResponse> creatArticle(@RequestBody ArticleRequest articleRequest) {
+		return ResponseData.<ArticleResponse>builder().message(ResponseMessage.CREATE_ARTICLE_SUCCESSFULLY)
+				.data(articleService.createArticle(articleRequest)).build();
+	}
 
-  @PostMapping("/update-article/{articleId}")
-  public ResponseData<ArticleResponse> updateArticle(
-      @PathVariable Integer articleId, @RequestBody ArticleRequest articleRequest) {
-    return ResponseData.<ArticleResponse>builder()
-        .message(ResponseMessage.UPDATE_ARTICLE_SUCCESSFULLY)
-        .data(articleService.updateAritcle(articleId, articleRequest))
-        .build();
-  }
+	@PostMapping("/update-article/{articleId}")
+	public ResponseData<ArticleResponse> updateArticle(@PathVariable Integer articleId,
+			@RequestBody ArticleRequest articleRequest) {
+		return ResponseData.<ArticleResponse>builder().message(ResponseMessage.UPDATE_ARTICLE_SUCCESSFULLY)
+				.data(articleService.updateAritcle(articleId, articleRequest)).build();
+	}
 }

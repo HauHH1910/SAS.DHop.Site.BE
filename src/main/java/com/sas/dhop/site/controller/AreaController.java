@@ -17,21 +17,17 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "[Area Controller]")
 @Slf4j(topic = "[Area Controller]")
 public class AreaController {
-  private final AreaService areaService;
+	private final AreaService areaService;
 
-  @GetMapping
-  public ResponseData<List<AreaResponse>> getAllArea() {
-    return ResponseData.<List<AreaResponse>>builder()
-        .message(ResponseMessage.GET_ALL_AREA)
-        .data(areaService.getAllArea())
-        .build();
-  }
+	@GetMapping
+	public ResponseData<List<AreaResponse>> getAllArea() {
+		return ResponseData.<List<AreaResponse>>builder().message(ResponseMessage.GET_ALL_AREA)
+				.data(areaService.getAllArea()).build();
+	}
 
-  @PostMapping
-  public ResponseData<AreaResponse> createArea(@RequestBody AreaRequest request) {
-    return ResponseData.<AreaResponse>builder()
-        .message(ResponseMessage.CREATE_AREA)
-        .data(areaService.createNewArea(request))
-        .build();
-  }
+	@PostMapping
+	public ResponseData<AreaResponse> createArea(@RequestBody AreaRequest request) {
+		return ResponseData.<AreaResponse>builder().message(ResponseMessage.CREATE_AREA)
+				.data(areaService.createNewArea(request)).build();
+	}
 }

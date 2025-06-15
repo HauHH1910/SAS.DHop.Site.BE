@@ -29,61 +29,49 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j(topic = "[User Subscription Service]")
 public class UserSubscriptionServiceImpl implements UserSubscriptionService {
-  private final UserRepository userRepository;
-  private final UserSubscriptionRepository userSubscriptionRepository;
-  private final SubscriptionRepository subscriptionRepository;
-  private final StatusService statusService;
+	private final UserRepository userRepository;
+	private final UserSubscriptionRepository userSubscriptionRepository;
+	private final SubscriptionRepository subscriptionRepository;
+	private final StatusService statusService;
 
-  @Override
-  public List<UserSubscriptionResponse> getSubscriptionStatus() {
-    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    log.info("[get subscription status] - [{}]", email);
+	@Override
+	public List<UserSubscriptionResponse> getSubscriptionStatus() {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		log.info("[get subscription status] - [{}]", email);
 
-    User user =
-        userRepository
-            .findByEmail(email)
-            .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
 
-    List<UserSubscription> list = userSubscriptionRepository.findByUser_Id(user.getId());
+		List<UserSubscription> list = userSubscriptionRepository.findByUser_Id(user.getId());
 
-    List<UserSubscriptionResponse> responsesList = new ArrayList<>();
+		List<UserSubscriptionResponse> responsesList = new ArrayList<>();
 
-    list.forEach(
-        subscription -> {
-          log.info("[get subscription status] - [{}]", subscription.getSubscription().getName());
-          responsesList.add(mapToResponse(subscription));
-        });
-    return responsesList;
-  }
+		list.forEach(subscription -> {
+			log.info("[get subscription status] - [{}]", subscription.getSubscription().getName());
+			responsesList.add(mapToResponse(subscription));
+		});
+		return responsesList;
+	}
 
-  @Override
-  public UserSubscriptionResponse addSubscriptionToUser(UserSubscriptionRequest request) {
-    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    log.info("[add subscription to user] - [{}]", email);
+	@Override
+	public UserSubscriptionResponse addSubscriptionToUser(UserSubscriptionRequest request) {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		log.info("[add subscription to user] - [{}]", email);
 
-    User user =
-        userRepository
-            .findByEmail(email)
-            .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
 
-    Subscription subscription =
-        subscriptionRepository
-            .findById(request.subscriptionId())
-            .orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND));
+		Subscription subscription = subscriptionRepository.findById(request.subscriptionId())
+				.orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND));
 
-    Status status = statusService.findStatusOrCreated(ACTIVE_USER_SUBSCRIPTION);
+		Status status = statusService.findStatusOrCreated(ACTIVE_USER_SUBSCRIPTION);
 
-    return mapToResponse(
-        userSubscriptionRepository.save(
-            UserSubscription.builder()
-                .user(user)
-                .subscription(subscription)
-                .fromDate(Instant.now())
-                .toDate(Instant.now().plus(subscription.getDuration(), ChronoUnit.DAYS))
-                .status(status)
-                .build()));
-  }
+		return mapToResponse(userSubscriptionRepository.save(UserSubscription.builder().user(user)
+				.subscription(subscription).fromDate(Instant.now())
+				.toDate(Instant.now().plus(subscription.getDuration(), ChronoUnit.DAYS)).status(status).build()));
+	}
 
-  @Override
-  public void updateSubscriptionStatus() {}
+	@Override
+	public void updateSubscriptionStatus() {
+	}
 }

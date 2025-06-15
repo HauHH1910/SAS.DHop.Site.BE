@@ -6,5 +6,5 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface ArticleMapper {
-  ArticleResponse mapToArticleResponse(Article article);
+	ArticleResponse mapToArticleResponse(Article article);
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserSubscriptionRepository extends JpaRepository<UserSubscription, Integer> {
-  List<UserSubscription> findByUser_Id(Integer userId);
+	List<UserSubscription> findByUser_Id(Integer userId);
 
-  Optional<UserSubscription> findByUserId(Integer userId);
+	Optional<UserSubscription> findByUserId(Integer userId);
 }
