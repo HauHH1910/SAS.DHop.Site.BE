@@ -2,10 +2,13 @@ package com.sas.dhop.site.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Set;
+
 import lombok.*;
 
 @Getter
@@ -29,9 +32,13 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @JoinColumn(name = "choreography_id")
     private Choreography choreography;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "dance_type_id", nullable = false)
-    private DanceType danceType;
+    @JoinTable(
+            name = "booking_dance_type",
+            joinColumns = @JoinColumn(name = "booking_id"),
+            inverseJoinColumns = @JoinColumn(name = "dance_type_id")
+    )
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<DanceType> danceType;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "area_id", nullable = false)

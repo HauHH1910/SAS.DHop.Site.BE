@@ -21,7 +21,6 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final UserRepository userRepository;
     private final DancerRepository dancerRepository;
-    private final ChoreographerRepository choreographerRepository;
     private final BookingRepository bookingRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final BookingFeedbackService bookingFeedbackService;

@@ -42,7 +42,7 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
 
         List<BookingFeedback> feedbacks = bookingFeedbackRepository.findAll().stream()
                 .filter(feedback -> feedback.getToUser().getId().equals(dancer.getUser().getId()))
-                .collect(Collectors.toList());
+                .toList();
 
         return feedbacks.stream()
                 .map(bookingFeebackMapper::mapToFeedbackResponse)
@@ -56,7 +56,7 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
 
         List<BookingFeedback> feedbacks = bookingFeedbackRepository.findAll().stream()
                 .filter(feedback -> feedback.getToUser().getId().equals(choreography.getUser().getId()))
-                .collect(Collectors.toList());
+                .toList();
 
         return feedbacks.stream()
                 .map(bookingFeebackMapper::mapToFeedbackResponse)
