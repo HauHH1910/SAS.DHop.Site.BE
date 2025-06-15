@@ -222,10 +222,8 @@
                         </includes>
                         <importOrder/>
                         <removeUnusedImports/>
-                        <googleJavaFormat>
-                            <version>1.17.0</version>
-                            <style>GOOGLE</style>
-                        </googleJavaFormat>
+                        <eclipse/>
+                        <formatAnnotations/>
                     </java>
                 </configuration>
                 <executions>
