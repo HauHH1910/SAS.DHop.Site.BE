@@ -147,9 +147,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
 
-
-
-
     // accept button for dancers and choreographer
     @Override
     @Transactional

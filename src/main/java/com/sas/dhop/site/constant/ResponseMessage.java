@@ -60,6 +60,7 @@ public class ResponseMessage {
     public static final String GET_FEEBACK_FOR_CHOREOGRAPHER = "Lấy đánh giá của biên đạo thành công";
     public static final String GET_BOOKING_FEEDBACK = "Lấy đánh giá cho dịch vụ thuê thành công";
     public static final String UPDATE_BOOKING_SUCCESSFULLY = "Cập nhập thông tin cho dịch vụ thuê thành công";
+    public static final String GET_BOOKING_DETAIL = "Lấy thông tin của dịch vụ thuê thành công";
 
 
     public static final String DELETE_ROOM = "Xóa phòng thành công";
