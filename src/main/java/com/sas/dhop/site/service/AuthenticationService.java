@@ -26,4 +26,6 @@ public interface AuthenticationService {
     AuthenticationResponse resetPassword(ResetPasswordRequest request) throws ParseException, JOSEException;
 
     AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException;
+
+    boolean authenticationChecking(String role);
 }

@@ -3,7 +3,6 @@ package com.sas.dhop.site.service.impl;
 import com.sas.dhop.site.constant.BookingStatus;
 import com.sas.dhop.site.dto.request.BookingFeedbackRequest;
 import com.sas.dhop.site.dto.response.BookingFeedbackResponse;
-import com.sas.dhop.site.dto.response.DancerResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.*;
@@ -13,12 +12,11 @@ import com.sas.dhop.site.repository.ChoreographyRepository;
 import com.sas.dhop.site.repository.DancerRepository;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingFeebackMapper;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -37,12 +35,14 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
 
     @Override
     public List<BookingFeedbackResponse> getFeedbackByDancerId(Integer dancerId) {
-        Dancer dancer = dancerRepository.findById(dancerId)
+        Dancer dancer = dancerRepository
+                .findById(dancerId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
         List<BookingFeedback> feedbacks = bookingFeedbackRepository.findAll().stream()
-                .filter(feedback -> feedback.getToUser().getId().equals(dancer.getUser().getId()))
-                .collect(Collectors.toList());
+                .filter(feedback ->
+                        feedback.getToUser().getId().equals(dancer.getUser().getId()))
+                .toList();
 
         return feedbacks.stream()
                 .map(bookingFeebackMapper::mapToFeedbackResponse)
@@ -51,12 +51,15 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
 
     @Override
     public List<BookingFeedbackResponse> getFeedbackByChoreographer(Integer choreographerId) {
-        Choreography choreography = choreographyRepository.findById(choreographerId)
+        Choreography choreography = choreographyRepository
+                .findById(choreographerId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
         List<BookingFeedback> feedbacks = bookingFeedbackRepository.findAll().stream()
-                .filter(feedback -> feedback.getToUser().getId().equals(choreography.getUser().getId()))
-                .collect(Collectors.toList());
+                .filter(feedback -> feedback.getToUser()
+                        .getId()
+                        .equals(choreography.getUser().getId()))
+                .toList();
 
         return feedbacks.stream()
                 .map(bookingFeebackMapper::mapToFeedbackResponse)
@@ -67,13 +70,13 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
     public BookingFeedbackResponse createBookingFeedback(BookingFeedbackRequest bookingFeebackRequest) {
 
         checkingBookingStatus(bookingFeebackRequest.bookingId());
-        
-        Booking booking = bookingRepository.findById(bookingFeebackRequest.bookingId())
+
+        Booking booking = bookingRepository
+                .findById(bookingFeebackRequest.bookingId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         // Take customer
         User fromUser = userService.getLoginUser();
-
 
         User toUser;
         if (booking.getDancer() != null) {
@@ -103,8 +106,7 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
     public BookingFeedbackResponse getBookingFeedbackByBookingId(Integer bookingId) {
         checkingBookingStatus(bookingId);
 
-        bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+        bookingRepository.findById(bookingId).orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         BookingFeedback feedback = bookingFeedbackRepository.findAll().stream()
                 .filter(f -> f.getBooking().getId().equals(bookingId))
@@ -114,13 +116,13 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
         return bookingFeebackMapper.mapToFeedbackResponse(feedback);
     }
 
-
-    //Check valid booking status to review
+    // Check valid booking status to review
     private void checkingBookingStatus(Integer bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
+        Booking booking = bookingRepository
+                .findById(bookingId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
-        if(!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_COMPLETED)){
+        if (!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_COMPLETED)) {
             throw new BusinessException(ErrorConstant.CAN_NOT_FEEDBACK);
         }
     }

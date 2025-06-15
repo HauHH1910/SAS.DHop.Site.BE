@@ -25,6 +25,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.stereotype.Service;
@@ -300,6 +303,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
         return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+    }
+
+    @Override
+    public boolean authenticationChecking(String role) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null
+                && !(authentication instanceof AnonymousAuthenticationToken)
+                && authentication.isAuthenticated()
+                && authentication.getAuthorities().stream().anyMatch(authority -> {
+                    log.info("User has the required role: {}", authority.getAuthority());
+                    return role.equals(authority.getAuthority());
+                });
     }
 
     private ExchangeTokenResponse getTokenResponse(String code) {

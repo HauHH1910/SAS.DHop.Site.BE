@@ -7,5 +7,4 @@ public record AreaResponse(String district, String ward, String city, Integer ar
     public static AreaResponse mapToAreaResponse(Area area) {
         return new AreaResponse(area.getDistrict(), area.getWard(), area.getCity(), area.getId());
     }
-
 }

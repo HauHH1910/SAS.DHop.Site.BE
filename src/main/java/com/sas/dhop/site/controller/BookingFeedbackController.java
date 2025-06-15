@@ -6,11 +6,10 @@ import com.sas.dhop.site.dto.request.BookingFeedbackRequest;
 import com.sas.dhop.site.dto.response.BookingFeedbackResponse;
 import com.sas.dhop.site.service.BookingFeedbackService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +20,8 @@ public class BookingFeedbackController {
     private final BookingFeedbackService bookingFeedbackService;
 
     @PostMapping("/create-booking-feedback")
-    public ResponseData<BookingFeedbackResponse> createBookingFeedback(@RequestBody BookingFeedbackRequest bookingFeedbackRequest){
+    public ResponseData<BookingFeedbackResponse> createBookingFeedback(
+            @RequestBody BookingFeedbackRequest bookingFeedbackRequest) {
         return ResponseData.<BookingFeedbackResponse>builder()
                 .message(ResponseMessage.CREATE_BOOKING_FEEDBACK)
                 .data(bookingFeedbackService.createBookingFeedback(bookingFeedbackRequest))
@@ -29,7 +29,7 @@ public class BookingFeedbackController {
     }
 
     @GetMapping("/get-feedback-of-dancer/{dancerId}")
-    public ResponseData<List<BookingFeedbackResponse>> getBookingFeedbackOfDancer (@PathVariable Integer dancerId){
+    public ResponseData<List<BookingFeedbackResponse>> getBookingFeedbackOfDancer(@PathVariable Integer dancerId) {
         return ResponseData.<List<BookingFeedbackResponse>>builder()
                 .message(ResponseMessage.GET_FEEBACK_FOR_DANCER)
                 .data(bookingFeedbackService.getFeedbackByDancerId(dancerId))
@@ -37,19 +37,19 @@ public class BookingFeedbackController {
     }
 
     @GetMapping("/get-feedback-of-choreographer/{choreographerId}")
-    public ResponseData<List<BookingFeedbackResponse>> getBookingFeedbackOfChoreographer (@PathVariable Integer choreographerId){
+    public ResponseData<List<BookingFeedbackResponse>> getBookingFeedbackOfChoreographer(
+            @PathVariable Integer choreographerId) {
         return ResponseData.<List<BookingFeedbackResponse>>builder()
                 .message(ResponseMessage.GET_FEEBACK_FOR_CHOREOGRAPHER)
                 .data(bookingFeedbackService.getFeedbackByChoreographer(choreographerId))
                 .build();
     }
 
-    @GetMapping("/get-feedback-of-choreographer/{bookingId}")
-    public ResponseData<BookingFeedbackResponse> getBookingFeedbackByBookingID (@PathVariable Integer bookingId){
+    @GetMapping("/get-feedback-of-booking/{bookingId}")
+    public ResponseData<BookingFeedbackResponse> getBookingFeedbackByBookingID(@PathVariable Integer bookingId) {
         return ResponseData.<BookingFeedbackResponse>builder()
                 .message(ResponseMessage.GET_BOOKING_FEEDBACK)
                 .data(bookingFeedbackService.getBookingFeedbackByBookingId(bookingId))
                 .build();
     }
-
 }
