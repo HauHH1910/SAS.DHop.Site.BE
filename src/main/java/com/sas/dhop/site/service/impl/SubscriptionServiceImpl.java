@@ -1,15 +1,20 @@
 package com.sas.dhop.site.service.impl;
 
+import static com.sas.dhop.site.constant.SubscriptionPlan.*;
+import static com.sas.dhop.site.constant.SubscriptionStatus.*;
+
 import com.sas.dhop.site.constant.SubscriptionStatus;
 import com.sas.dhop.site.dto.request.SubscriptionRequest;
 import com.sas.dhop.site.dto.response.SubscriptionResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
+import com.sas.dhop.site.model.Status;
 import com.sas.dhop.site.model.Subscription;
 import com.sas.dhop.site.repository.SubscriptionRepository;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.SubscriptionService;
 import com.sas.dhop.site.util.mapper.SubscriptionMapper;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +74,49 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionRepository.delete(subscriptionRepository
                 .findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND)));
+    }
+
+    @Override
+    public Subscription findOrCreateSubscription(String status) {
+        Status serviceStatusOrCreated = statusService.findStatusOrCreated(status);
+
+        Subscription subscription = getSubscription(status, serviceStatusOrCreated);
+        return subscriptionRepository
+                .findByStatus(serviceStatusOrCreated)
+                .orElseGet(() -> subscriptionRepository.save(subscription));
+    }
+
+    private Subscription getSubscription(String status, Status serviceStatusOrCreated) {
+        Subscription subscription = new Subscription();
+
+        switch (status) {
+            case FREE_TRIAL -> {
+                subscription.setPrice(BigDecimal.ZERO);
+                subscription.setContent(FREE_TRIAL);
+                subscription.setName(FREE_TRIAL);
+                subscription.setStatus(serviceStatusOrCreated);
+            }
+
+            case STANDARD_MONTHLY -> {
+                subscription.setPrice(BigDecimal.valueOf(250000));
+                subscription.setContent(STANDARD_MONTHLY);
+                subscription.setName(STANDARD_MONTHLY);
+                subscription.setStatus(serviceStatusOrCreated);
+            }
+            case STANDARD_3MONTHS -> {
+                subscription.setPrice(BigDecimal.valueOf(550000));
+                subscription.setContent(STANDARD_3MONTHS);
+                subscription.setName(STANDARD_3MONTHS);
+                subscription.setStatus(serviceStatusOrCreated);
+            }
+            case UNLIMITED_YEARLY -> {
+                subscription.setPrice(BigDecimal.valueOf(1750000));
+                subscription.setContent(UNLIMITED_YEARLY);
+                subscription.setName(UNLIMITED_YEARLY);
+                subscription.setStatus(serviceStatusOrCreated);
+            }
+        }
+        return subscription;
     }
 
     @Override

@@ -1,49 +1,41 @@
 package com.sas.dhop.site.service.impl;
 
-import static com.sas.dhop.site.constant.UserSubscriptionStatus.*;
 import static com.sas.dhop.site.dto.response.UserSubscriptionResponse.mapToResponse;
 
+import com.sas.dhop.site.constant.RolePrefix;
+import com.sas.dhop.site.constant.SubscriptionPlan;
+import com.sas.dhop.site.constant.UserSubscriptionStatus;
 import com.sas.dhop.site.dto.request.UserSubscriptionRequest;
 import com.sas.dhop.site.dto.response.UserSubscriptionResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
-import com.sas.dhop.site.model.Status;
-import com.sas.dhop.site.model.Subscription;
-import com.sas.dhop.site.model.User;
-import com.sas.dhop.site.model.UserSubscription;
-import com.sas.dhop.site.repository.SubscriptionRepository;
-import com.sas.dhop.site.repository.UserRepository;
-import com.sas.dhop.site.repository.UserSubscriptionRepository;
-import com.sas.dhop.site.service.StatusService;
-import com.sas.dhop.site.service.UserSubscriptionService;
+import com.sas.dhop.site.model.*;
+import com.sas.dhop.site.repository.*;
+import com.sas.dhop.site.service.*;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j(topic = "[User Subscription Service]")
 public class UserSubscriptionServiceImpl implements UserSubscriptionService {
-    private final UserRepository userRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
-    private final SubscriptionRepository subscriptionRepository;
     private final StatusService statusService;
+    private final UserService userService;
+    private final SubscriptionService subscriptionService;
+    private final BookingRepository bookingRepository;
+    private final AuthenticationService authenticationService;
+    private final DancerRepository dancerRepository;
+    private final ChoreographyRepository choreographyRepository;
 
     @Override
     public List<UserSubscriptionResponse> getSubscriptionStatus() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.info("[get subscription status] - [{}]", email);
 
-        User user = userRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
-
-        List<UserSubscription> list = userSubscriptionRepository.findByUser_Id(user.getId());
+        List<UserSubscription> list = userSubscriptionRepository.findAllByUser(userService.getLoginUser());
 
         List<UserSubscriptionResponse> responsesList = new ArrayList<>();
 
@@ -58,28 +50,60 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
 
     @Override
     public UserSubscriptionResponse addSubscriptionToUser(UserSubscriptionRequest request) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.info("[add subscription to user] - [{}]", email);
-
-        User user = userRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
-
-        Subscription subscription = subscriptionRepository
-                .findById(request.subscriptionId())
-                .orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND));
-
-        Status status = statusService.findStatusOrCreated(ACTIVE_USER_SUBSCRIPTION);
-
-        return mapToResponse(userSubscriptionRepository.save(UserSubscription.builder()
-                .user(user)
-                .subscription(subscription)
-                .fromDate(Instant.now())
-                .toDate(Instant.now().plus(subscription.getDuration(), ChronoUnit.DAYS))
-                .status(status)
-                .build()));
+        return null;
     }
 
     @Override
     public void updateSubscriptionStatus() {}
+
+    @Override
+    public UserSubscription findUserSubscriptionByUser(User user) {
+        return userSubscriptionRepository.findByUser(user).orElseGet(() -> UserSubscription.builder()
+                .user(user)
+                .subscription(subscriptionService.findOrCreateSubscription(SubscriptionPlan.FREE_TRIAL))
+                .fromDate(Instant.now())
+                .status(statusService.findStatusOrCreated(UserSubscriptionStatus.FREE_TRIAL_USER_SUBSCRIPTION))
+                .build());
+    }
+
+    @Override
+    public Integer countBookingFromUserSubscription(UserSubscription userSubscription) {
+        User user = userSubscription.getUser();
+        Subscription currentSubscription = userSubscription.getSubscription();
+        String planName = currentSubscription.getStatus().getStatusName();
+
+        List<Booking> bookings;
+
+        if (authenticationService.authenticationChecking(RolePrefix.DANCER_PREFIX)) {
+            Dancer dancer = dancerRepository
+                    .findByUser(user)
+                    .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_DANCER));
+            bookings = bookingRepository.findAllByDancer(dancer);
+        } else if (authenticationService.authenticationChecking(RolePrefix.CHOREOGRAPHY_PREFIX)) {
+            Choreography choreography = choreographyRepository
+                    .findByUser(user)
+                    .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_FOUND_CHOREOGRAPHY));
+            bookings = bookingRepository.findAllByChoreography(choreography);
+        } else {
+            return 0;
+        }
+
+        int bookingCount = bookings.size();
+        int allowedLimit = getSubscriptionBookingLimit(planName);
+
+        if (bookingCount >= allowedLimit) {
+            throw new BusinessException(ErrorConstant.SUBSCRIPTION_ENDED);
+        }
+
+        return bookingCount;
+    }
+
+    private int getSubscriptionBookingLimit(String planName) {
+        return switch (planName) {
+            case SubscriptionPlan.FREE_TRIAL -> 3;
+            case SubscriptionPlan.STANDARD_3MONTHS -> 20;
+            case SubscriptionPlan.STANDARD_MONTHLY -> 10;
+            default -> Integer.MAX_VALUE; // Unlimited
+        };
+    }
 }

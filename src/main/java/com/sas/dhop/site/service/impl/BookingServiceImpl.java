@@ -42,6 +42,8 @@ public class BookingServiceImpl implements BookingService {
     private final StatusService statusService;
     private final CloudStorageService cloudStorageService;
     private final PerformanceService performanceService;
+    private final SubscriptionService subscriptionService;
+    private final UserSubscriptionService userSubscriptionService;
 
     // Booking is only for the dancer, the booker wants
     @Override
@@ -109,7 +111,12 @@ public class BookingServiceImpl implements BookingService {
         if (!currentStatus.getStatusName().equals(BookingStatus.BOOKING_PENDING)) {
             throw new BusinessException(ErrorConstant.BOOKING_NOT_ACCEPTABLE);
         }
+        UserSubscription subscription = userSubscriptionService.findUserSubscriptionByUser(userService.getLoginUser());
 
+        Integer counted = userSubscriptionService.countBookingFromUserSubscription(subscription);
+        if (counted == 0) {
+            throw new BusinessException(ErrorConstant.UNCATEGORIZED_ERROR);
+        }
         Status activateStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_ACTIVATE);
         booking.setStatus(activateStatus);
         booking = bookingRepository.save(booking);
