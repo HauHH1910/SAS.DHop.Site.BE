@@ -16,7 +16,7 @@ public record BookingRequest(
         Integer dancerId,
         Integer areaId,
         Integer choreographyId,
-        Integer danceTypeId,
+        String danceTypeName,
         Integer numberOfTrainingSessions,
         BigDecimal bookingPrice,
         String dancerPhone,

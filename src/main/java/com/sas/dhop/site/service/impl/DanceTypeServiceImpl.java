@@ -47,4 +47,11 @@ public class DanceTypeServiceImpl implements DanceTypeService {
                 .findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.DANCE_TYPE_NOT_FOUND));
     }
+
+    @Override
+    public DanceType findDanceTypeName(String name) {
+        return danceTypeRepository
+                .findByType(name)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.DANCE_TYPE_NOT_FOUND));
+    }
 }
