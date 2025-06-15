@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/Booking")
+@RequestMapping("/booking")
 @Tag(name = "[Booking Controller]")
 @Slf4j(topic = "[Booking Controller]")
 public class BookingController {

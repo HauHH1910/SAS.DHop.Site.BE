@@ -5,7 +5,7 @@ import com.sas.dhop.site.dto.response.PerformanceResponse;
 
 public interface PerformanceService {
 
-	PerformanceResponse createPerformance(PerformanceRequest request);
+	void createPerformance(PerformanceRequest request);
 
 	PerformanceResponse getPerformanceById(Integer id);
 

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/Feedback")
+@RequestMapping("/feedback")
 @Tag(name = "[Booking Feedback Controller]")
 @Slf4j(topic = "[Booking Feedback Controller]")
 public class BookingFeedbackController {

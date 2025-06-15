@@ -3,6 +3,7 @@ package com.sas.dhop.site.service.impl;
 import com.sas.dhop.site.constant.BookingStatus;
 import com.sas.dhop.site.dto.request.BookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
+import com.sas.dhop.site.dto.request.PerformanceRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.dto.response.MediaResponse;
@@ -36,6 +37,7 @@ public class BookingServiceImpl implements BookingService {
 	private final ChoreographyRepository choreographyRepository;
 	private final StatusService statusService;
 	private final CloudStorageService cloudStorageService;
+	private final PerformanceService performanceService;
 
 	// Booking is only for the dancer, the booker wants
 	@Override
@@ -161,6 +163,9 @@ public class BookingServiceImpl implements BookingService {
 
 		if (request.multipartFiles() != null) {
 			List<MediaResponse> mediaResponses = cloudStorageService.uploadImage(request.multipartFiles());
+			for (MediaResponse media : mediaResponses) {
+				performanceService.createPerformance(new PerformanceRequest(media.url()));
+			}
 		}
 
 		Status workingStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_WORKING_DONE);
