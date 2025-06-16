@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[Booking Controller]")
 public class BookingController {
     private final BookingService bookingService;
-    private final BuildProperties buildProperties;
 
     @GetMapping("/get-all-booking")
     public ResponseData<List<BookingResponse>> getAllBooking() {

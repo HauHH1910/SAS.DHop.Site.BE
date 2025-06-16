@@ -349,14 +349,15 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    //This like booking report
+    // This like booking report
     @Override
     public BookingCancelResponse bookingComplains(Integer bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
+        Booking booking = bookingRepository
+                .findById(bookingId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
-        if(booking.getBookingStatus().equals(BookingStatus.BOOKING_INACTIVATE)
-                || booking.getBookingStatus().equals(BookingStatus.BOOKING_PENDING)){
+        if (booking.getBookingStatus().equals(BookingStatus.BOOKING_INACTIVATE)
+                || booking.getBookingStatus().equals(BookingStatus.BOOKING_PENDING)) {
             throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
         }
 
@@ -374,7 +375,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponse acceptBookingComplainsProgress(Integer bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
+        Booking booking = bookingRepository
+                .findById(bookingId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         if (!booking.getBookingStatus().equals(BookingStatus.BOOKING_DISPUTED_REQUEST)) {
@@ -389,7 +391,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponse denyBookingComplainsProgress(Integer bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
+        Booking booking = bookingRepository
+                .findById(bookingId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         if (!booking.getBookingStatus().equals(BookingStatus.BOOKING_DISPUTED)) {
