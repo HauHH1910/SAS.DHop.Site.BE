@@ -26,7 +26,7 @@ public record BookingResponse(
         String address,
         String status,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-        Instant bookingDate,
+        LocalDateTime bookingDate,
         String customerPhone,
         Integer numberOfTrainingSessions,
         Integer numberOfTeamMember,
