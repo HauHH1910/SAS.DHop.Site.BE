@@ -1,0 +1,158 @@
+# Sample GraphQL Queries for Admin Dashboard
+# Access these queries via GraphiQL at: http://localhost:8080/graphiql
+
+# 1. Get comprehensive admin dashboard overview
+query GetAdminDashboard {
+  getAdminDashboard {
+    totalBookings
+    totalUsers
+    totalDancers
+    totalChoreographers
+    totalRevenue
+    bookingRevenue
+    subscriptionRevenue
+    thisMonthRevenue
+    lastMonthRevenue
+    revenueGrowthRate
+    activeBookings
+    completedBookings
+    canceledBookings
+    pendingBookings
+    dailyBookings {
+      label
+      count
+      dateFrom
+      dateTo
+      growthRate
+    }
+    weeklyBookings {
+      label
+      count
+      dateFrom
+      dateTo
+      growthRate
+    }
+    monthlyBookings {
+      label
+      count
+      dateFrom
+      dateTo
+      growthRate
+    }
+    revenueByService {
+      label
+      amount
+      revenueType
+      percentage
+    }
+    monthlyRevenueBreakdown {
+      label
+      amount
+      dateFrom
+      dateTo
+      period
+    }
+    averageBookingValue
+    activeSubscriptions
+    expiredSubscriptions
+    dataFromDate
+    dataToDate
+  }
+}
+
+# 2. Get booking statistics for a specific date range
+query GetBookingStatistics($startDate: String!, $endDate: String!) {
+  getBookingStatistics(startDate: $startDate, endDate: $endDate) {
+    label
+    count
+    dateFrom
+    dateTo
+    period
+    percentage
+    previousCount
+    growthRate
+  }
+}
+
+# 3. Get booking statistics by time period
+query GetBookingStatisticsByPeriod($period: String!, $count: Int!) {
+  getBookingStatisticsByPeriod(period: $period, count: $count) {
+    label
+    count
+    dateFrom
+    dateTo
+    period
+    growthRate
+  }
+}
+
+# 4. Get booking counts by status
+query GetBookingCountsByStatus($statuses: [String!]!) {
+  getBookingCountsByStatus(statuses: $statuses) {
+    label
+    count
+    status
+    percentage
+  }
+}
+
+# 5. Get revenue statistics for a date range
+query GetRevenueStatistics($startDate: String!, $endDate: String!) {
+  getRevenueStatistics(startDate: $startDate, endDate: $endDate) {
+    label
+    amount
+    currency
+    dateFrom
+    dateTo
+    revenueType
+    transactionCount
+    averageTransactionValue
+  }
+}
+
+# 6. Get total website revenue
+query GetTotalWebsiteRevenue {
+  getTotalWebsiteRevenue
+}
+
+# 7. Get subscription revenue breakdown
+query GetSubscriptionRevenue($startDate: String!, $endDate: String!) {
+  getSubscriptionRevenue(startDate: $startDate, endDate: $endDate) {
+    label
+    amount
+    currency
+    revenueType
+    transactionCount
+    averageTransactionValue
+  }
+}
+
+# 8. Get booking revenue breakdown
+query GetBookingRevenue($startDate: String!, $endDate: String!) {
+  getBookingRevenue(startDate: $startDate, endDate: $endDate) {
+    label
+    amount
+    currency
+    revenueType
+    transactionCount
+    averageTransactionValue
+  }
+}
+
+# Example usage with variables:
+# Variables for GetBookingStatistics:
+# {
+#   "startDate": "2024-01-01",
+#   "endDate": "2024-01-31"
+# }
+
+# Variables for GetBookingStatisticsByPeriod:
+# {
+#   "period": "WEEKLY",
+#   "count": 4
+# }
+
+# Variables for GetBookingCountsByStatus:
+# {
+#   "statuses": ["BOOKING_PENDING", "BOOKING_ACTIVATE", "BOOKING_COMPLETED", "BOOKING_CANCELED"]
+# } 

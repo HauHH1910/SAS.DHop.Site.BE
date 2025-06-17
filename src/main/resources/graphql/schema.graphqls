@@ -1,0 +1,352 @@
+# GraphQL Booking type with ALL fields including createdAt/updatedAt for admin dashboard
+type Booking {
+  id: Int!
+  startTime: String
+  endTime: String
+  customer: String
+  dancer: String
+  choreography: String
+  area: AreaResponse
+  address: String
+  status: String
+  bookingDate: String
+  detail: String
+  updateBookingDate: String
+  bookingStatus: String
+  customerPhone: String
+  numberOfTrainingSessions: Int!
+  choreographyPhone: String
+  dancerPhone: String
+  cancelReason: String
+  cancelPersonName: String
+  price: Float
+  createdAt: String
+  updatedAt: String
+}
+
+# Keep the original complex type for future use if needed
+type BookingEntity {
+  id: ID!
+  customer: User!
+  dancer: Dancer
+  choreography: Choreography
+  danceType: DanceType!
+  area: Area!
+  status: Status!
+  bookingDate: String
+  startTime: String
+  endTime: String
+  address: String
+  detail: String
+  updateBookingDate: String
+  bookingStatus: String
+  customerPhone: String
+  performance: Performance
+  numberOfTrainingSessions: Int!
+  dancerPhone: String
+  choreographyPhone: String
+  cancelReason: String
+  cancelPersonName: String
+  price: Float
+  createdAt: String
+  updatedAt: String
+}
+
+type User {
+  id: ID!
+  avatar: String
+  age: Int
+  name: String
+  email: String
+  phone: String
+  area: Area
+  status: Status!
+  roles: [Role!]
+  createdAt: String
+  updatedAt: String
+}
+
+type Dancer {
+  id: ID!
+  danceTypes: [DanceType!]
+  dancerNickName: String
+  user: User!
+  about: String
+  yearExperience: Int
+  teamSize: Int
+  price: Float
+  subscription: Subscription
+  status: Status!
+  createdAt: String
+  updatedAt: String
+}
+
+type Choreography {
+  id: ID!
+  danceTypes: [DanceType!]
+  user: User!
+  subscription: Subscription
+  about: String
+  yearExperience: Int
+  price: Float
+  status: Status!
+  createdAt: String
+  updatedAt: String
+}
+
+type DanceType {
+  id: ID!
+  type: String
+  description: String
+  createdAt: String
+  updatedAt: String
+}
+
+# This matches your AreaResponse DTO
+type AreaResponse {
+  district: String
+  ward: String
+  city: String
+  areaId: Int
+}
+
+# Keep the original complex type for future use if needed
+type Area {
+  id: ID!
+  district: String
+  ward: String
+  city: String
+  status: Status!
+  createdAt: String
+  updatedAt: String
+}
+
+type Status {
+  id: ID!
+  statusName: String
+  statusType: String
+  description: String
+  createdAt: String
+  updatedAt: String
+}
+
+type Performance {
+  id: ID!
+  user: User!
+  mediaUrl: String
+  mediaType: String
+  purpose: String
+  description: String
+  status: Status!
+  createdAt: String
+  updatedAt: String
+}
+
+type Role {
+  id: ID!
+  name: String
+  createdAt: String
+  updatedAt: String
+}
+
+type Subscription {
+  id: ID!
+  name: String
+  duration: Int
+  content: String
+  price: Float
+  status: Status!
+  createdAt: String
+  updatedAt: String
+}
+
+# Admin Dashboard Types
+type AdminDashboard {
+  totalBookings: Int!
+  totalUsers: Int!
+  totalDancers: Int!
+  totalChoreographers: Int!
+  totalRevenue: Float!
+  bookingRevenue: Float!
+  subscriptionRevenue: Float!
+  thisMonthRevenue: Float!
+  lastMonthRevenue: Float!
+  revenueGrowthRate: Float!
+  activeBookings: Int!
+  completedBookings: Int!
+  canceledBookings: Int!
+  pendingBookings: Int!
+  dailyBookings: [BookingStatistics!]!
+  weeklyBookings: [BookingStatistics!]!
+  monthlyBookings: [BookingStatistics!]!
+  revenueByService: [RevenueStatistics!]!
+  monthlyRevenueBreakdown: [RevenueStatistics!]!
+  averageBookingValue: Float!
+  activeSubscriptions: Int!
+  expiredSubscriptions: Int!
+  dataFromDate: String!
+  dataToDate: String!
+}
+
+type BookingStatistics {
+  label: String!
+  count: Int!
+  dateFrom: String
+  dateTo: String
+  period: String!
+  status: String
+  percentage: Float
+  previousCount: Int
+  growthRate: Float
+}
+
+type RevenueStatistics {
+  label: String!
+  amount: Float!
+  currency: String!
+  dateFrom: String
+  dateTo: String
+  revenueType: String!
+  period: String
+  transactionCount: Int
+  averageTransactionValue: Float
+  percentage: Float
+  previousAmount: Float
+  growthRate: Float
+  description: String
+}
+
+# GraphQL Response Types with createdAt/updatedAt for admin dashboard
+type UserGraphQLResponse {
+  id: Int
+  avatar: String
+  age: Int
+  name: String
+  email: String
+  phone: String
+  area: AreaResponse
+  status: String
+  createdAt: String
+  updatedAt: String
+}
+
+type DancerGraphQLResponse {
+  id: Int
+  dancerNickName: String
+  danceTypeName: [String!]
+  user: UserGraphQLResponse
+  about: String
+  yearExperience: Int
+  teamSize: Int
+  price: Float
+  status: String
+  createdAt: String
+  updatedAt: String
+}
+
+type ChoreographyGraphQLResponse {
+  id: Int
+  danceTypeNames: [String!]
+  user: UserGraphQLResponse
+  about: String
+  yearExperience: Int
+  price: Float
+  status: String
+  createdAt: String
+  updatedAt: String
+}
+
+type DanceTypeResponse {
+  id: Int
+  type: String
+  description: String
+}
+
+# Query root type - Updated to use GraphQL response types with createdAt/updatedAt
+type Query {
+  # Basic booking queries
+  booking(id: ID!): Booking
+  bookings: [Booking!]!
+
+  # User-specific booking queries
+  bookingsByUser(userId: ID!): [Booking!]!
+  bookingsByDancer(dancerId: ID!): [Booking!]!
+  bookingsByChoreographer(choreographerId: ID!): [Booking!]!
+  bookingsByStatus(status: String!): [Booking!]!
+
+  # Time-based booking queries
+  bookingsByDateRange(startDate: String!, endDate: String!): [Booking!]!
+  bookingsToday: [Booking!]!
+  bookingsThisWeek: [Booking!]!
+  bookingsThisMonth: [Booking!]!
+  bookingsThisYear: [Booking!]!
+  bookingsByPeriod(period: String!, offset: Int): [Booking!]!
+
+  # Other entity queries
+  user(id: ID!): UserGraphQLResponse
+  users: [UserGraphQLResponse!]!
+  dancer(id: ID!): DancerGraphQLResponse
+  dancers: [DancerGraphQLResponse!]!
+  choreography(id: ID!): ChoreographyGraphQLResponse
+  choreographies: [ChoreographyGraphQLResponse!]!
+  danceType(id: ID!): DanceTypeResponse
+  danceTypes: [DanceTypeResponse!]!
+  area(id: ID!): AreaResponse
+  areas: [AreaResponse!]!
+  status(id: ID!): Status
+  statuses: [Status!]!
+  performance(id: ID!): Performance
+  performances: [Performance!]!
+
+  # Test Queries (no authentication required)
+  testGraphQL: String!
+  getBasicBookingCount: Int!
+  getTestAdminDashboard: AdminDashboard!
+
+  # Admin Dashboard Queries (require ADMIN role)
+  getAdminDashboard: AdminDashboard!
+  getBookingStatistics(startDate: String!, endDate: String!): BookingStatistics!
+  getBookingStatisticsByPeriod(
+    period: String!
+    count: Int!
+  ): [BookingStatistics!]!
+  getBookingCountsByStatus(statuses: [String!]!): [BookingStatistics!]!
+  getRevenueStatistics(startDate: String!, endDate: String!): RevenueStatistics!
+  getTotalWebsiteRevenue: Float!
+  getSubscriptionRevenue(
+    startDate: String!
+    endDate: String!
+  ): [RevenueStatistics!]!
+  getBookingRevenue(startDate: String!, endDate: String!): [RevenueStatistics!]!
+}
+
+# Mutation root type
+type Mutation {
+  createBooking(input: BookingInput!): Booking
+  updateBooking(id: ID!, input: BookingInput!): Booking
+  deleteBooking(id: ID!): Boolean
+
+  # Add other mutations as needed
+}
+
+# Input types for mutations
+input BookingInput {
+  customerId: ID!
+  dancerId: ID
+  choreographyId: ID
+  danceTypeId: ID!
+  areaId: ID!
+  statusId: ID!
+  bookingDate: String
+  startTime: String
+  endTime: String
+  address: String
+  detail: String
+  bookingStatus: String
+  customerPhone: String
+  performanceId: ID
+  numberOfTrainingSessions: Int!
+  dancerPhone: String
+  choreographyPhone: String
+  price: Float
+}
