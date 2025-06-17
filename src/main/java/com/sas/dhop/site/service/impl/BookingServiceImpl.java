@@ -15,15 +15,18 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -412,12 +415,12 @@ public class BookingServiceImpl implements BookingService {
 
         Status status = statusService.findStatusOrCreated(BookingStatus.BOOKING_PENDING);
         return Booking.builder()
-                .startTime(request.startTime())
+                .startTime(LocalDateTime.now())
                 .endTime(request.endTime())
                 .address(request.address())
                 .detail(request.detail())
                 .area(area)
-                .bookingDate(Instant.now())
+                .bookingDate(request.bookingDate().toInstant())
                 .customer(customer)
                 .numberOfTeamMember(request.numberOfTeamMember())
                 .danceType(danceTypes)
@@ -429,38 +432,9 @@ public class BookingServiceImpl implements BookingService {
                 .build();
     }
 
-    // Check conflit for dancer schedules
-    private void checkDancerBookingConflict(BookingRequest bookingRequest, Dancer dancer) {
-        // Lấy tất cả booking của dancer trong ngày
-        LocalDate bookingDate = bookingRequest.startTime().toLocalDate();
-        List<Booking> bookings = bookingRepository.findAll().stream()
-                .filter(b -> b.getDancer() != null && b.getDancer().getId().equals(dancer.getId()))
-                .filter(b -> !b.getStatus().getStatusName().equals(BookingStatus.BOOKING_CANCELED))
-                .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
-                .toList();
+    //TODO: check numberOfTeamMember: 2 cái booking trùng 1 thời gian thì cái booking không qu
+    private void checkDancerBookingConflict(DancerBookingRequest request, Dancer dancer) {
 
-        int requestedSessions;
-        if (bookingRequest.numberOfTrainingSessions() != null) {
-            requestedSessions = bookingRequest.numberOfTrainingSessions();
-        } else {
-            requestedSessions = 1;
-        }
-
-        // Tính tổng số người thuê ở các booking giao nhau
-        int totalSessions = requestedSessions;
-        for (Booking b : bookings) {
-            // Kiểm tra giao nhau thời gian
-            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime())
-                    || bookingRequest.startTime().isAfter(b.getEndTime()));
-            if (isOverlap) {
-                int bookedSessions = b.getNumberOfTrainingSessions() != null ? b.getNumberOfTrainingSessions() : 1;
-                totalSessions += bookedSessions;
-            }
-        }
-
-        if (totalSessions > dancer.getTeamSize()) {
-            throw new BusinessException(ErrorConstant.DANCER_TEAM_SIZE_CONFLICT);
-        }
     }
 
     // Check same time of the schedule

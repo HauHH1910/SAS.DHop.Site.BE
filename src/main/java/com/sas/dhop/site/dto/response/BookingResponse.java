@@ -25,13 +25,16 @@ public record BookingResponse(
         AreaResponse area,
         String address,
         String status,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
         Instant bookingDate,
         String customerPhone,
         Integer numberOfTrainingSessions,
+        Integer numberOfTeamMember,
         String choreographyPhone,
         String dancerPhone,
         BigDecimal price,
-        List<String> danceTypeName) {
+        List<String> danceTypeName,
+        String detail) {
 
     public static BookingResponse mapToBookingResponse(Booking request) {
         return BookingResponse.builder()
@@ -44,10 +47,12 @@ public record BookingResponse(
                 .area(AreaResponse.mapToAreaResponse(request.getArea()))
                 .address(request.getAddress())
                 .status(request.getStatus().getStatusName())
+                .detail(request.getDetail())
                 .bookingDate(request.getBookingDate())
                 .customerPhone(request.getCustomerPhone())
                 .numberOfTrainingSessions(request.getNumberOfTrainingSessions())
                 .choreographyPhone(request.getChoreographyPhone())
+                .numberOfTeamMember(request.getNumberOfTeamMember())
                 .dancerPhone(request.getDancerPhone())
                 .price(request.getPrice())
                 .danceTypeName(request.getDanceType().stream().map(DanceType::getType).toList())

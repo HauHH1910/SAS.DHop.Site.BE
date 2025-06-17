@@ -46,7 +46,7 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     private Status status;
 
     @Column(name = "booking_date")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Instant bookingDate;
 
     @Column(name = "start_time")
