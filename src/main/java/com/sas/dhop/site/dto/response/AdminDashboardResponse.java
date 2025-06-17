@@ -1,48 +1,50 @@
 package com.sas.dhop.site.dto.response;
 
 import lombok.Builder;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+@Data
 @Builder
-public record AdminDashboardResponse(
+public class AdminDashboardResponse {
   // Total counts
-  Long totalBookings,
-  Long totalUsers,
-  Long totalDancers,
-  Long totalChoreographers,
+  private final Long totalBookings;
+  private final Long totalUsers;
+  private final Long totalDancers;
+  private final Long totalChoreographers;
 
   // Revenue metrics
-  BigDecimal totalRevenue,
-  BigDecimal bookingRevenue,
-  BigDecimal subscriptionRevenue,
-  BigDecimal thisMonthRevenue,
-  BigDecimal lastMonthRevenue,
-  Double revenueGrowthRate,
+  private final BigDecimal totalRevenue;
+  private final BigDecimal bookingRevenue;
+  private final BigDecimal subscriptionRevenue;
+  private final BigDecimal thisMonthRevenue;
+  private final BigDecimal lastMonthRevenue;
+  private final Double revenueGrowthRate;
 
   // Booking metrics
-  Long activeBookings,
-  Long completedBookings,
-  Long canceledBookings,
-  Long pendingBookings,
+  private final Long activeBookings;
+  private final Long completedBookings;
+  private final Long canceledBookings;
+  private final Long pendingBookings;
 
   // Time-based statistics
-  List<BookingStatisticsResponse> dailyBookings,
-  List<BookingStatisticsResponse> weeklyBookings,
-  List<BookingStatisticsResponse> monthlyBookings,
+  private final List<BookingStatisticsResponse> dailyBookings;
+  private final List<BookingStatisticsResponse> weeklyBookings;
+  private final List<BookingStatisticsResponse> monthlyBookings;
 
   // Revenue breakdown
-  List<RevenueStatisticsResponse> revenueByService,
-  List<RevenueStatisticsResponse> monthlyRevenueBreakdown,
+  private final List<RevenueStatisticsResponse> revenueByService;
+  private final List<RevenueStatisticsResponse> monthlyRevenueBreakdown;
 
   // Additional metrics
-  Double averageBookingValue,
-  Long activeSubscriptions,
-  Long expiredSubscriptions,
+  private final Double averageBookingValue;
+  private final Long activeSubscriptions;
+  private final Long expiredSubscriptions;
 
   // Date range for the data
-  LocalDate dataFromDate,
-  LocalDate dataToDate
-) {} 
+  private final LocalDate dataFromDate;
+  private final LocalDate dataToDate;
+}
