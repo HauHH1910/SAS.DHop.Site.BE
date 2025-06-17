@@ -139,6 +139,7 @@ public class BookingServiceImpl implements BookingService {
                 .choreographyPhone(request.choreographyPhone())
                 .numberOfTrainingSessions(request.numberOfTrainingSessions())
                 .price(calculateCommissionPrice(request.bookingPrice()))
+
                 .build();
 
         booking = bookingRepository.save(booking);
