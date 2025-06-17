@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[Booking Controller]")
 public class BookingController {
     private final BookingService bookingService;
-    private final BuildProperties buildProperties;
 
     @GetMapping("/get-all-booking")
     public ResponseData<List<BookingResponse>> getAllBooking() {
