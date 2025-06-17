@@ -30,12 +30,22 @@ public class GlobalHandlerException {
                         .build());
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ResponseError> handleRuntimeException(RuntimeException e) {
+        log.error("[handle runtime exception] - [{}]", e.getMessage());
+        return ResponseEntity.status(ErrorConstant.UNCATEGORIZED_ERROR.getHttpStatusCode())
+                .body(ResponseError.builder()
+                        .code(ErrorConstant.UNCATEGORIZED_ERROR.getCode())
+                        .message(ErrorConstant.UNCATEGORIZED_ERROR.getMessage())
+                        .build());
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ResponseError> handleException(RuntimeException e) {
+    public ResponseEntity<ResponseError> handleException(Exception e) {
         log.error("[handle exception] - [{}]", e.getMessage());
         return ResponseEntity.status(ErrorConstant.UNCATEGORIZED_ERROR.getHttpStatusCode())
                 .body(ResponseError.builder()
-                        .code(ErrorConstant.UNAUTHENTICATED.getCode())
+                        .code(ErrorConstant.UNCATEGORIZED_ERROR.getCode())
                         .message(ErrorConstant.UNCATEGORIZED_ERROR.getMessage())
                         .build());
     }

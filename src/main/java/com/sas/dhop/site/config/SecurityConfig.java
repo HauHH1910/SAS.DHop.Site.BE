@@ -33,7 +33,16 @@ public class SecurityConfig {
     @Lazy
     private final CustomJwtDecoder customJwtDecoder;
 
-    private final String[] PUBLIC_ENDPOINTS = {"/auth/**", "/users", "/dance-type", "/ws/**"};
+    private final String[] PUBLIC_ENDPOINTS = {
+        "/auth/**", 
+        "/users", 
+        "/dance-type", 
+        "/ws/**",
+        "/graphql/**", 
+        "/graphiql/**",
+        "/graphiql",
+        "/graphql"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -97,7 +106,13 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/swagger-ui/**", "/v3/api-docs*/**");
+        return (web) -> web.ignoring().requestMatchers(
+            "/swagger-ui/**", 
+            "/v3/api-docs*/**",
+            "/graphql/**",
+            "/graphiql/**",
+            "/graphiql"
+        );
     }
 
     @Bean
