@@ -204,8 +204,6 @@ public class BookingServiceImpl implements BookingService {
 
         User user = userService.getLoginUser();
 
-        booking.setCancelReason(booking.getCancelReason());
-        booking.setCancelPersonName(user.getName());
 
         bookingRepository.save(booking);
 
@@ -324,8 +322,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(complainStatus);
 
         User currentUser = userService.getLoginUser();
-        booking.setCancelPersonName(currentUser.getName());
-        booking.setCancelReason(booking.getCancelReason());
+
 
         bookingRepository.save(booking);
 
@@ -358,14 +355,14 @@ public class BookingServiceImpl implements BookingService {
             throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
         }
 
-        // Khôi phục trạng thái trước khi khiếu nại
-        Status restoredStatus = booking.getPreviousStatus(); // cần có cột này
-        if (restoredStatus == null) {
-            throw new BusinessException(ErrorConstant.BOOKING_STATUS_NOT_FOUND);
-        }
-
-        booking.setStatus(restoredStatus);
-        booking.setPreviousStatus(null); // clear lại nếu cần
+//        // Khôi phục trạng thái trước khi khiếu nại
+////        Status restoredStatus = booking.getPreviousStatus(); // cần có cột này
+//        if (restoredStatus == null) {
+//            throw new BusinessException(ErrorConstant.BOOKING_STATUS_NOT_FOUND);
+//        }
+//
+//        booking.setStatus(restoredStatus);
+//        booking.setPreviousStatus(null); // clear lại nếu cần
         bookingRepository.save(booking);
 
         return BookingResponse.mapToBookingResponse(booking);
@@ -481,8 +478,8 @@ public class BookingServiceImpl implements BookingService {
 
         for (Booking booking : lateBookings) {
             booking.setStatus(inactivateStatus);
-            booking.setCancelReason("Tự động chuyển sang INACTIVATE vì đã quá 24h mà không bắt đầu.");
-            booking.setCancelPersonName("Hệ thống");
+//            booking.setCancelReason("Tự động chuyển sang INACTIVATE vì đã quá 24h mà không bắt đầu.");
+//            booking.setCancelPersonName("Hệ thống");
 
             bookingRepository.save(booking);
         }

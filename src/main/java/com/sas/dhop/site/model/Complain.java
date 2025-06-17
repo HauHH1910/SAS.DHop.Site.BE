@@ -21,6 +21,9 @@ public class Complain extends AbstractEntity<Integer> implements Serializable {
 
     private LocalDateTime time;
 
+    @Column(name = "cancel_person_name")
+    private String cancelPersonName;
+
     private String content;
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
