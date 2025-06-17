@@ -4,7 +4,9 @@ import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.Choreography;
 import com.sas.dhop.site.model.Dancer;
 import com.sas.dhop.site.model.User;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -16,4 +18,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
     List<Booking> findAllByChoreography(Choreography choreography);
 
     List<Booking> findAllByCustomer(User customer);
+
+    Optional<Booking> findByBookingDate(LocalDateTime bookingDate);
 }

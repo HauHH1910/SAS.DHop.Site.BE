@@ -2,8 +2,10 @@ package com.sas.dhop.site.exception;
 
 import com.sas.dhop.site.dto.ResponseError;
 import jakarta.validation.ConstraintViolation;
+
 import java.util.Map;
 import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalHandlerException {
 
     private static final String MIN_ATTRIBUTE = "min";
+    private static final String VALUE_ATTRIBUTE = "value";
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ResponseError> handleBusinessException(BusinessException e) {
@@ -80,7 +83,13 @@ public class GlobalHandlerException {
 
     private String mapAttribute(String message, Map<String, Object> attributes) {
         String minValue = String.valueOf(attributes.get(MIN_ATTRIBUTE));
+        String valueAttribute = String.valueOf(attributes.get(VALUE_ATTRIBUTE));
 
-        return message.replace("{" + MIN_ATTRIBUTE + "}", minValue);
+        if (valueAttribute != null) {
+            return message.replace("{" + VALUE_ATTRIBUTE + "}", valueAttribute);
+        } else if (minValue != null) {
+            return message.replace("{" + MIN_ATTRIBUTE + "}", minValue);
+        }
+        return null;
     }
 }
