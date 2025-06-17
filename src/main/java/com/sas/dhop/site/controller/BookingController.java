@@ -9,9 +9,7 @@ import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.service.BookingService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -128,5 +126,4 @@ public class BookingController {
                 .data(bookingService.findBookingByAuthenticatedUser())
                 .build();
     }
-
 }

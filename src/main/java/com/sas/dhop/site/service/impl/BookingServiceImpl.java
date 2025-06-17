@@ -15,7 +15,6 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
@@ -25,10 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -287,18 +284,23 @@ public class BookingServiceImpl implements BookingService {
         User user = userService.getLoginUser();
 
         if (isUser) {
-            return bookingRepository.findAllByCustomer(user)
-                    .stream().map(BookingResponse::mapToBookingResponse).toList();
+            return bookingRepository.findAllByCustomer(user).stream()
+                    .map(BookingResponse::mapToBookingResponse)
+                    .toList();
         } else if (isDancer) {
-            Dancer dancer = dancerRepository.findByUser(user)
+            Dancer dancer = dancerRepository
+                    .findByUser(user)
                     .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_DANCER));
-            return bookingRepository.findAllByDancer(dancer)
-                    .stream().map(BookingResponse::mapToBookingResponse).toList();
+            return bookingRepository.findAllByDancer(dancer).stream()
+                    .map(BookingResponse::mapToBookingResponse)
+                    .toList();
         } else if (isChoreography) {
-            Choreography choreography = choreographyRepository.findByUser(user)
+            Choreography choreography = choreographyRepository
+                    .findByUser(user)
                     .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_FOUND_CHOREOGRAPHY));
-            return bookingRepository.findAllByChoreography(choreography)
-                    .stream().map(BookingResponse::mapToBookingResponse).toList();
+            return bookingRepository.findAllByChoreography(choreography).stream()
+                    .map(BookingResponse::mapToBookingResponse)
+                    .toList();
         } else {
             return bookingRepository.findAll().stream()
                     .map(BookingResponse::mapToBookingResponse)
