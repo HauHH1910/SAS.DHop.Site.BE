@@ -49,6 +49,7 @@ public record BookingResponse(
                 .choreographyPhone(request.getChoreographyPhone())
                 .numberOfTeamMember(request.getNumberOfTeamMember())
                 .dancerPhone(request.getDancerPhone())
+                .customerPhone(request.getCustomerPhone())
                 .price(request.getPrice())
                 .danceTypeName(
                         request.getDanceType().stream().map(DanceType::getType).toList())

@@ -1,7 +1,6 @@
 package com.sas.dhop.site.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -18,5 +17,4 @@ public record BookingRequest(
         BigDecimal bookingPrice,
         String dancerPhone,
         String choreographyPhone,
-        String customerPhone) {
-}
+        String customerPhone) {}

@@ -428,7 +428,6 @@ public class BookingServiceImpl implements BookingService {
                 .build();
     }
 
-    // TODO: ACITVE, INPROGRESS, WORK DONE
     private void checkDancerBookingConflict(DancerBookingRequest request) {
         boolean isDancer = authenticationService.authenticationChecking(RolePrefix.DANCER_PREFIX);
         if (isDancer) {

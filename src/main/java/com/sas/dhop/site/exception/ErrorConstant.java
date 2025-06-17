@@ -59,7 +59,7 @@ public enum ErrorConstant {
     DANCER_END_TIME_NOT_NULL(43, "Thời gian kết thúc không được trống", HttpStatus.FORBIDDEN),
     ARTICLE_NOT_FOUND(44, "Không tìm thấy bài báo", HttpStatus.NOT_FOUND),
 
-    //Start dancer booking validate enum
+    // Start dancer booking validate enum
     BOOKING_DATE_NOT_NULL(1, "ngày diễn không được để trống", HttpStatus.FORBIDDEN),
     BOOKING_DATE_NOT_BLANK(2, "ngày diễn không được để rỗng", HttpStatus.FORBIDDEN),
     END_TIME_NOT_NULL(3, "thời gian kết thúc không được trống", HttpStatus.FORBIDDEN),
@@ -83,7 +83,7 @@ public enum ErrorConstant {
     NUMBER_OF_TEAM_MEMBER_NOT_BLANK(14, "Số lượng thành viên không được rỗng", HttpStatus.FORBIDDEN),
     NUMBER_OF_TEAM_MEMBER_NOT_NULL(14, "Số lượng thành viên không được trống", HttpStatus.FORBIDDEN),
     NUMBER_OF_TEAM_MEMBER_MIN_VALUE(14, "Số lượng thành viên ít nhất là {value}", HttpStatus.FORBIDDEN),
-    //End dancer booking validate enum
+    // End dancer booking validate enum
 
     CAN_NOT_FEEDBACK(45, "Không thể đánh giá dịch vụ này", HttpStatus.NOT_ACCEPTABLE),
     INVALID_BOOKING(46, "Dịch vụ thuê không hợp lệ", HttpStatus.NOT_ACCEPTABLE),

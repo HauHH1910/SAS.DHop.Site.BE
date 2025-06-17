@@ -2,10 +2,8 @@ package com.sas.dhop.site.exception;
 
 import com.sas.dhop.site.dto.ResponseError;
 import jakarta.validation.ConstraintViolation;
-
 import java.util.Map;
 import java.util.Objects;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
