@@ -1,11 +1,9 @@
 package com.sas.dhop.site.service.impl;
 
 import com.sas.dhop.site.service.NotificationService;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

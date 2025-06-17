@@ -9,5 +9,4 @@ public interface NotificationService {
     void removeEmitter(SseEmitter emitter);
 
     void sendNotification(String message);
-
 }
