@@ -55,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingResponse createBookingRequestForDancer(DancerBookingRequest request) {
-        return BookingResponse.mapToBookingResponse(bookingRepository.save(mapToBooking(request)));
+        return BookingResponse.mapToBookingResponse(bookingRepository.save(buildDancerBooking(request)));
     }
 
     @Override
@@ -392,7 +392,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private Booking mapToBooking(DancerBookingRequest request) {
+    private Booking buildDancerBooking(DancerBookingRequest request) {
 
         Dancer dancer = dancerRepository
                 .findById(request.dancerId())
