@@ -4,6 +4,7 @@ import static com.sas.dhop.site.constant.BookingStatus.*;
 
 import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.request.CreatePaymentRequest;
 import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
@@ -16,12 +17,14 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.*;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,9 +45,8 @@ public class BookingServiceImpl implements BookingService {
     private final StatusService statusService;
     private final CloudStorageService cloudStorageService;
     private final PerformanceService performanceService;
-    private final SubscriptionService subscriptionService;
-    private final UserSubscriptionService userSubscriptionService;
     private final AuthenticationService authenticationService;
+    private final PaymentService paymentService;
 
     // Booking is only for the dancer, the booker wants
     @Override
@@ -234,7 +236,6 @@ public class BookingServiceImpl implements BookingService {
         if (!booking.getBookingStatus().equals(BOOKING_IN_PROGRESS)) {
             throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_COMPLETE);
         }
-        // TODO: chuyen khoan tien truoc khi end booking
         Status endStatus = statusService.findStatusOrCreated(BOOKING_COMPLETED);
         booking.setStatus(endStatus);
         booking = bookingRepository.save(booking);

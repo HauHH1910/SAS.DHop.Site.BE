@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sas.dhop.site.dto.request.CreatePaymentRequest;
 import com.sas.dhop.site.service.PaymentService;
+
 import java.util.Date;
 import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import vn.payos.PayOS;
 import vn.payos.type.CheckoutResponseData;
@@ -23,11 +26,17 @@ public class PaymentServiceImpl implements PaymentService {
     private final PayOS payOS;
     private final ObjectMapper objectMapper;
 
+    @Value("${sas.payos.return-url}")
+    private String returnUrl;
+
+    @Value("${sas.payos.cancel-url}")
+    private String cancelUrl;
+
     @Override
     public ObjectNode createPaymentLink(CreatePaymentRequest request) {
         ObjectNode response = objectMapper.createObjectNode();
         try {
-            String currentTimeString = String.valueOf(new Date().getTime());
+            String currentTimeString = String.valueOf(request.bookingDate());
 
             long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
 
@@ -42,8 +51,8 @@ public class PaymentServiceImpl implements PaymentService {
                     .description(request.description())
                     .amount(request.price())
                     .item(item)
-                    .returnUrl(request.returnUrl())
-                    .cancelUrl(request.cancelUrl())
+                    .returnUrl(returnUrl)
+                    .cancelUrl(cancelUrl)
                     .build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);
@@ -54,7 +63,7 @@ public class PaymentServiceImpl implements PaymentService {
             return response;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("[create payment link] - [{}]", e.getMessage());
             response.put("error", -1);
             response.put("message", "fail");
             response.set("data", null);
@@ -74,7 +83,7 @@ public class PaymentServiceImpl implements PaymentService {
             response.put("message", "ok");
             return response;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("[get order by id] - [{}]", e.getMessage());
             response.put("error", -1);
             response.put("message", e.getMessage());
             response.set("data", null);
@@ -92,7 +101,7 @@ public class PaymentServiceImpl implements PaymentService {
             response.put("message", "ok");
             return response;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("[cancel order] - [{}]", e.getMessage());
             response.put("error", -1);
             response.put("message", e.getMessage());
             response.set("data", null);
@@ -110,7 +119,7 @@ public class PaymentServiceImpl implements PaymentService {
             response.put("message", "ok");
             return response;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("[confirm web hook] - [{}]", e.getMessage());
             response.put("error", -1);
             response.put("message", e.getMessage());
             response.set("data", null);
