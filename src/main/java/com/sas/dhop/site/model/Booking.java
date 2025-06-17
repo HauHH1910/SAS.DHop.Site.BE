@@ -76,7 +76,7 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @JoinColumn(name = "performance_id")
     private Performance performance;
 
-    @Column(name = "number_of_training_sessions", nullable = false)
+    @Column(name = "number_of_training_sessions")
     private Integer numberOfTrainingSessions;
 
     @Column(name = "dancer_phone")
@@ -98,4 +98,6 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @JoinColumn(name = "previous_status_id")
     private Status previousStatus;
 
+    @Column(name = "number_of_team_member")
+    private Integer numberOfTeamMember;
 }

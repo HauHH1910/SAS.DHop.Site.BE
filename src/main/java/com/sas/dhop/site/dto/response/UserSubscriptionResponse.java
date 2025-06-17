@@ -8,10 +8,11 @@ import lombok.Builder;
 
 @Builder
 public record UserSubscriptionResponse(
-        String subscriptionName, String status, Instant fromDate, Instant toDate, Long remainingDays) {
+        Integer id, String subscriptionName, String status, Instant fromDate, Instant toDate, Long remainingDays) {
 
     public static UserSubscriptionResponse mapToResponse(UserSubscription subscription) {
         return UserSubscriptionResponse.builder()
+                .id(subscription.getId())
                 .subscriptionName(subscription.getSubscription().getName())
                 .status(subscription.getStatus().getStatusName())
                 .fromDate(subscription.getFromDate())

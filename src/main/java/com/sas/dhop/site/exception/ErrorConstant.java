@@ -2,7 +2,6 @@ package com.sas.dhop.site.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.http.protocol.HTTP;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
@@ -68,9 +67,8 @@ public enum ErrorConstant {
     CAN_NOT_UPDATE_BOOKING(50, "Không thể cập nhập thông tin của dịch vụ", HttpStatus.FORBIDDEN),
     PERFORMANCE_CAN_NOT_BE_DELETED(51, "Không thể xóa được vì thuộc về một phần của hợp đồng", HttpStatus.FORBIDDEN),
     CAN_NOT_COMPLAIN(52, "Không thể khiếu nại", HttpStatus.NOT_ACCEPTABLE),
-    BOOKING_STATUS_NOT_FOUND(53,"Không tìm thấy trạng thái", HttpStatus.NOT_FOUND);
-
-
+    BOOKING_STATUS_NOT_FOUND(53, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND),
+    SUBSCRIPTION_ENDED(52, "Hết số lượt sử dụng thử", HttpStatus.FORBIDDEN);
 
     private final Integer code;
     private final String message;

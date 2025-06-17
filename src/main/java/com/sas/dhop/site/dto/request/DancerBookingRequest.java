@@ -7,18 +7,17 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
-public record BookingRequest(
+public record DancerBookingRequest(
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm") @NotNull(message = DANCER_START_TIME_NOT_NULL) LocalDateTime startTime,
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm") @NotNull(message = DANCER_END_TIME_NOT_NULL) LocalDateTime endTime,
         String address,
         String detail,
         Integer dancerId,
         Integer areaId,
-        Integer choreographyId,
-        String danceTypeName,
-        Integer numberOfTrainingSessions,
+        List<String> danceTypeName,
         BigDecimal bookingPrice,
         String dancerPhone,
-        String choreographyPhone,
-        String customerPhone) {}
+        String customerPhone,
+        Integer numberOfTeamMember) {}

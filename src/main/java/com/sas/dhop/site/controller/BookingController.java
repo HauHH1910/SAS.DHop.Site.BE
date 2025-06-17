@@ -3,6 +3,7 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j(topic = "[Booking Controller]")
 public class BookingController {
     private final BookingService bookingService;
-    private final BuildProperties buildProperties;
 
     @GetMapping("/get-all-booking")
     public ResponseData<List<BookingResponse>> getAllBooking() {
@@ -48,7 +47,8 @@ public class BookingController {
     }
 
     @PutMapping("/update-booking/{bookingId}")
-    public ResponseData<BookingResponse> updateBookingInformation(@PathVariable Integer bookingId, @RequestBody BookingRequest bookingRequest) {
+    public ResponseData<BookingResponse> updateBookingInformation(
+            @PathVariable Integer bookingId, @RequestBody BookingRequest bookingRequest) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.UPDATE_BOOKING_SUCCESSFULLY)
                 .data(bookingService.updateBookingInformation(bookingId, bookingRequest))
@@ -64,7 +64,7 @@ public class BookingController {
     }
 
     @PostMapping("/create-booking-for-dancers")
-    public ResponseData<BookingResponse> createBookingForDancers(@RequestBody BookingRequest bookingRequest) {
+    public ResponseData<BookingResponse> createBookingForDancers(@RequestBody DancerBookingRequest bookingRequest) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.CREATE_BOOKING)
                 .data(bookingService.createBookingRequestForDancer(bookingRequest))
@@ -96,7 +96,7 @@ public class BookingController {
     }
 
     @PutMapping("/booking-complains/{bookingId}")
-    public ResponseData<BookingCancelResponse> bookingComplains(@PathVariable Integer bookingId){
+    public ResponseData<BookingCancelResponse> bookingComplains(@PathVariable Integer bookingId) {
         return ResponseData.<BookingCancelResponse>builder()
                 .message(ResponseMessage.BOOKING_COMPLAINS_REQUEST)
                 .data(bookingService.bookingComplains(bookingId))
@@ -104,7 +104,7 @@ public class BookingController {
     }
 
     @PutMapping("/booking-complains-accept/{bookingId}")
-    public ResponseData<BookingResponse> acceptBookingComplainsProgress(@PathVariable Integer bookingId){
+    public ResponseData<BookingResponse> acceptBookingComplainsProgress(@PathVariable Integer bookingId) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.BOOKING_COMPLAINS_APPLY)
                 .data(bookingService.acceptBookingComplainsProgress(bookingId))
@@ -112,14 +112,18 @@ public class BookingController {
     }
 
     @PutMapping("/booking-complains-deny/{bookingId}")
-    public ResponseData<BookingResponse> denyBookingComplainsProgress(@PathVariable Integer bookingId){
+    public ResponseData<BookingResponse> denyBookingComplainsProgress(@PathVariable Integer bookingId) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.BOOKING_COMPLAINS_DENY)
                 .data(bookingService.denyBookingComplainsProgress(bookingId))
                 .build();
     }
 
-
-    //    public ResponseData<BookingResponse>
-
+    @GetMapping("/booking")
+    public ResponseData<List<BookingResponse>> getAllBookingByAuthenticatedUser() {
+        return ResponseData.<List<BookingResponse>>builder()
+                .message(ResponseMessage.GET_ALL_BOOKING)
+                .data(bookingService.findBookingByAuthenticatedUser())
+                .build();
+    }
 }
