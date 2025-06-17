@@ -23,5 +23,4 @@ public class ServerSentEventController {
     public SseEmitter sseEmitter() {
         return serverSentEventService.subscribe();
     }
-
 }

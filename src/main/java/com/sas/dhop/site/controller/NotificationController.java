@@ -24,6 +24,4 @@ public class NotificationController {
         notificationService.sendNotification(request.message());
         return "[Sent Notification]" + request.message();
     }
-
-
 }
