@@ -2,11 +2,13 @@ package com.sas.dhop.site.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Set;
+
 import lombok.*;
 
 @Getter
@@ -47,7 +49,7 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
 
     @Column(name = "booking_date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private Instant bookingDate;
+    private LocalDateTime bookingDate;
 
     @Column(name = "start_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")

@@ -18,10 +18,9 @@ import com.sas.dhop.site.util.mapper.BookingCancelMapper;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.chrono.ChronoLocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -87,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
                 .choreography(choreography)
                 .status(status)
                 .danceType(Set.of(danceType))
-                .bookingDate(Instant.now())
+                .bookingDate(LocalDateTime.now())
                 .startTime(request.startTime())
                 .endTime(request.endTime())
                 .address(request.address())
@@ -420,7 +419,7 @@ public class BookingServiceImpl implements BookingService {
                 .address(request.address())
                 .detail(request.detail())
                 .area(area)
-                .bookingDate(request.bookingDate().toInstant())
+                .bookingDate(request.bookingDate())
                 .customer(customer)
                 .numberOfTeamMember(request.numberOfTeamMember())
                 .danceType(danceTypes)
@@ -434,7 +433,6 @@ public class BookingServiceImpl implements BookingService {
 
     //TODO: check numberOfTeamMember: 2 cái booking trùng 1 thời gian thì cái booking không qu
     private void checkDancerBookingConflict(DancerBookingRequest request, Dancer dancer) {
-
     }
 
     // Check same time of the schedule

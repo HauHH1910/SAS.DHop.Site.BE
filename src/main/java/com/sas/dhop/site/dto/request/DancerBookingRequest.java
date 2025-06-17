@@ -16,7 +16,7 @@ import java.util.List;
 public record DancerBookingRequest
         (
                 @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-                Date bookingDate, //cái ngày đi diễn
+                LocalDateTime bookingDate, //cái ngày đi diễn
                 @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
                 @NotNull(message = DANCER_END_TIME_NOT_NULL)
                 LocalDateTime endTime,
