@@ -4,7 +4,6 @@ import static com.sas.dhop.site.constant.BookingStatus.*;
 
 import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.request.BookingRequest;
-import com.sas.dhop.site.dto.request.CreatePaymentRequest;
 import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
