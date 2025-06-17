@@ -1,6 +1,7 @@
 package com.sas.dhop.site.service.impl;
 
 import com.sas.dhop.site.constant.BookingStatus;
+import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.request.BookingRequest;
 import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
@@ -14,16 +15,20 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +49,7 @@ public class BookingServiceImpl implements BookingService {
     private final PerformanceService performanceService;
     private final SubscriptionService subscriptionService;
     private final UserSubscriptionService userSubscriptionService;
+    private final AuthenticationService authenticationService;
 
     // Booking is only for the dancer, the booker wants
     @Override
@@ -272,80 +278,31 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(booking);
     }
 
-    // Check conflit for dancer schedules
-    private void checkDancerBookingConflict(BookingRequest bookingRequest, Dancer dancer) {
-        // Lấy tất cả booking của dancer trong ngày
-        LocalDate bookingDate = bookingRequest.startTime().toLocalDate();
-        List<Booking> bookings = bookingRepository.findAll().stream()
-                .filter(b -> b.getDancer() != null && b.getDancer().getId().equals(dancer.getId()))
-                .filter(b -> !b.getStatus().getStatusName().equals(BookingStatus.BOOKING_CANCELED))
-                .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
-                .toList();
+    @Override
+    public List<BookingResponse> findBookingByAuthenticatedUser() {
+        boolean isUser = authenticationService.authenticationChecking(RolePrefix.USER_PREFIX);
+        boolean isDancer = authenticationService.authenticationChecking(RolePrefix.DANCER_PREFIX);
+        boolean isChoreography = authenticationService.authenticationChecking(RolePrefix.CHOREOGRAPHY_PREFIX);
 
-        int requestedSessions;
-        if (bookingRequest.numberOfTrainingSessions() != null) {
-            requestedSessions = bookingRequest.numberOfTrainingSessions();
+        User user = userService.getLoginUser();
+
+        if (isUser) {
+            return bookingRepository.findAllByCustomer(user)
+                    .stream().map(BookingResponse::mapToBookingResponse).toList();
+        } else if (isDancer) {
+            Dancer dancer = dancerRepository.findByUser(user)
+                    .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_DANCER));
+            return bookingRepository.findAllByDancer(dancer)
+                    .stream().map(BookingResponse::mapToBookingResponse).toList();
+        } else if (isChoreography) {
+            Choreography choreography = choreographyRepository.findByUser(user)
+                    .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_FOUND_CHOREOGRAPHY));
+            return bookingRepository.findAllByChoreography(choreography)
+                    .stream().map(BookingResponse::mapToBookingResponse).toList();
         } else {
-            requestedSessions = 1;
-        }
-
-        // Tính tổng số người thuê ở các booking giao nhau
-        int totalSessions = requestedSessions;
-        for (Booking b : bookings) {
-            // Kiểm tra giao nhau thời gian
-            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime())
-                    || bookingRequest.startTime().isAfter(b.getEndTime()));
-            if (isOverlap) {
-                int bookedSessions = b.getNumberOfTrainingSessions() != null ? b.getNumberOfTrainingSessions() : 1;
-                totalSessions += bookedSessions;
-            }
-        }
-
-        if (totalSessions > dancer.getTeamSize()) {
-            throw new BusinessException(ErrorConstant.DANCER_TEAM_SIZE_CONFLICT);
-        }
-    }
-
-    // Check same time of the schedule
-    private void checkChoreographerBookingConflict(BookingRequest bookingRequest, Choreography choreography) {
-        LocalDate bookingDate = bookingRequest.startTime().toLocalDate();
-        List<Booking> bookings = bookingRepository.findAll().stream()
-                .filter(b -> b.getChoreography() != null
-                        && b.getChoreography().getId().equals(choreography.getId()))
-                .filter(b -> !b.getStatus().getStatusName().equals(BookingStatus.BOOKING_CANCELED))
-                .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
-                .collect(Collectors.toList());
-
-        for (Booking b : bookings) {
-            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime())
-                    || bookingRequest.startTime().isAfter(b.getEndTime()));
-            if (isOverlap) {
-                throw new BusinessException(ErrorConstant.CHOOREOGRAPHY_TIME_CONFLICT);
-            }
-        }
-    }
-
-    // Todo: nhớ bỏ hàm này vào xử lý real time luôn
-    // Check time need to change status before begin the work (24 hour)
-    @Transactional
-    public void cancelLateBookingsAutomatically() {
-        Instant now = Instant.now();
-
-        // Lọc các booking đang ở trạng thái ACTIVATE và đã qua 24h kể từ startTime
-        List<Booking> lateBookings = bookingRepository.findAll().stream()
-                .filter(b -> b.getStatus().getStatusName().equals(BookingStatus.BOOKING_ACTIVATE))
-                .filter(b -> b.getStartTime().plusHours(24).isBefore(ChronoLocalDateTime.from(now)))
-                .collect(Collectors.toList());
-
-        // Lấy trạng thái INACTIVATE để set
-        Status inactivateStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_INACTIVATE);
-
-        for (Booking booking : lateBookings) {
-            booking.setStatus(inactivateStatus);
-            booking.setCancelReason("Tự động chuyển sang INACTIVATE vì đã quá 24h mà không bắt đầu.");
-            booking.setCancelPersonName("Hệ thống");
-
-            bookingRepository.save(booking);
+            return bookingRepository.findAll().stream()
+                    .map(BookingResponse::mapToBookingResponse)
+                    .toList();
         }
     }
 
@@ -438,7 +395,14 @@ public class BookingServiceImpl implements BookingService {
 
         User customer = userService.getLoginUser();
 
-        DanceType danceType = danceTypeService.findDanceTypeName(request.danceTypeName());
+        List<String> listDanceType = request.danceTypeName();
+
+        Set<DanceType> danceTypes = new HashSet<>();
+
+        for (String type : listDanceType) {
+            DanceType danceType = danceTypeService.findDanceTypeName(type);
+            danceTypes.add(danceType);
+        }
 
         Area area = areaRepository
                 .findById(request.areaId())
@@ -454,12 +418,89 @@ public class BookingServiceImpl implements BookingService {
                 .bookingDate(Instant.now())
                 .customer(customer)
                 .numberOfTeamMember(request.numberOfTeamMember())
-                .danceType(Set.of(danceType))
+                .danceType(danceTypes)
                 .dancer(dancer)
                 .status(status)
                 .customerPhone(request.customerPhone())
                 .dancerPhone(request.dancerPhone())
                 .price(calculateCommissionPrice(request.bookingPrice()))
                 .build();
+    }
+
+    // Check conflit for dancer schedules
+    private void checkDancerBookingConflict(BookingRequest bookingRequest, Dancer dancer) {
+        // Lấy tất cả booking của dancer trong ngày
+        LocalDate bookingDate = bookingRequest.startTime().toLocalDate();
+        List<Booking> bookings = bookingRepository.findAll().stream()
+                .filter(b -> b.getDancer() != null && b.getDancer().getId().equals(dancer.getId()))
+                .filter(b -> !b.getStatus().getStatusName().equals(BookingStatus.BOOKING_CANCELED))
+                .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
+                .toList();
+
+        int requestedSessions;
+        if (bookingRequest.numberOfTrainingSessions() != null) {
+            requestedSessions = bookingRequest.numberOfTrainingSessions();
+        } else {
+            requestedSessions = 1;
+        }
+
+        // Tính tổng số người thuê ở các booking giao nhau
+        int totalSessions = requestedSessions;
+        for (Booking b : bookings) {
+            // Kiểm tra giao nhau thời gian
+            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime())
+                    || bookingRequest.startTime().isAfter(b.getEndTime()));
+            if (isOverlap) {
+                int bookedSessions = b.getNumberOfTrainingSessions() != null ? b.getNumberOfTrainingSessions() : 1;
+                totalSessions += bookedSessions;
+            }
+        }
+
+        if (totalSessions > dancer.getTeamSize()) {
+            throw new BusinessException(ErrorConstant.DANCER_TEAM_SIZE_CONFLICT);
+        }
+    }
+
+    // Check same time of the schedule
+    private void checkChoreographerBookingConflict(BookingRequest bookingRequest, Choreography choreography) {
+        LocalDate bookingDate = bookingRequest.startTime().toLocalDate();
+        List<Booking> bookings = bookingRepository.findAll().stream()
+                .filter(b -> b.getChoreography() != null
+                        && b.getChoreography().getId().equals(choreography.getId()))
+                .filter(b -> !b.getStatus().getStatusName().equals(BookingStatus.BOOKING_CANCELED))
+                .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
+                .collect(Collectors.toList());
+
+        for (Booking b : bookings) {
+            boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime())
+                    || bookingRequest.startTime().isAfter(b.getEndTime()));
+            if (isOverlap) {
+                throw new BusinessException(ErrorConstant.CHOOREOGRAPHY_TIME_CONFLICT);
+            }
+        }
+    }
+
+    // Todo: nhớ bỏ hàm này vào xử lý real time luôn
+    // Check time need to change status before begin the work (24 hour)
+    @Transactional
+    public void cancelLateBookingsAutomatically() {
+        Instant now = Instant.now();
+
+        // Lọc các booking đang ở trạng thái ACTIVATE và đã qua 24h kể từ startTime
+        List<Booking> lateBookings = bookingRepository.findAll().stream()
+                .filter(b -> b.getStatus().getStatusName().equals(BookingStatus.BOOKING_ACTIVATE))
+                .filter(b -> b.getStartTime().plusHours(24).isBefore(ChronoLocalDateTime.from(now)))
+                .collect(Collectors.toList());
+
+        // Lấy trạng thái INACTIVATE để set
+        Status inactivateStatus = statusService.findStatusOrCreated(BookingStatus.BOOKING_INACTIVATE);
+
+        for (Booking booking : lateBookings) {
+            booking.setStatus(inactivateStatus);
+            booking.setCancelReason("Tự động chuyển sang INACTIVATE vì đã quá 24h mà không bắt đầu.");
+            booking.setCancelPersonName("Hệ thống");
+
+            bookingRepository.save(booking);
+        }
     }
 }

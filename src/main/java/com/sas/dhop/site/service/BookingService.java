@@ -48,4 +48,6 @@ public interface BookingService {
 
     // For Staff process complains and change booking status
     BookingResponse denyBookingComplainsProgress(Integer bookingId);
+
+    List<BookingResponse> findBookingByAuthenticatedUser();
 }
