@@ -4,6 +4,7 @@ import static com.sas.dhop.site.constant.BookingStatus.*;
 
 import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.request.DancerAcceptRequest;
 import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
@@ -105,7 +106,7 @@ public class BookingServiceImpl implements BookingService {
     // accept button for dancers and choreographer
     @Override
     @Transactional
-    public BookingResponse acceptBookingRequest(int bookingId) {
+    public BookingResponse acceptBookingRequest(int bookingId, DancerAcceptRequest request) {
         Booking booking = bookingRepository
                 .findById(bookingId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
@@ -114,14 +115,11 @@ public class BookingServiceImpl implements BookingService {
         if (!currentStatus.getStatusName().equals(BOOKING_PENDING)) {
             throw new BusinessException(ErrorConstant.BOOKING_NOT_ACCEPTABLE);
         }
-        //        UserSubscription subscription =
-        // userSubscriptionService.findUserSubscriptionByUser(userService.getLoginUser());
-        //
-        //        Integer counted = userSubscriptionService.countBookingFromUserSubscription(subscription);
-        //        if (counted == 0) {
-        //            throw new BusinessException(ErrorConstant.UNCATEGORIZED_ERROR);
-        //        }
+
         Status activateStatus = statusService.findStatusOrCreated(BOOKING_ACTIVATE);
+        booking.setDancerAccountNumber(request.accountNumber());
+        booking.setDancerPhone(request.dancerPhone());
+        booking.setDancerBank(request.bank());
         booking.setStatus(activateStatus);
         booking = bookingRepository.save(booking);
 

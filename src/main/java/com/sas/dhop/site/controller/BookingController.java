@@ -3,6 +3,7 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.request.DancerAcceptRequest;
 import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
@@ -10,7 +11,9 @@ import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.service.BookingService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -74,10 +77,10 @@ public class BookingController {
     }
 
     @PutMapping("/accept/{bookingId}")
-    public ResponseData<BookingResponse> acceptBookingRequest(@PathVariable Integer bookingId) {
+    public ResponseData<BookingResponse> acceptBookingRequest(@PathVariable Integer bookingId, @RequestBody DancerAcceptRequest request) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.ACCEPT_BOOKING_SUCESSFULLY)
-                .data(bookingService.acceptBookingRequest(bookingId))
+                .data(bookingService.acceptBookingRequest(bookingId, request))
                 .build();
     }
 
