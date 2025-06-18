@@ -62,7 +62,8 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "detail")
+    @Lob
+    @Column(name = "detail", columnDefinition = "TEXT")
     private String detail;
 
     @Column(name = "update_booking_date")
