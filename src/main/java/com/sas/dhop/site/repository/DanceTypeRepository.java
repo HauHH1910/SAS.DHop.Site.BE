@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 public interface DanceTypeRepository extends JpaRepository<DanceType, Integer>, JpaSpecificationExecutor<DanceType> {
-    @Query("select d from DanceType d where d.type = ?1")
+    @Query("select d from DanceType d where d.type LIKE %?1%")
     Optional<DanceType> findByType(String type);
 }
