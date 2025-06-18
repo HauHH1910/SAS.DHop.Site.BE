@@ -15,6 +15,7 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -131,8 +132,8 @@ public class BookingController {
                 .build();
     }
 
-    @PostMapping("/send-evidence")
-    public ResponseData<BookingResponse> userSentPayment(@RequestBody EndWorkRequest bookingRequest) {
+    @PostMapping(value = "/send-evidence", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseData<BookingResponse> userSentPayment(@ModelAttribute EndWorkRequest bookingRequest) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.CREATE_BOOKING)
                 .data(bookingService.userSentPayment(bookingRequest))
@@ -144,6 +145,13 @@ public class BookingController {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.CREATE_BOOKING)
                 .data(bookingService.completeWork(booking))
+                .build();
+    }
+
+    @PutMapping("/end-book/{bookingId}")
+    public ResponseData<BookingResponse> endBooking(@PathVariable("bookingId") Integer bookingId){
+        return ResponseData.<BookingResponse>builder()
+                .data(bookingService.endBooking(bookingId))
                 .build();
     }
 }

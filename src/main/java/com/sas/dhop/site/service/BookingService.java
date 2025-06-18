@@ -16,6 +16,8 @@ public interface BookingService {
     // status is Pending
     BookingResponse createBookingRequestForDancer(DancerBookingRequest request);
 
+//    BookingResponse approveBookingRequestForDancer(Integer bookingId);
+
     // create booking contract for choreography(add field to insert information in
     // contract), set
     // booking status is

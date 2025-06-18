@@ -14,6 +14,7 @@ import com.sas.dhop.site.dto.response.MediaResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.*;
+import com.sas.dhop.site.model.enums.BookingStatus;
 import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
@@ -58,6 +59,8 @@ public class BookingServiceImpl implements BookingService {
         checkDancerBookingConflict(request);
         return BookingResponse.mapToBookingResponse(bookingRepository.save(buildDancerBooking(request)));
     }
+
+
 
     @Override
     @Transactional
@@ -159,7 +162,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponse endWorking(EndWorkRequest request) {
         Booking booking = bookingRepository
-                .findById(request.id())
+                .findById(request.getId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         Status currentStatus = booking.getStatus();
@@ -167,8 +170,8 @@ public class BookingServiceImpl implements BookingService {
             throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
         }
 
-        if (request.multipartFiles() != null) {
-            List<MediaResponse> mediaResponses = cloudStorageService.uploadImage(request.multipartFiles());
+        if (request.getMultipartFiles() != null) {
+            List<MediaResponse> mediaResponses = cloudStorageService.uploadImage(request.getMultipartFiles());
             for (MediaResponse media : mediaResponses) {
                 performanceService.uploadPerformanceForBooking(media.url(), booking);
             }
@@ -185,14 +188,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponse userSentPayment(EndWorkRequest request) {
         Booking booking = bookingRepository
-                .findById(request.id())
+                .findById(request.getId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
-        if (!booking.getStatus().getStatusName().equals(BOOKING_COMPLETED)) {
-            throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
-        }
-
-        List<MediaResponse> mediaResponses = cloudStorageService.uploadImage(request.multipartFiles());
+        List<MediaResponse> mediaResponses = cloudStorageService.uploadImage(request.getMultipartFiles());
         for (MediaResponse media : mediaResponses) {
             performanceService.uploadPerformanceForBooking(media.url(), booking);
         }
