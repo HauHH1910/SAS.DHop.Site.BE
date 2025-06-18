@@ -1,6 +1,7 @@
 package com.sas.dhop.site.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.sas.dhop.site.dto.request.CommissionPaymentRequest;
 import com.sas.dhop.site.dto.request.CreatePaymentRequest;
 import com.sas.dhop.site.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,5 +39,10 @@ public class PaymentController {
     @PostMapping("/confirm-webhook")
     public ObjectNode confirmWebHook(@RequestBody Map<String, String> request) {
         return paymentService.confirmWebHook(request);
+    }
+
+    @PostMapping("/commission")
+    public ObjectNode paymentCommission(@RequestBody CommissionPaymentRequest request) {
+        return paymentService.commissionPayment(request);
     }
 }

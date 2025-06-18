@@ -6,7 +6,6 @@ import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
 import static com.sas.dhop.site.constant.UserStatus.INACTIVE_USER;
 
 import com.nimbusds.jose.*;
-import com.sas.dhop.site.constant.ChoreographerStatus;
 import com.sas.dhop.site.controller.client.OAuthIdentityClient;
 import com.sas.dhop.site.controller.client.OAuthUserClient;
 import com.sas.dhop.site.dto.request.*;
@@ -22,11 +21,9 @@ import com.sas.dhop.site.util.mapper.DancerMapper;
 import com.sas.dhop.site.util.mapper.UserMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
-
 import java.text.ParseException;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -171,7 +168,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return getAuthenticationResponse(accessToken, refreshToken, user);
     }
-
 
     @Override
     public AuthenticationResponse resetPassword(ResetPasswordRequest request) {
@@ -320,9 +316,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 && !(authentication instanceof AnonymousAuthenticationToken)
                 && authentication.isAuthenticated()
                 && authentication.getAuthorities().stream().anyMatch(authority -> {
-            log.info("User has the required role: {}", authority.getAuthority());
-            return role.equals(authority.getAuthority());
-        });
+                    log.info("User has the required role: {}", authority.getAuthority());
+                    return role.equals(authority.getAuthority());
+                });
     }
 
     private ExchangeTokenResponse getTokenResponse(String code) {
@@ -350,11 +346,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private AuthenticationResponse getAuthenticationResponse(String accessToken, String refreshToken, User user) {
         Set<RoleName> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
         if (roleNames.contains(RoleName.DANCER)) {
-            DancerResponse dancerResponse = dancerMapper.mapToDancerResponse(dancerRepository.findByUser(user)
+            DancerResponse dancerResponse = dancerMapper.mapToDancerResponse(dancerRepository
+                    .findByUser(user)
                     .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_DANCER)));
-            return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user), user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()), dancerResponse);
+            return new AuthenticationResponse(
+                    accessToken,
+                    refreshToken,
+                    userMapper.mapToUserResponse(user),
+                    user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()),
+                    dancerResponse);
         } else {
-            return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user), user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()), null);
+            return new AuthenticationResponse(
+                    accessToken,
+                    refreshToken,
+                    userMapper.mapToUserResponse(user),
+                    user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()),
+                    null);
         }
     }
 }

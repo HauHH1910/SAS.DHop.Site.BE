@@ -1,10 +1,9 @@
 package com.sas.dhop.site.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.*;
 
 @Getter
 @Setter
@@ -25,6 +24,7 @@ public class Complain extends AbstractEntity<Integer> implements Serializable {
     private String cancelPersonName;
 
     private String content;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

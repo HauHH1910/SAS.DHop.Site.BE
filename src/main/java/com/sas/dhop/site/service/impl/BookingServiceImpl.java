@@ -2,6 +2,7 @@ package com.sas.dhop.site.service.impl;
 
 import static com.sas.dhop.site.constant.BookingStatus.*;
 
+import com.sas.dhop.site.constant.PaymentStatus;
 import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.request.BookingRequest;
 import com.sas.dhop.site.dto.request.DancerAcceptRequest;
@@ -22,6 +23,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.*;
 import java.time.chrono.ChronoLocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +49,7 @@ public class BookingServiceImpl implements BookingService {
     private final PerformanceService performanceService;
     private final AuthenticationService authenticationService;
     private final PaymentService paymentService;
+    private final PaymentRepository paymentRepository;
 
     // Booking is only for the dancer, the booker wants
     @Override
@@ -123,6 +126,14 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(activateStatus);
         booking = bookingRepository.save(booking);
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+        String currentTimeString = booking.getBookingDate().format(formatter);
+
+        long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
+        log.info("[order code] - [{}]", orderCode);
+        paymentRepository.save(new Payment(
+                orderCode, PaymentStatus.NOT_PAID, booking.getPrice().intValue()));
+
         return BookingResponse.mapToBookingResponse(booking);
     }
 
@@ -155,6 +166,16 @@ public class BookingServiceImpl implements BookingService {
         Status currentStatus = booking.getStatus();
         if (!currentStatus.getStatusName().equals(BOOKING_IN_PROGRESS)) {
             throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+        String currentTimeString = booking.getBookingDate().format(formatter);
+
+        long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
+
+        Payment payment = paymentService.findPayment(orderCode);
+
+        if (PaymentStatus.NOT_PAID.equals(payment.getStatus())) {
+            throw new BusinessException(ErrorConstant.PAYMENT_NOT_PAY);
         }
 
         if (request.multipartFiles() != null) {
@@ -203,7 +224,6 @@ public class BookingServiceImpl implements BookingService {
 
         User user = userService.getLoginUser();
 
-
         bookingRepository.save(booking);
 
         return bookingCancelMapper.mapToBookingCancelResponse(booking);
@@ -233,6 +253,7 @@ public class BookingServiceImpl implements BookingService {
         if (!booking.getBookingStatus().equals(BOOKING_IN_PROGRESS)) {
             throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_COMPLETE);
         }
+
         Status endStatus = statusService.findStatusOrCreated(BOOKING_COMPLETED);
         booking.setStatus(endStatus);
         booking = bookingRepository.save(booking);
@@ -321,7 +342,6 @@ public class BookingServiceImpl implements BookingService {
 
         User currentUser = userService.getLoginUser();
 
-
         bookingRepository.save(booking);
 
         return bookingCancelMapper.mapToBookingCancelResponse(booking);
@@ -353,14 +373,14 @@ public class BookingServiceImpl implements BookingService {
             throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
         }
 
-//        // Khôi phục trạng thái trước khi khiếu nại
-////        Status restoredStatus = booking.getPreviousStatus(); // cần có cột này
-//        if (restoredStatus == null) {
-//            throw new BusinessException(ErrorConstant.BOOKING_STATUS_NOT_FOUND);
-//        }
-//
-//        booking.setStatus(restoredStatus);
-//        booking.setPreviousStatus(null); // clear lại nếu cần
+        //        // Khôi phục trạng thái trước khi khiếu nại
+        ////        Status restoredStatus = booking.getPreviousStatus(); // cần có cột này
+        //        if (restoredStatus == null) {
+        //            throw new BusinessException(ErrorConstant.BOOKING_STATUS_NOT_FOUND);
+        //        }
+        //
+        //        booking.setStatus(restoredStatus);
+        //        booking.setPreviousStatus(null); // clear lại nếu cần
         bookingRepository.save(booking);
 
         return BookingResponse.mapToBookingResponse(booking);
@@ -368,9 +388,9 @@ public class BookingServiceImpl implements BookingService {
 
     // Check price after original have commission
     private BigDecimal calculateCommissionPrice(BigDecimal price) {
-        if (price.compareTo(new BigDecimal("500000")) < 0) {
-            throw new BusinessException(ErrorConstant.INVALID_MINIMUM_PRICE);
-        }
+//        if (price.compareTo(new BigDecimal("500000")) < 0) {
+//            throw new BusinessException(ErrorConstant.INVALID_MINIMUM_PRICE);
+//        }
 
         if (price.compareTo(new BigDecimal("500000")) >= 0 && price.compareTo(new BigDecimal("1000000")) < 0) {
             // Phí hoa hồng 20%
@@ -476,8 +496,8 @@ public class BookingServiceImpl implements BookingService {
 
         for (Booking booking : lateBookings) {
             booking.setStatus(inactivateStatus);
-//            booking.setCancelReason("Tự động chuyển sang INACTIVATE vì đã quá 24h mà không bắt đầu.");
-//            booking.setCancelPersonName("Hệ thống");
+            //            booking.setCancelReason("Tự động chuyển sang INACTIVATE vì đã quá 24h mà không bắt đầu.");
+            //            booking.setCancelPersonName("Hệ thống");
 
             bookingRepository.save(booking);
         }

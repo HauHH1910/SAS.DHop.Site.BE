@@ -3,11 +3,9 @@ package com.sas.dhop.site.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.DanceType;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import lombok.Builder;
 
 // yyyy-MM-dd HH:mm
