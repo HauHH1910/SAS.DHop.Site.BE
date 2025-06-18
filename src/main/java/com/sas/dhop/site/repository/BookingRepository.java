@@ -1,9 +1,7 @@
 package com.sas.dhop.site.repository;
 
-import com.sas.dhop.site.model.Booking;
-import com.sas.dhop.site.model.Choreography;
-import com.sas.dhop.site.model.Dancer;
-import com.sas.dhop.site.model.User;
+import com.sas.dhop.site.model.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -20,4 +18,10 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
     List<Booking> findAllByCustomer(User customer);
 
     Optional<Booking> findByBookingDate(LocalDateTime bookingDate);
+
+//    List<Booking> findAllByBookingIdAndStatus(Integer bookingId, Status status);
+
+    List<Booking> findAllByStatus(Status status);
+
+
 }
