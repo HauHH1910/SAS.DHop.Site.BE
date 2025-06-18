@@ -15,7 +15,7 @@ import lombok.*;
 @Table(name = "dance_type")
 public class DanceType extends AbstractEntity<Integer> implements Serializable {
 
-    @Column(name = "type", length = 100)
+    @Column(name = "type", length = 100, unique = true)
     private String type;
 
     @Column(name = "description")

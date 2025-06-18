@@ -7,6 +7,7 @@ public class BookingStatus {
     public static final String BOOKING_CANCELED = "Đã bị hủy";
     public static final String BOOKING_COMPLETED = "Đã hoàn tất";
     public static final String BOOKING_INCOMPLETE = "Chưa hoàn tất";
+    public static final String BOOKING_SENT_IMAGE = "Gửi ảnh thanh toán thành công";
     public static final String BOOKING_IN_PROGRESS = "Đang thực hiện";
     public static final String BOOKING_WORKING_DONE = "Hoàn tất công việc";
     public static final String BOOKING_JOINED = "Đã tham gia";

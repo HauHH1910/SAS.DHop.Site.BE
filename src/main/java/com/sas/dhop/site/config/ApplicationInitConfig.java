@@ -13,8 +13,9 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.model.enums.StatusType;
 import com.sas.dhop.site.repository.*;
 import jakarta.transaction.Transactional;
-import java.util.Locale;
-import java.util.Set;
+
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
@@ -41,14 +42,24 @@ public class ApplicationInitConfig {
             PerformanceRepository performanceRepository) {
         return args -> {
             Role adminRole = buildRole(roleRepository, RoleName.ADMIN);
-
             Status adminStatus = buildStatus(statusRepository, RolePrefix.ADMIN_PREFIX);
-
             User admin = checkIfAdminExistOrNot(userRepository, adminRole, adminStatus, passwordEncoder);
 
             if (admin != null) {
                 Faker fakerVN = new Faker(new Locale("vi"));
                 Faker fakerUS = new Faker(new Locale("en-US"));
+
+                Set<String> generatedTitles = new HashSet<>();
+                Set<DanceType> danceTypes = new HashSet<>();
+
+                while (danceTypes.size() < 20) {
+                    String title = fakerUS.job().title();
+                    if (generatedTitles.add(title)) {
+                        danceTypes.add(DanceType.builder().type(title).build());
+                    }
+                }
+                danceTypeRepository.saveAll(danceTypes);
+                List<DanceType> danceTypeList = new ArrayList<>(danceTypes);
 
                 for (int i = 0; i < 10; i++) {
                     Role userRole = buildRole(roleRepository, RoleName.USER);
@@ -57,65 +68,52 @@ public class ApplicationInitConfig {
 
                     Status activeStatus = buildStatus(statusRepository, ACTIVE_USER);
 
-                    DanceType type = danceTypeRepository.save(
-                            DanceType.builder().type(fakerUS.job().title()).build());
-
-                    // Create status for user subscription
+                    // Các status subscription mẫu
                     switch (i) {
-                        case 1: {
-                            buildStatus(statusRepository, ACTIVE_USER_SUBSCRIPTION);
-                            break;
-                        }
-                        case 2: {
-                            buildStatus(statusRepository, EXPIRE_USER_SUBSCRIPTION);
-                            break;
-                        }
-                        case 3: {
-                            buildStatus(statusRepository, FREE_TRIAL_USER_SUBSCRIPTION);
-                            break;
-                        }
-                        case 4: {
-                            buildStatus(statusRepository, PENDING_USER_SUBSCRIPTION);
-                            break;
-                        }
-                        case 5: {
-                            buildStatus(statusRepository, RENEWING_USER_SUBSCRIPTION);
-                            break;
-                        }
+                        case 1 -> buildStatus(statusRepository, ACTIVE_USER_SUBSCRIPTION);
+                        case 2 -> buildStatus(statusRepository, EXPIRE_USER_SUBSCRIPTION);
+                        case 3 -> buildStatus(statusRepository, FREE_TRIAL_USER_SUBSCRIPTION);
+                        case 4 -> buildStatus(statusRepository, PENDING_USER_SUBSCRIPTION);
+                        case 5 -> buildStatus(statusRepository, RENEWING_USER_SUBSCRIPTION);
                     }
 
                     if (i % 2 == 0) {
-                        User userWithRoleDancer =
-                                buildUser(userRepository, activeStatus, passwordEncoder, fakerUS, dancerRole);
-
+                        User userWithRoleDancer = buildUser(userRepository, activeStatus, passwordEncoder, fakerUS, dancerRole);
+                        DanceType randomType = getRandomDanceType(danceTypeList);
                         buildDancer(
                                 dancerRepository,
                                 buildStatus(statusRepository, ACTIVATED_DANCER),
                                 userWithRoleDancer,
-                                type);
-
+                                randomType
+                        );
                         buildPerformance(performanceRepository, activeStatus, userWithRoleDancer);
                     }
 
                     buildUser(userRepository, activeStatus, passwordEncoder, fakerUS, userRole);
 
-                    User choreographyUser =
-                            buildUser(userRepository, activeStatus, passwordEncoder, fakerUS, choreographyRole);
-
+                    User choreographyUser = buildUser(userRepository, activeStatus, passwordEncoder, fakerUS, choreographyRole);
+                    DanceType randomType = getRandomDanceType(danceTypeList);
                     buildChoreography(
                             choreographyRepository,
                             buildStatus(statusRepository, ACTIVATED_CHOREOGRAPHER),
                             choreographyUser,
-                            type);
+                            randomType
+                    );
 
                     buildArea(areaRepository, fakerVN, buildStatus(statusRepository, ACTIVATED_AREA));
                 }
+
                 log.info("Created default admin user");
             } else {
                 log.info("Default admin already init");
             }
         };
     }
+
+    private DanceType getRandomDanceType(List<DanceType> danceTypes) {
+        return danceTypes.get(new Random().nextInt(danceTypes.size()));
+    }
+
 
     private void buildArea(AreaRepository areaRepository, Faker faker, Status status) {
         areaRepository.save(Area.builder()
@@ -139,6 +137,7 @@ public class ApplicationInitConfig {
         dancerRepository.save(Dancer.builder()
                 .status(status)
                 .user(user)
+                .teamSize(100)
                 .danceTypes(Set.of(type))
                 .build());
     }
