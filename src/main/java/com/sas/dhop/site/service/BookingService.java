@@ -6,6 +6,7 @@ import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
+
 import java.util.List;
 
 public interface BookingService {
@@ -33,7 +34,9 @@ public interface BookingService {
 
     BookingCancelResponse cancelBooking(int bookingId);
 
-    BookingResponse customerEndWork(EndWorkRequest request);
+    BookingResponse completeWork(int bookingId);
+
+    BookingResponse userSentPayment(EndWorkRequest request);
 
     BookingResponse endBooking(int bookingId);
 

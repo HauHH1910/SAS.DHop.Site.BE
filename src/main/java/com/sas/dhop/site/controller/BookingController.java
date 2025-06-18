@@ -10,7 +10,9 @@ import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.service.BookingService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -126,6 +128,22 @@ public class BookingController {
         return ResponseData.<List<BookingResponse>>builder()
                 .message(ResponseMessage.GET_ALL_BOOKING)
                 .data(bookingService.findBookingByAuthenticatedUser())
+                .build();
+    }
+
+    @PostMapping("/send-evidence")
+    public ResponseData<BookingResponse> userSentPayment(@RequestBody EndWorkRequest bookingRequest) {
+        return ResponseData.<BookingResponse>builder()
+                .message(ResponseMessage.CREATE_BOOKING)
+                .data(bookingService.userSentPayment(bookingRequest))
+                .build();
+    }
+
+    @PutMapping("/complete-work/${booking}")
+    public ResponseData<BookingResponse> completeWork(@PathVariable Integer booking) {
+        return ResponseData.<BookingResponse>builder()
+                .message(ResponseMessage.CREATE_BOOKING)
+                .data(bookingService.completeWork(booking))
                 .build();
     }
 }

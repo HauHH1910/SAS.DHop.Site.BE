@@ -126,14 +126,13 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(activateStatus);
         booking = bookingRepository.save(booking);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-        String currentTimeString = booking.getBookingDate().format(formatter);
-
-        long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
-        log.info("[order code] - [{}]", orderCode);
-        paymentRepository.save(new Payment(
-                orderCode, PaymentStatus.NOT_PAID, booking.getPrice().intValue()));
-
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+//        String currentTimeString = booking.getBookingDate().format(formatter);
+//
+//        long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
+//        log.info("[order code] - [{}]", orderCode);
+//        paymentRepository.save(new Payment(
+//                orderCode, PaymentStatus.NOT_PAID, booking.getPrice().intValue()));
         return BookingResponse.mapToBookingResponse(booking);
     }
 
@@ -182,7 +181,28 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(booking);
     }
 
-    // This like booking report
+
+    @Override
+    public BookingResponse userSentPayment(EndWorkRequest request) {
+        Booking booking = bookingRepository
+                .findById(request.id())
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+
+        if (!booking.getStatus().getStatusName().equals(BOOKING_COMPLETED)) {
+            throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
+        }
+
+        List<MediaResponse> mediaResponses = cloudStorageService.uploadImage(request.multipartFiles());
+        for (MediaResponse media : mediaResponses) {
+            performanceService.uploadPerformanceForBooking(media.url(), booking);
+        }
+
+        Status workingStatus = statusService.findStatusOrCreated(BOOKING_WORKING_DONE);
+        booking.setStatus(workingStatus);
+        booking = bookingRepository.save(booking);
+
+        return BookingResponse.mapToBookingResponse(booking);
+    }
 
     @Override
     public BookingResponse getBookingDetail(int bookingId) {
@@ -212,38 +232,24 @@ public class BookingServiceImpl implements BookingService {
         Status cancelStatus = statusService.findStatusOrCreated(BOOKING_CANCELED);
         booking.setStatus(cancelStatus);
 
-        User user = userService.getLoginUser();
-
         bookingRepository.save(booking);
 
         return bookingCancelMapper.mapToBookingCancelResponse(booking);
     }
 
-    // @Override
-    // public BookingResponse confirmWork(int bookingId) {
-    // Booking booking = bookingRepository
-    // .findById(bookingId)
-    // .orElseThrow(()-> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
-    //
-    // if(booking.getBookingStatus() != BookingStatus.BOOKING_WORKING_DONE)
-    // throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_END_WORK);
-    //
-    // Status confirmStatus = statusService.findStatusOrCreated(BookingStatus.)
-    //
-    //
-    //
-    //
-    // }
-
 
     @Override
-    public BookingResponse customerEndWork(EndWorkRequest request) {
-        Booking booking = bookingRepository.findById(request.id())
+    public BookingResponse completeWork(int bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
+        if (!booking.getStatus().getStatusName().equals(BOOKING_WORKING_DONE)) {
+            throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_COMPLETE);
+        }
 
+        booking.setStatus(statusService.findStatusOrCreated(BOOKING_COMPLETED));
 
-        return null;
+        return BookingResponse.mapToBookingResponse(bookingRepository.save(booking));
     }
 
     @Override
