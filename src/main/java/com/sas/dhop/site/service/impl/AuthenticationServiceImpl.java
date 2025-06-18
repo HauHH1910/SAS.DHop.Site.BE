@@ -18,6 +18,7 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.JwtUtil;
+import com.sas.dhop.site.util.mapper.DancerMapper;
 import com.sas.dhop.site.util.mapper.UserMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
@@ -54,6 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final ChoreographyRepository choreographyRepository;
     private final DancerRepository dancerRepository;
     private final UserMapper userMapper;
+    private final DancerMapper dancerMapper;
 
     @NonFinal
     @Value("${sas.dhop.oauth.client-id}")
@@ -98,7 +100,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
         log.info("User {} login successfully", user.getEmail());
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
 
     @Override
@@ -134,7 +136,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
 
     @Override
@@ -167,8 +169,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
+
 
     @Override
     public AuthenticationResponse resetPassword(ResetPasswordRequest request) {
@@ -199,7 +202,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
 
     @Override
@@ -215,7 +218,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
 
     @Override
@@ -307,7 +310,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
 
     @Override
@@ -342,5 +345,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .name(String.join(" ", userInfo.givenName(), userInfo.familyName()))
                         .avatar(userInfo.picture())
                         .build()));
+    }
+
+    private AuthenticationResponse getAuthenticationResponse(String accessToken, String refreshToken, User user) {
+        Set<RoleName> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        if (roleNames.contains(RoleName.DANCER)) {
+            DancerResponse dancerResponse = dancerMapper.mapToDancerResponse(dancerRepository.findByUser(user)
+                    .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_DANCER)));
+            return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user), user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()), dancerResponse);
+        } else {
+            return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user), user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()), null);
+        }
     }
 }

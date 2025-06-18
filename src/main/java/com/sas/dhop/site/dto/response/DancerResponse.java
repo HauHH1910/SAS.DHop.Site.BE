@@ -1,8 +1,11 @@
 package com.sas.dhop.site.dto.response;
 
+import lombok.Builder;
+
 import java.math.BigDecimal;
 import java.util.Set;
 
+@Builder
 public record DancerResponse(
         String dancerNickName,
         Set<String> danceTypeName,
