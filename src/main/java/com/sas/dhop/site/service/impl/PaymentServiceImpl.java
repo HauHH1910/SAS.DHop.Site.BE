@@ -184,4 +184,14 @@ public class PaymentServiceImpl implements PaymentService {
                 .findByOrderCode(orderCode)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.PAYMENT_NOT_FOUND));
     }
+
+    @Override
+    public Payment saveCommissionPayment(String status, Long orderCode) throws Exception {
+        PaymentLinkData order = payOS.getPaymentLinkInformation(orderCode);
+        if (order == null) {
+            throw new BusinessException(ErrorConstant.PAYMENT_NOT_FOUND);
+        }
+        return paymentRepository.findByOrderCode(orderCode)
+                .orElseGet(() -> paymentRepository.save(new Payment(orderCode, status, order.getAmount())))
+    }
 }
