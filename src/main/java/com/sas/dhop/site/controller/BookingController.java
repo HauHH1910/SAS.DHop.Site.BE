@@ -139,8 +139,8 @@ public class BookingController {
                 .build();
     }
 
-    @PutMapping("/complete-work/${booking}")
-    public ResponseData<BookingResponse> completeWork(@PathVariable Integer booking) {
+    @PutMapping("/complete-work/{booking}")
+    public ResponseData<BookingResponse> completeWork(@PathVariable("booking") Integer booking) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.CREATE_BOOKING)
                 .data(bookingService.completeWork(booking))
