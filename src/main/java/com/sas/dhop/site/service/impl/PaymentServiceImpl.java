@@ -192,6 +192,6 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BusinessException(ErrorConstant.PAYMENT_NOT_FOUND);
         }
         return paymentRepository.findByOrderCode(orderCode)
-                .orElseGet(() -> paymentRepository.save(new Payment(orderCode, status, order.getAmount())))
+                .orElseGet(() -> paymentRepository.save(new Payment(orderCode, status, order.getAmount())));
     }
 }

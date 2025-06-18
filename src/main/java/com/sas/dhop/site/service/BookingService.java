@@ -33,7 +33,7 @@ public interface BookingService {
 
     BookingCancelResponse cancelBooking(int bookingId);
 
-    // BookingResponse confirmWork(int bookingId);
+    BookingResponse customerEndWork(EndWorkRequest request);
 
     BookingResponse endBooking(int bookingId);
 
