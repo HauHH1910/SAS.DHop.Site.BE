@@ -98,7 +98,7 @@ public enum ErrorConstant {
     BOOKING_NUMBER_OF_TEAM_MEMBER(55, "Số thành viên không đủ", HttpStatus.FORBIDDEN),
     DANCER_CAN_NOT_BOOKING(56, "Dancer không thể đặt lịch", HttpStatus.FORBIDDEN),
     PAYMENT_NOT_PAY(57, "Họp đồng chưa thanh toán", HttpStatus.FORBIDDEN),
-    PAYMENT_NOT_FOUND(58, "Không tìm thấy hóa đơn", HttpStatus.NOT_FOUND);
+    PAYMENT_NOT_FOUND(58, "Không tìm thấy hóa đơn", HttpStatus.NOT_FOUND), BOOKING_NOT_PAY(55, "Hợp đồng chưa gửi biên lai", HttpStatus.FORBIDDEN);
 
     private final Integer code;
     private final String message;

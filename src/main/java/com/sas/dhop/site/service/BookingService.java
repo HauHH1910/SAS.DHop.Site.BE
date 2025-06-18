@@ -38,6 +38,8 @@ public interface BookingService {
 
     BookingResponse completeWork(int bookingId);
 
+    BookingResponse dancerAcceptBooking(Integer bookingId);
+
     BookingResponse userSentPayment(EndWorkRequest request);
 
     BookingResponse endBooking(int bookingId);
@@ -45,6 +47,7 @@ public interface BookingService {
     BookingResponse updateBookingInformation(Integer bookingId, BookingRequest bookingRequest);
 
     BookingResponse endWorking(EndWorkRequest request);
+
 
     // For user(booker, dancers, choreographer) use
     BookingCancelResponse bookingComplains(Integer bookingId);

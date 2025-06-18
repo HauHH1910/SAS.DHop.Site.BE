@@ -246,6 +246,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public BookingResponse dancerAcceptBooking(Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+
+        if(!booking.getStatus().getStatusName().equals(BOOKING_SENT_IMAGE)){
+            throw new BusinessException(ErrorConstant.BOOKING_NOT_PAY);
+        }
+
+        booking.setStatus(statusService.findStatusOrCreated(BOOKING_ACCEPTED));
+
+        return BookingResponse.mapToBookingResponse(bookingRepository.save(booking), new ArrayList<>());
+    }
+
+    @Override
     public BookingResponse endBooking(int bookingId) {
         Booking booking = bookingRepository
                 .findById(bookingId)

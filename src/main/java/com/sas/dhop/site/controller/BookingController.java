@@ -140,6 +140,13 @@ public class BookingController {
                 .build();
     }
 
+    @PutMapping("/dancer-accept/{bookingId}")
+    public ResponseData<BookingResponse> acceptBookingDancer(@PathVariable Integer bookingId) {
+        return ResponseData.<BookingResponse>builder()
+                .data(bookingService.dancerAcceptBooking(bookingId))
+                .build();
+    }
+
     @PutMapping("/complete-work/{booking}")
     public ResponseData<BookingResponse> completeWork(@PathVariable("booking") Integer booking) {
         return ResponseData.<BookingResponse>builder()
