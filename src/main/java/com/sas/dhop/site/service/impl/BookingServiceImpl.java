@@ -178,7 +178,7 @@ public class BookingServiceImpl implements BookingService {
         Status workingStatus = statusService.findStatusOrCreated(BOOKING_WORKING_DONE);
         booking.setStatus(workingStatus);
         booking = bookingRepository.save(booking);
-w
+
         return BookingResponse.mapToBookingResponse(booking);
     }
 
