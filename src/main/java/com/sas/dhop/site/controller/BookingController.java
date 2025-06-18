@@ -69,7 +69,7 @@ public class BookingController {
 
     @PostMapping("/create-booking-for-dancers")
     public ResponseData<BookingResponse> createBookingForDancers(
-            @Valid @RequestBody DancerBookingRequest bookingRequest) {
+            @RequestBody DancerBookingRequest bookingRequest) {
         return ResponseData.<BookingResponse>builder()
                 .message(ResponseMessage.CREATE_BOOKING)
                 .data(bookingService.createBookingRequestForDancer(bookingRequest))
