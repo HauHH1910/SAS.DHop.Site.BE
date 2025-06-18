@@ -1,9 +1,12 @@
 package com.sas.dhop.site.service.impl;
 
+import static com.sas.dhop.site.constant.ChoreographerStatus.ACTIVATED_CHOREOGRAPHER;
+import static com.sas.dhop.site.constant.DancerStatus.ACTIVATED_DANCER;
 import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
 import static com.sas.dhop.site.constant.UserStatus.INACTIVE_USER;
 
 import com.nimbusds.jose.*;
+import com.sas.dhop.site.constant.ChoreographerStatus;
 import com.sas.dhop.site.controller.client.OAuthIdentityClient;
 import com.sas.dhop.site.controller.client.OAuthUserClient;
 import com.sas.dhop.site.dto.request.*;
@@ -18,9 +21,11 @@ import com.sas.dhop.site.util.JwtUtil;
 import com.sas.dhop.site.util.mapper.UserMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
+
 import java.text.ParseException;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -238,7 +243,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (RoleName.CHOREOGRAPHY.equals(request.role()) && request.choreography() != null) {
             log.info("[{}] đăng ký vai trò CHOREOGRAPHY", request.email());
-            Status choreographyStatus = statusService.findStatusOrCreated("Chờ xác nhận để trở thành biên đạo");
+            Status choreographyStatus = statusService.findStatusOrCreated(ACTIVATED_CHOREOGRAPHER);
 
             Set<DanceType> danceTypes = request.choreography().danceType().stream()
                     .map(danceTypeService::findDanceType)
@@ -255,7 +260,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             choreographyRepository.save(choreography);
         } else if (RoleName.DANCER.equals(request.role()) && request.dancer() != null) {
             log.info("[{}] đăng ký vai trò DANCER", request.email());
-            Status dancerStatus = statusService.findStatusOrCreated("Chờ xác nhận để trở thành nhóm nhảy");
+            Status dancerStatus = statusService.findStatusOrCreated(ACTIVATED_DANCER);
 
             Set<DanceType> danceTypes = request.dancer().danceType().stream()
                     .map(danceTypeService::findDanceType)
@@ -312,9 +317,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 && !(authentication instanceof AnonymousAuthenticationToken)
                 && authentication.isAuthenticated()
                 && authentication.getAuthorities().stream().anyMatch(authority -> {
-                    log.info("User has the required role: {}", authority.getAuthority());
-                    return role.equals(authority.getAuthority());
-                });
+            log.info("User has the required role: {}", authority.getAuthority());
+            return role.equals(authority.getAuthority());
+        });
     }
 
     private ExchangeTokenResponse getTokenResponse(String code) {

@@ -1,6 +1,7 @@
 package com.sas.dhop.site.service.impl;
 
 import com.sas.dhop.site.constant.DancerStatus;
+import com.sas.dhop.site.constant.UserStatus;
 import com.sas.dhop.site.dto.request.DancerRequest;
 import com.sas.dhop.site.dto.response.DancerResponse;
 import com.sas.dhop.site.exception.BusinessException;
@@ -13,13 +14,17 @@ import com.sas.dhop.site.service.DancerService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.DancerMapper;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import static com.sas.dhop.site.constant.DancerStatus.ACTIVATED_DANCER;
 
 @Service
 @RequiredArgsConstructor
@@ -117,7 +122,7 @@ public class DancerServiceImpl implements DancerService {
         if (isStaff || isAdmin) {
             dancers = dancerRepository.findAll();
         } else {
-            dancers = dancerRepository.findByStatus(statusService.findStatusOrCreated(DancerStatus.ACTIVATED_DANCER));
+            dancers = dancerRepository.findByStatus(statusService.findStatusOrCreated(ACTIVATED_DANCER));
         }
 
         return dancers.stream().map(dancerMapper::mapToDancerResponse).collect(Collectors.toList());
