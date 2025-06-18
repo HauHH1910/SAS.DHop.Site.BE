@@ -96,7 +96,10 @@ public enum ErrorConstant {
     BOOKING_STATUS_NOT_FOUND(53, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND),
     SUBSCRIPTION_ENDED(52, "Hết số lượt sử dụng thử", HttpStatus.FORBIDDEN),
     BOOKING_NUMBER_OF_TEAM_MEMBER(55, "Số thành viên không đủ", HttpStatus.FORBIDDEN),
-    DANCER_CAN_NOT_BOOKING(56, "Dancer không thể đặt lịch", HttpStatus.FORBIDDEN);
+    DANCER_CAN_NOT_BOOKING(56, "Dancer không thể đặt lịch", HttpStatus.FORBIDDEN),
+    INVALID_USER(57, "Người dùng không hợp lệ", HttpStatus.FORBIDDEN),
+    COMPLAIN_NOT_FOUND(58,"Không tìm thấy khiếu nại",HttpStatus.NOT_FOUND);
+
 
     private final Integer code;
     private final String message;

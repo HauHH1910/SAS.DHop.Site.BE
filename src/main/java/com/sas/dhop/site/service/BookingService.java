@@ -9,6 +9,9 @@ import java.util.List;
 
 public interface BookingService {
 
+    //Create Booking Request for any dancers, or choreographer to apply
+//    BookingResponse creatBookingRequest(BookingRequest bookingRequest);
+
     // create booking contract for dancer(add field to insert information in
     // contract), set booking
     // status is Pending
@@ -40,14 +43,11 @@ public interface BookingService {
 
     BookingResponse endWorking(EndWorkRequest request);
 
-    // For user(booker, dancers, choreographer) use
-    BookingCancelResponse bookingComplains(Integer bookingId);
+    // For Staff process complains and change booking status
+//    BookingResponse acceptBookingComplainsProgress(Integer bookingId);
 
     // For Staff process complains and change booking status
-    BookingResponse acceptBookingComplainsProgress(Integer bookingId);
-
-    // For Staff process complains and change booking status
-    BookingResponse denyBookingComplainsProgress(Integer bookingId);
+//    BookingResponse denyBookingComplainsProgress(Integer bookingId);
 
     List<BookingResponse> findBookingByAuthenticatedUser();
 }

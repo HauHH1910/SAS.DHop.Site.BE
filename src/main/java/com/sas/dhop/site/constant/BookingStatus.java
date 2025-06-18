@@ -14,4 +14,8 @@ public class BookingStatus {
     public static final String BOOKING_OUT_SLOT = "Hết chỗ trống";
     public static final String BOOKING_DISPUTED = "Đang xử lý tranh chấp";
     public static final String BOOKING_DISPUTED_REQUEST = "Yêu cầu nền tảng xử lý tranh chấp của đôi bên";
+    public static final String BOOKING_COMPLAIN_APPROVED = "Chấp nhận yêu cầu khiếu nại";
+    public static final String BOOKING_COMPLAIN_COMPLETED = "Hoàn thành yêu cầu khiếu nại";
+    public static final String BOOKING_COMPLAIN_CANCELED = "Yêu cầu khiếu nại bị hủy";
+
 }

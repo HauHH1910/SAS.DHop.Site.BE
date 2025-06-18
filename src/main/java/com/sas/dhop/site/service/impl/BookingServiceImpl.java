@@ -45,6 +45,7 @@ public class BookingServiceImpl implements BookingService {
     private final SubscriptionService subscriptionService;
     private final UserSubscriptionService userSubscriptionService;
     private final AuthenticationService authenticationService;
+    private final ComplainRepository complainRepository;
 
     // Booking is only for the dancer, the booker wants
     @Override
@@ -189,6 +190,7 @@ public class BookingServiceImpl implements BookingService {
                 .toList();
     }
 
+    //Todo: Nhớ sửa lại hàm cancel cho nó hợp lý vì ko thể cứ set status bừa như thế này được
     @Override
     public BookingCancelResponse cancelBooking(int bookingId) {
         Booking booking = bookingRepository
@@ -262,7 +264,6 @@ public class BookingServiceImpl implements BookingService {
         booking.setCustomerPhone(bookingRequest.customerPhone());
         booking.setDetail(bookingRequest.detail());
         booking.setPrice(bookingRequest.bookingPrice());
-        booking.setStartTime(bookingRequest.startTime());
         booking.setEndTime(bookingRequest.endTime());
         booking.setNumberOfTrainingSessions(bookingRequest.numberOfTrainingSessions());
         DanceType danceTypeName = danceTypeService.findDanceTypeName(bookingRequest.danceTypeName());
@@ -306,67 +307,45 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    // This like booking report
-    @Override
-    public BookingCancelResponse bookingComplains(Integer bookingId) {
-        Booking booking = bookingRepository
-                .findById(bookingId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
-        if (booking.getBookingStatus().equals(BOOKING_INACTIVATE)
-                || booking.getBookingStatus().equals(BOOKING_PENDING)) {
-            throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
-        }
-
-        Status complainStatus = statusService.findStatusOrCreated(BOOKING_DISPUTED_REQUEST);
-        booking.setStatus(complainStatus);
-
-        User currentUser = userService.getLoginUser();
-
-
-        bookingRepository.save(booking);
-
-        return bookingCancelMapper.mapToBookingCancelResponse(booking);
-    }
-
-    @Override
-    public BookingResponse acceptBookingComplainsProgress(Integer bookingId) {
-        Booking booking = bookingRepository
-                .findById(bookingId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
-
-        if (!booking.getBookingStatus().equals(BOOKING_DISPUTED_REQUEST)) {
-            throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
-        }
-
-        Status complainStatus = statusService.findStatusOrCreated(BOOKING_DISPUTED);
-        booking.setStatus(complainStatus);
-        bookingRepository.save(booking);
-        return BookingResponse.mapToBookingResponse(booking);
-    }
-
-    @Override
-    public BookingResponse denyBookingComplainsProgress(Integer bookingId) {
-        Booking booking = bookingRepository
-                .findById(bookingId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
-
-        if (!booking.getBookingStatus().equals(BOOKING_DISPUTED)) {
-            throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
-        }
-
-//        // Khôi phục trạng thái trước khi khiếu nại
-////        Status restoredStatus = booking.getPreviousStatus(); // cần có cột này
-//        if (restoredStatus == null) {
-//            throw new BusinessException(ErrorConstant.BOOKING_STATUS_NOT_FOUND);
+//    @Override
+//    public BookingResponse acceptBookingComplainsProgress(Integer bookingId) {
+//        Booking booking = bookingRepository
+//                .findById(bookingId)
+//                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+//
+//        if (!booking.getBookingStatus().equals(BOOKING_DISPUTED_REQUEST)) {
+//            throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
 //        }
 //
-//        booking.setStatus(restoredStatus);
-//        booking.setPreviousStatus(null); // clear lại nếu cần
-        bookingRepository.save(booking);
+//        Status complainStatus = statusService.findStatusOrCreated(BOOKING_DISPUTED);
+//        booking.setStatus(complainStatus);
+//        bookingRepository.save(booking);
+//        return BookingResponse.mapToBookingResponse(booking);
+//    }
 
-        return BookingResponse.mapToBookingResponse(booking);
-    }
+//    @Override
+//    public BookingResponse denyBookingComplainsProgress(Integer bookingId) {
+//        Booking booking = bookingRepository
+//                .findById(bookingId)
+//                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+//
+//        if (!booking.getBookingStatus().equals(BOOKING_DISPUTED)) {
+//            throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
+//        }
+//
+////        // Khôi phục trạng thái trước khi khiếu nại
+//////        Status restoredStatus = booking.getPreviousStatus(); // cần có cột này
+////        if (restoredStatus == null) {
+////            throw new BusinessException(ErrorConstant.BOOKING_STATUS_NOT_FOUND);
+////        }
+////
+////        booking.setStatus(restoredStatus);
+////        booking.setPreviousStatus(null); // clear lại nếu cần
+//        bookingRepository.save(booking);
+//
+//        return BookingResponse.mapToBookingResponse(booking);
+//    }
 
     // Check price after original have commission
     private BigDecimal calculateCommissionPrice(BigDecimal price) {
