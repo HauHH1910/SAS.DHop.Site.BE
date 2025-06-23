@@ -3,7 +3,9 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.DancerRequest;
+import com.sas.dhop.site.dto.request.DancersFiltersRequest;
 import com.sas.dhop.site.dto.response.DancerResponse;
+import com.sas.dhop.site.dto.response.DancersFiltersResponse;
 import com.sas.dhop.site.service.DancerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -60,4 +62,13 @@ public class DancersController {
                 .data(dancerService.getDancerByDanceType(danceTypeId))
                 .build();
     }
+
+    @PutMapping("/filter-dancer")
+    public ResponseData<List<DancersFiltersResponse>> filterDancers(@RequestBody DancersFiltersRequest dancersFiltersRequest) {
+        return ResponseData.<List<DancersFiltersResponse>>builder()
+                .message(ResponseMessage.FILTERS_DANCERS_COMPLETE)
+                .data(dancerService.getAllDancersFilters(dancersFiltersRequest))
+                .build();
+    }
+
 }

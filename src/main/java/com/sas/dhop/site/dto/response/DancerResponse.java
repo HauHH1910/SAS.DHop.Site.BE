@@ -15,4 +15,5 @@ public record DancerResponse(
         Integer subscriptionId,
         Integer statusId,
         Integer dancerId,
+        Integer areaId,
         String dancerPhone) {}

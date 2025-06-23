@@ -65,6 +65,8 @@ public class ResponseMessage {
     public static final String BOOKING_COMPLAINS_DENY = "Từ chối yêu cầu khiếu nại đến nền tảng ";
     public static final String BOOKING_COMPLAINS_APPLY = "Chấp nhận yêu cầu khiếu nại đến nền tảng ";
     public static final String BOOKING_COMPLAINS_COMPLETE = "Hoàn thành xử lý yêu cầu khiếu nại đến nền tảng ";
+    public static final String FILTERS_DANCERS_COMPLETE = "Lọc nhóm nhảy theo yêu cầu thành công";
+
 
 
     public static final String DELETE_ROOM = "Xóa phòng thành công";

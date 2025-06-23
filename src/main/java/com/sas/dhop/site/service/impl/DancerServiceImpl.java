@@ -4,7 +4,9 @@ import static com.sas.dhop.site.constant.DancerStatus.ACTIVATED_DANCER;
 
 import com.sas.dhop.site.constant.DancerStatus;
 import com.sas.dhop.site.dto.request.DancerRequest;
+import com.sas.dhop.site.dto.request.DancersFiltersRequest;
 import com.sas.dhop.site.dto.response.DancerResponse;
+import com.sas.dhop.site.dto.response.DancersFiltersResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.*;
@@ -15,8 +17,11 @@ import com.sas.dhop.site.service.DancerService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.DancerMapper;
+
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -123,6 +128,61 @@ public class DancerServiceImpl implements DancerService {
         }
 
         return dancers.stream().map(dancerMapper::mapToDancerResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DancersFiltersResponse> getAllDancersFilters(DancersFiltersRequest dancersFiltersRequest) {
+        Status activeDancers = statusService.getStatus(ACTIVATED_DANCER);
+
+        List<Dancer> dancers = dancerRepository.findByStatus(activeDancers);
+
+
+
+        List<Dancer> filtered = dancers.stream()
+                .filter(dancer -> {
+                    boolean matched = false;
+
+                    Integer areaId = dancersFiltersRequest.areaId();
+                    if (areaId != null && dancer.getUser() != null && dancer.getUser().getArea() != null) {
+                        matched |= dancer.getUser().getArea().getId().equals(areaId);
+                    }
+
+                    List<Integer> danceTypeIds = dancersFiltersRequest.danceTypeId();
+                    if (danceTypeIds != null && !danceTypeIds.isEmpty() && dancer.getDanceTypes() != null) {
+                        matched |= dancer.getDanceTypes().stream().anyMatch(dt -> danceTypeIds.contains(dt.getId()));
+                    }
+
+                    BigDecimal maxPrice = dancersFiltersRequest.price();
+                    if (maxPrice != null && dancer.getPrice() != null) {
+                        matched |= dancer.getPrice().compareTo(maxPrice) <= 0;
+                    }
+
+                    Integer minTeamSize = dancersFiltersRequest.teamSize();
+                    if (minTeamSize != null) {
+                        matched |= dancer.getTeamSize() >= minTeamSize;
+                    }
+
+                    return matched;
+                })
+                .toList();
+
+
+
+        return filtered.stream().map(dancer -> new DancersFiltersResponse(
+                dancer.getUser().getArea() != null ? dancer.getUser().getArea().getId() : null,
+                dancer.getDanceTypes().stream().map(DanceType::getId).toList(),
+                dancer.getPrice(),
+                dancer.getTeamSize(),
+                dancer.getDancerNickName(),
+                dancer.getDanceTypes().stream().map(DanceType::getType).collect(java.util.stream.Collectors.toSet()),
+                dancer.getUser().getId(),
+                dancer.getYearExperience(),
+//                dancer.getSubscription() != null ? dancer.getSubscription().getId() : null,
+                dancer.getStatus() != null ? dancer.getStatus().getId() : null,
+                dancer.getId(),
+                dancer.getUser().getPhone()
+        )).toList();
+
     }
 
     @Override
