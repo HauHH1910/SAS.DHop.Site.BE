@@ -12,6 +12,7 @@ import com.sas.dhop.site.repository.PerformanceRepository;
 import com.sas.dhop.site.service.PerformanceService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,5 +77,10 @@ public class PerformanceServiceImpl implements PerformanceService {
         return performanceRepository.findByBooking(bookingId).stream()
                 .map(PerformanceResponse::mapToPerformance)
                 .toList();
+    }
+
+    @Override
+    public List<String> getPerformanceByBookingId(Integer bookingId) {
+        return performanceRepository.findByBooking(bookingId).stream().map(Performance::getMediaUrl).toList();
     }
 }

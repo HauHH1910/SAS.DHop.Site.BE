@@ -1,5 +1,7 @@
 package com.sas.dhop.site.service.impl;
 
+import static com.sas.dhop.site.constant.DancerStatus.ACTIVATED_DANCER;
+
 import com.sas.dhop.site.constant.DancerStatus;
 import com.sas.dhop.site.dto.request.DancerRequest;
 import com.sas.dhop.site.dto.response.DancerResponse;
@@ -117,7 +119,7 @@ public class DancerServiceImpl implements DancerService {
         if (isStaff || isAdmin) {
             dancers = dancerRepository.findAll();
         } else {
-            dancers = dancerRepository.findByStatus(statusService.findStatusOrCreated(DancerStatus.ACTIVATED_DANCER));
+            dancers = dancerRepository.findByStatus(statusService.findStatusOrCreated(ACTIVATED_DANCER));
         }
 
         return dancers.stream().map(dancerMapper::mapToDancerResponse).collect(Collectors.toList());

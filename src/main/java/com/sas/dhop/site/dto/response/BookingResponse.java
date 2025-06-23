@@ -31,9 +31,11 @@ public record BookingResponse(
         String dancerPhone,
         BigDecimal price,
         List<String> danceTypeName,
-        String detail) {
+        String detail,
+        List<String> urls
+) {
 
-    public static BookingResponse mapToBookingResponse(Booking request) {
+    public static BookingResponse mapToBookingResponse(Booking request, List<String> mediaResponses) {
         return BookingResponse.builder()
                 .id(request.getId())
                 .start(request.getStartTime())
@@ -51,12 +53,13 @@ public record BookingResponse(
                 .choreographyPhone(request.getChoreographyPhone())
                 .numberOfTeamMember(request.getNumberOfTeamMember())
                 .dancerPhone(request.getDancerPhone())
-                .customerPhone(request.getCustomerPhone())
                 .price(request.getPrice())
                 .danceTypeName(
                         request.getDanceType().stream().map(DanceType::getType).toList())
+                .urls(mediaResponses)
                 .build();
     }
+
 
     private static String getChoreography(Booking request) {
         return request.getChoreography() != null && request.getChoreography().getUser() != null

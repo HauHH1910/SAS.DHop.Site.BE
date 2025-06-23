@@ -3,9 +3,12 @@ package com.sas.dhop.site.service;
 import com.sas.dhop.site.dto.request.PerformanceRequest;
 import com.sas.dhop.site.dto.response.PerformanceResponse;
 import com.sas.dhop.site.model.Booking;
+
 import java.util.List;
 
 public interface PerformanceService {
+
+    List<String> getPerformanceByBookingId(Integer bookingId);
 
     PerformanceResponse createPerformance(PerformanceRequest request);
 
