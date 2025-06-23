@@ -77,13 +77,15 @@ public class DancersController {
     public ResponseData<List<DancersFiltersResponse>> filterDancers(
             @RequestParam(required = false) Integer areaId,
             @RequestParam(required = false) List<Integer> danceTypeId,
-            @RequestParam(required = false) BigDecimal price,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Integer teamSize
     ) {
         DancersFiltersRequest request = DancersFiltersRequest.builder()
                 .areaId(areaId)
                 .danceTypeId(danceTypeId)
-                .price(price)
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
                 .teamSize(teamSize)
                 .build();
 

@@ -152,7 +152,7 @@ public class DancerServiceImpl implements DancerService {
                         matched |= dancer.getDanceTypes().stream().anyMatch(dt -> danceTypeIds.contains(dt.getId()));
                     }
 
-                    BigDecimal maxPrice = dancersFiltersRequest.price();
+                    BigDecimal maxPrice = dancersFiltersRequest.maxPrice();
                     if (maxPrice != null && dancer.getPrice() != null) {
                         matched |= dancer.getPrice().compareTo(maxPrice) <= 0;
                     }
@@ -188,13 +188,11 @@ public class DancerServiceImpl implements DancerService {
 
     @Override
     public DancerResponse getDancerBySubscriptionStatus(Integer id) {
-        // TODO: Implement getting dancer by subscription status
         return null;
     }
 
     @Override
     public DancerResponse getAllDancerBySubscriptionStatus() {
-        // TODO: Implement getting all dancers by subscription status
         return null;
     }
 }

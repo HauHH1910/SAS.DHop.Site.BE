@@ -10,7 +10,8 @@ import java.util.List;
 public record DancersFiltersRequest(
         Integer areaId,
         List<Integer> danceTypeId,
-        BigDecimal price,
+        BigDecimal minPrice,
+        BigDecimal maxPrice,
         Integer teamSize
 
 ) {
