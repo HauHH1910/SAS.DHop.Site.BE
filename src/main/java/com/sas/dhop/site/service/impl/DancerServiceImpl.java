@@ -158,9 +158,10 @@ public class DancerServiceImpl implements DancerService {
                     }
 
                     Integer minTeamSize = dancersFiltersRequest.teamSize();
-                    if (minTeamSize != null) {
+                    if (minTeamSize != null && dancer.getTeamSize() != null) {
                         matched |= dancer.getTeamSize() >= minTeamSize;
                     }
+
 
                     return matched;
                 })

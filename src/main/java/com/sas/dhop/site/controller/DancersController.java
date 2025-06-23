@@ -73,7 +73,7 @@ public class DancersController {
 //                .build();
 //    }
 
-    @PutMapping("/filter-dancer")
+    @GetMapping("/filter-dancer")
     public ResponseData<List<DancersFiltersResponse>> filterDancers(
             @RequestParam(required = false) Integer areaId,
             @RequestParam(required = false) List<Integer> danceTypeId,

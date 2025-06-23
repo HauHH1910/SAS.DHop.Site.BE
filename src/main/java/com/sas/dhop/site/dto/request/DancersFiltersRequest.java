@@ -11,7 +11,7 @@ public record DancersFiltersRequest(
         Integer areaId,
         List<Integer> danceTypeId,
         BigDecimal price,
-        int teamSize
+        Integer teamSize
 
 ) {
 }

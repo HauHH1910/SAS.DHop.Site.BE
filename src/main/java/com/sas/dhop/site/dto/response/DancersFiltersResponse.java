@@ -8,7 +8,7 @@ public record DancersFiltersResponse(
         Integer areaId,
         List<Integer> danceTypeId,
         BigDecimal price,
-        int teamSize,
+        Integer teamSize,
         String dancerNickName,
         Set<String> danceTypeName,
         Integer userId,
