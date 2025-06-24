@@ -4,4 +4,4 @@ import com.sas.dhop.site.model.Area;
 
 import java.util.List;
 
-public record ChoreographyRegisterRequest(List<Integer> danceType, String about, Integer yearExperience, Area area) {}
+public record ChoreographyRegisterRequest(List<Integer> danceType, String about, Integer yearExperience) {}
