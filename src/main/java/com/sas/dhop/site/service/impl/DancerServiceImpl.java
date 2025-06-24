@@ -132,59 +132,83 @@ public class DancerServiceImpl implements DancerService {
 
     @Override
     public List<DancersFiltersResponse> getAllDancersFilters(DancersFiltersRequest dancersFiltersRequest) {
+
         Status activeDancers = statusService.getStatus(ACTIVATED_DANCER);
 
         List<Dancer> dancers = dancerRepository.findByStatus(activeDancers);
 
-
-
         List<Dancer> filtered = dancers.stream()
                 .filter(dancer -> {
-                    boolean matched = false;
-
+                    // 1. Lọc theo khu vực (dựa trên dancers_work_area_list)
                     Integer areaId = dancersFiltersRequest.areaId();
-                    if (areaId != null && dancer.getUser() != null && dancer.getUser().getArea() != null) {
-                        matched |= dancer.getUser().getArea().getId().equals(areaId);
+                    if (areaId != null) {
+                        if (dancer.getAreas() == null || dancer.getAreas().isEmpty() ||
+                                dancer.getAreas().stream().noneMatch(area -> area.getId().equals(areaId))) {
+                            return false;
+                        }
                     }
 
-                    List<Integer> danceTypeIds = dancersFiltersRequest.danceTypeId();
-                    if (danceTypeIds != null && !danceTypeIds.isEmpty() && dancer.getDanceTypes() != null) {
-                        matched |= dancer.getDanceTypes().stream().anyMatch(dt -> danceTypeIds.contains(dt.getId()));
+                    // 2. Lọc theo team size
+                    Integer minTeamSize = dancersFiltersRequest.teamSize();
+                    if (minTeamSize != null) {
+                        if (dancer.getTeamSize() == null || dancer.getTeamSize() < minTeamSize) {
+                            return false;
+                        }
+                    }
+
+                    // 3. Lọc theo khoảng giá
+                    BigDecimal minPrice = dancersFiltersRequest.minPrice();
+                    if (minPrice != null) {
+                        if (dancer.getPrice() == null || dancer.getPrice().compareTo(minPrice) < 0) {
+                            return false;
+                        }
                     }
 
                     BigDecimal maxPrice = dancersFiltersRequest.maxPrice();
-                    if (maxPrice != null && dancer.getPrice() != null) {
-                        matched |= dancer.getPrice().compareTo(maxPrice) <= 0;
+                    if (maxPrice != null) {
+                        if (dancer.getPrice() == null || dancer.getPrice().compareTo(maxPrice) > 0) {
+                            return false;
+                        }
                     }
 
-                    Integer minTeamSize = dancersFiltersRequest.teamSize();
-                    if (minTeamSize != null && dancer.getTeamSize() != null) {
-                        matched |= dancer.getTeamSize() >= minTeamSize;
+                    // 4. Lọc theo thể loại nhảy (ít nhất 1 thể loại trùng)
+                    List<Integer> requestedDanceTypeIds = dancersFiltersRequest.danceTypeId();
+                    if (requestedDanceTypeIds != null && !requestedDanceTypeIds.isEmpty()) {
+                        if (dancer.getDanceTypes() == null || dancer.getDanceTypes().isEmpty()) {
+                            return false;
+                        }
+
+                        boolean hasMatchingDanceType = dancer.getDanceTypes().stream()
+                                .anyMatch(dt -> requestedDanceTypeIds.contains(dt.getId()));
+
+                        if (!hasMatchingDanceType) {
+                            return false;
+                        }
                     }
 
-
-                    return matched;
+                    return true;
                 })
                 .toList();
 
+        return filtered.stream()
+                .map(dancer -> new DancersFiltersResponse(
+                        dancer.getAreas() != null && !dancer.getAreas().isEmpty()
+                                ? dancer.getAreas().iterator().next().getId() : null,
+                        dancer.getDanceTypes().stream().map(DanceType::getId).toList(),
+                        dancer.getPrice(),
+                        dancer.getTeamSize(),
+                        dancer.getDancerNickName(),
+                        dancer.getDanceTypes().stream().map(DanceType::getType).collect(Collectors.toSet()),
+                        dancer.getUser().getId(),
+                        dancer.getYearExperience() != null ? dancer.getYearExperience() : 0, // ✅ fix null
+                        dancer.getStatus() != null ? dancer.getStatus().getId() : null,
+                        dancer.getId(),
+                        dancer.getUser().getPhone()
+                ))
 
-
-        return filtered.stream().map(dancer -> new DancersFiltersResponse(
-                dancer.getUser().getArea() != null ? dancer.getUser().getArea().getId() : null,
-                dancer.getDanceTypes().stream().map(DanceType::getId).toList(),
-                dancer.getPrice(),
-                dancer.getTeamSize(),
-                dancer.getDancerNickName(),
-                dancer.getDanceTypes().stream().map(DanceType::getType).collect(java.util.stream.Collectors.toSet()),
-                dancer.getUser().getId(),
-                dancer.getYearExperience(),
-//                dancer.getSubscription() != null ? dancer.getSubscription().getId() : null,
-                dancer.getStatus() != null ? dancer.getStatus().getId() : null,
-                dancer.getId(),
-                dancer.getUser().getPhone()
-        )).toList();
-
+                .toList();
     }
+
 
     @Override
     public DancerResponse getDancerBySubscriptionStatus(Integer id) {

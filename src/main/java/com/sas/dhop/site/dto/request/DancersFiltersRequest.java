@@ -13,6 +13,5 @@ public record DancersFiltersRequest(
         BigDecimal minPrice,
         BigDecimal maxPrice,
         Integer teamSize
-
 ) {
 }

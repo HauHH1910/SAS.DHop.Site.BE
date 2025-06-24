@@ -223,15 +223,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public void register(RegisterRequest request) throws MessagingException {
+        // Kiểm tra trùng email
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new BusinessException(ErrorConstant.EMAIL_ALREADY_EXIST);
         }
 
+        // Lấy status mặc định cho user mới
         Status userStatus = statusService.findStatusOrCreated(INACTIVE_USER);
 
+        // Tìm role theo tên
         Role role = roleService.findByRoleName(request.role());
         Set<Role> roles = Set.of(role);
 
+        // Tạo user entity
         User user = User.builder()
                 .name(request.name())
                 .phone(request.phone())
@@ -243,21 +247,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         userRepository.save(user);
 
+        // Chỉ bắt buộc kiểm tra khu vực nếu role là DANCER hoặc CHOREOGRAPHY
         Set<Area> workAreas = new HashSet<>();
-        if(request.areaIds() == null || request.areaIds().isEmpty()){
-            throw new BusinessException(ErrorConstant.AREA_NOT_NULL);
+        boolean isDancerOrChoreo = RoleName.DANCER.equals(request.role()) || RoleName.CHOREOGRAPHY.equals(request.role());
+        if (isDancerOrChoreo) {
+            if (request.areaIds() == null || request.areaIds().isEmpty()) {
+                throw new BusinessException(ErrorConstant.AREA_NOT_NULL);
+            }
+            List<Area> foundAreas = areaRepository.findAllById(request.areaIds());
+            if (foundAreas.size() != request.areaIds().size()) {
+                throw new BusinessException(ErrorConstant.AREA_NOT_FOUND);
+            }
+            workAreas = new HashSet<>(foundAreas);
         }
-        List<Area> foundAreas = areaRepository.findAllById(request.areaIds());
-        if(foundAreas.size() != request.areaIds().size()){
-            throw new BusinessException(ErrorConstant.AREA_NOT_FOUND);
-        }
 
-        workAreas = new HashSet<>(foundAreas);
-
-
-
+        // Nếu là CHOREOGRAPHY
         if (RoleName.CHOREOGRAPHY.equals(request.role()) && request.choreography() != null) {
             log.info("[{}] đăng ký vai trò CHOREOGRAPHY", request.email());
+
             Status choreographyStatus = statusService.findStatusOrCreated(ACTIVATED_CHOREOGRAPHER);
 
             Set<DanceType> danceTypes = request.choreography().danceType().stream()
@@ -274,8 +281,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build();
 
             choreographyRepository.save(choreography);
-        } else if (RoleName.DANCER.equals(request.role()) && request.dancer() != null) {
+        }
+        // Nếu là DANCER
+        else if (RoleName.DANCER.equals(request.role()) && request.dancer() != null) {
             log.info("[{}] đăng ký vai trò DANCER", request.email());
+
             Status dancerStatus = statusService.findStatusOrCreated(ACTIVATED_DANCER);
 
             Set<DanceType> danceTypes = request.dancer().danceType().stream()
@@ -296,10 +306,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             dancerRepository.save(dancer);
         }
 
-
+        // Gửi OTP qua email
         String otp = oTPService.generateOTP(request.email());
-        boolean success =
-                oTPService.sendOTPByEmail(request.email(), request.name(), otp).join();
+        boolean success = oTPService.sendOTPByEmail(request.email(), request.name(), otp).join();
 
         if (!success) {
             log.error("Gửi OTP thất bại cho email [{}]", request.email());
@@ -308,6 +317,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("OTP đã được gửi tới [{}]", request.email());
     }
+
 
     @Override
     public AuthenticationResponse verifyOTPAndActiveUSer(VerifyOTPRequest request) {
