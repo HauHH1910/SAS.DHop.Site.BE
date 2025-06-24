@@ -22,6 +22,14 @@ public class Choreography extends AbstractEntity<Integer> implements Serializabl
             inverseJoinColumns = @JoinColumn(name = "dance_type_id"))
     private Set<DanceType> danceTypes;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "choreography_work_area_list",
+            joinColumns = @JoinColumn(name = "choreography_id"),
+            inverseJoinColumns = @JoinColumn(name = "area_id")
+    )
+    private Set<Area> areas;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
