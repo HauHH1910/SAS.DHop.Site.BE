@@ -101,7 +101,8 @@ public enum ErrorConstant {
     PAYMENT_NOT_PAY(57, "Họp đồng chưa thanh toán", HttpStatus.FORBIDDEN),
     PAYMENT_NOT_FOUND(58, "Không tìm thấy hóa đơn", HttpStatus.NOT_FOUND),
     BOOKING_NOT_PAY(55, "Hợp đồng chưa gửi biên lai", HttpStatus.FORBIDDEN),
-    COMPLAIN_NOT_FOUND(59,"Không tìm thấy khiếu nại ", HttpStatus.NOT_FOUND)
+    COMPLAIN_NOT_FOUND(59,"Không tìm thấy khiếu nại ", HttpStatus.NOT_FOUND),
+
     ;
 
 

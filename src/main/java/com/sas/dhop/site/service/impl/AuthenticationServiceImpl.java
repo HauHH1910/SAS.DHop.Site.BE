@@ -22,6 +22,8 @@ import com.sas.dhop.site.util.mapper.UserMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final DancerRepository dancerRepository;
     private final UserMapper userMapper;
     private final DancerMapper dancerMapper;
+    private final AreaRepository areaRepository;
 
     @NonFinal
     @Value("${sas.dhop.oauth.client-id}")
@@ -240,6 +243,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         userRepository.save(user);
 
+        Set<Area> workAreas = new HashSet<>();
+        if(request.areaIds() == null || request.areaIds().isEmpty()){
+            throw new BusinessException(ErrorConstant.AREA_NOT_NULL);
+        }
+        List<Area> foundAreas = areaRepository.findAllById(request.areaIds());
+        if(foundAreas.size() != request.areaIds().size()){
+            throw new BusinessException(ErrorConstant.AREA_NOT_FOUND);
+        }
+
+        workAreas = new HashSet<>(foundAreas);
+
+
+
         if (RoleName.CHOREOGRAPHY.equals(request.role()) && request.choreography() != null) {
             log.info("[{}] đăng ký vai trò CHOREOGRAPHY", request.email());
             Status choreographyStatus = statusService.findStatusOrCreated(ACTIVATED_CHOREOGRAPHER);
@@ -254,6 +270,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .about(request.choreography().about())
                     .yearExperience(request.choreography().yearExperience())
                     .status(choreographyStatus)
+                    .areas(workAreas)
                     .build();
 
             choreographyRepository.save(choreography);
@@ -273,10 +290,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .yearExperience(request.dancer().yearExperience())
                     .teamSize(request.dancer().teamSize())
                     .status(dancerStatus)
+                    .areas(workAreas)
                     .build();
 
             dancerRepository.save(dancer);
         }
+
 
         String otp = oTPService.generateOTP(request.email());
         boolean success =
