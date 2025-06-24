@@ -7,6 +7,8 @@ import com.sas.dhop.site.dto.response.BookingFeedbackResponse;
 import com.sas.dhop.site.service.BookingFeedbackService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ public class BookingFeedbackController {
 
     @PostMapping("/create-booking-feedback")
     public ResponseData<BookingFeedbackResponse> createBookingFeedback(
+            @Valid
             @RequestBody BookingFeedbackRequest bookingFeedbackRequest) {
         return ResponseData.<BookingFeedbackResponse>builder()
                 .message(ResponseMessage.CREATE_BOOKING_FEEDBACK)
