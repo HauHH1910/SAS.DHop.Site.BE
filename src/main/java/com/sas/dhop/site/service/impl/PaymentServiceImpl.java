@@ -7,13 +7,13 @@ import com.sas.dhop.site.dto.request.CommissionPaymentRequest;
 import com.sas.dhop.site.dto.request.CreatePaymentRequest;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
-import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.Payment;
-import com.sas.dhop.site.repository.BookingRepository;
 import com.sas.dhop.site.repository.PaymentRepository;
 import com.sas.dhop.site.service.PaymentService;
+
 import java.util.Date;
 import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +32,6 @@ public class PaymentServiceImpl implements PaymentService {
     private final PayOS payOS;
     private final PaymentRepository paymentRepository;
     private final ObjectMapper objectMapper;
-    private final BookingRepository bookingRepository;
 
     @Value("${sas.payos.return-url}")
     private String returnUrl;
@@ -80,13 +79,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ObjectNode createPaymentLink(CreatePaymentRequest request) {
-        ObjectNode response = objectMapper.createObjectNode();
+    public String createPaymentLink(CreatePaymentRequest request) {
         try {
-            Booking booking = bookingRepository
-                    .findById(request.bookingId())
-                    .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
-            String currentTimeString = String.valueOf(booking.getBookingDate());
+            String currentTimeString = String.valueOf(new Date().getTime());
 
             long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
 
@@ -106,25 +101,17 @@ public class PaymentServiceImpl implements PaymentService {
                     .build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);
-            paymentRepository.save(new Payment(orderCode, "", paymentData.getAmount()));
-            response.put("error", 0);
-            response.put("message", "success");
-            response.set("data", objectMapper.valueToTree(data));
-            return response;
+            paymentRepository.save(new Payment(orderCode, data.getStatus(), paymentData.getAmount()));
 
+            return data.getCheckoutUrl();
         } catch (Exception e) {
-            log.info("[create payment link] - [{}]", e.getMessage());
-            response.put("error", -1);
-            response.put("message", "fail");
-            response.set("data", null);
-            return response;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public ObjectNode getOrderByID(Long orderId) {
         ObjectNode response = objectMapper.createObjectNode();
-
         try {
             PaymentLinkData order = payOS.getPaymentLinkInformation(orderId);
 

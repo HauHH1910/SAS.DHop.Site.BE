@@ -10,7 +10,7 @@ public interface PaymentService {
 
     ObjectNode commissionPayment(CommissionPaymentRequest request);
 
-    ObjectNode createPaymentLink(CreatePaymentRequest request);
+    String createPaymentLink(CreatePaymentRequest request);
 
     ObjectNode getOrderByID(Long orderId);
 

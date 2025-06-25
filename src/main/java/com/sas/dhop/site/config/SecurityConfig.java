@@ -3,6 +3,7 @@ package com.sas.dhop.site.config;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +34,7 @@ public class SecurityConfig {
     @Lazy
     private final CustomJwtDecoder customJwtDecoder;
 
-    private final String[] PUBLIC_ENDPOINTS = {"/auth/**", "/users", "/dance-type", "/ws/**", "/area/getAllArea/"};
+    private final String[] PUBLIC_ENDPOINTS = {"/auth/**", "/users", "/dance-type", "/ws/**", "/area/getAllArea/", "/swagger-ui/**", "/v3/api-docs*/**"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -93,11 +94,6 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
         return converter;
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/swagger-ui/**", "/v3/api-docs*/**");
     }
 
     @Bean

@@ -6,7 +6,9 @@ import com.sas.dhop.site.dto.request.CreatePaymentRequest;
 import com.sas.dhop.site.model.Payment;
 import com.sas.dhop.site.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +24,8 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/create")
-    public ObjectNode createPayment(@RequestBody CreatePaymentRequest request) {
-        return paymentService.createPaymentLink(request);
+    public ResponseEntity<String> createPayment(@RequestBody CreatePaymentRequest request) {
+        return ResponseEntity.ok(paymentService.createPaymentLink(request));
     }
 
     @GetMapping(path = "/{orderId}")

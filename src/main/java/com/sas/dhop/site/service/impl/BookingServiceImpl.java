@@ -375,8 +375,6 @@ public class BookingServiceImpl implements BookingService {
         Status complainStatus = statusService.findStatusOrCreated(BOOKING_DISPUTED_REQUEST);
         booking.setStatus(complainStatus);
 
-        User currentUser = userService.getLoginUser();
-
         bookingRepository.save(booking);
 
         return bookingCancelMapper.mapToBookingCancelResponse(booking);
@@ -473,7 +471,6 @@ public class BookingServiceImpl implements BookingService {
                 }
             }
         });
-
         return true;
     }
 
@@ -485,7 +482,7 @@ public class BookingServiceImpl implements BookingService {
                         && b.getChoreography().getId().equals(choreography.getId()))
                 .filter(b -> !b.getStatus().getStatusName().equals(BOOKING_CANCELED))
                 .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
-                .collect(Collectors.toList());
+                .toList();
 
         for (Booking b : bookings) {
             boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime())
@@ -506,7 +503,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> lateBookings = bookingRepository.findAll().stream()
                 .filter(b -> b.getStatus().getStatusName().equals(BOOKING_ACTIVATE))
                 .filter(b -> b.getStartTime().plusHours(24).isBefore(ChronoLocalDateTime.from(now)))
-                .collect(Collectors.toList());
+                .toList();
 
         // Lấy trạng thái INACTIVATE để set
         Status inactivateStatus = statusService.findStatusOrCreated(BOOKING_INACTIVATE);
