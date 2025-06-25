@@ -14,7 +14,6 @@ import com.sas.dhop.site.dto.response.MediaResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.*;
-import com.sas.dhop.site.model.enums.BookingStatus;
 import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
@@ -24,7 +23,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.*;
 import java.time.chrono.ChronoLocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,7 +66,10 @@ public class BookingServiceImpl implements BookingService {
                 .findById(request.choreographyId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
 
+        cancelLateBookingsAutomatically();
         log.info("Starting to create booking request for dancer with request: {}", request);
+
+        checkChoreographerBookingConflict(request, choreography);
 
         User customer = userService.getLoginUser();
         log.debug("[Booking for choreography] Fetched logged-in customer: {}", customer.getName());

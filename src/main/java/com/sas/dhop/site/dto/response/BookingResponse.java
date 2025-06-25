@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Builder;
+import lombok.Getter;
 
 // yyyy-MM-dd HH:mm
 // Title, start, end, description, id[string||int], people []
@@ -36,29 +37,29 @@ public record BookingResponse(
 ) {
 
     public static BookingResponse mapToBookingResponse(Booking request, List<String> mediaResponses) {
-        return BookingResponse.builder()
-                .id(request.getId())
-                .start(request.getStartTime())
-                .end(request.getEndTime())
-                .customer(request.getCustomer().getName())
-                .dancer(getDancer(request))
-                .choreography(getChoreography(request))
-                .area(AreaResponse.mapToAreaResponse(request.getArea()))
-                .address(request.getAddress())
-                .status(request.getStatus().getStatusName())
-                .detail(request.getDetail())
-                .bookingDate(request.getBookingDate())
-                .customerPhone(request.getCustomerPhone())
-                .numberOfTrainingSessions(request.getNumberOfTrainingSessions())
-                .choreographyPhone(request.getChoreographyPhone())
-                .numberOfTeamMember(request.getNumberOfTeamMember())
-                .dancerPhone(request.getDancerPhone())
-                .price(request.getPrice())
-                .danceTypeName(
-                        request.getDanceType().stream().map(DanceType::getType).toList())
-                .urls(mediaResponses)
-                .build();
+        return new BookingResponse(
+                request.getId(),
+                request.getStartTime(),
+                request.getEndTime(),
+                request.getCustomer().getName(),
+                getDancer(request),
+                getChoreography(request),
+                AreaResponse.mapToAreaResponse(request.getArea()),
+                request.getAddress(),
+                request.getStatus().getStatusName(),
+                request.getBookingDate(),
+                request.getCustomerPhone(),
+                request.getNumberOfTrainingSessions(),
+                request.getNumberOfTeamMember(),
+                request.getChoreographyPhone(),
+                request.getDancerPhone(),
+                request.getPrice(),
+                request.getDanceType().stream().map(DanceType::getType).toList(),
+                request.getDetail(),
+                mediaResponses
+        );
     }
+
 
 
     private static String getChoreography(Booking request) {
