@@ -48,6 +48,9 @@ public class BookingServiceImpl implements BookingService {
     private final PerformanceService performanceService;
     private final AuthenticationService authenticationService;
 
+    //TODO: Hiện tại đang thiếu các hàm liên quan tới luồng booking không chỉ định,
+    // cần làm các hàm liên quan tới apply danh sách và get danh sach đó
+
     // Booking is only for the dancer, the booker wants
     @Override
     @Transactional
@@ -75,7 +78,7 @@ public class BookingServiceImpl implements BookingService {
         log.debug("[Booking for choreography] Fetched logged-in customer: {}", customer.getName());
 
         DanceType danceType = danceTypeService.findDanceTypeName(request.danceTypeName());
-        log.debug("[Booking for choreography] Fetched dance type: {}", danceType.getType());
+        log.debug("[Booking for choreography] \nFetched dance type: {}", danceType.getType());
 
         Area area = areaRepository.findById(request.areaId()).orElseThrow(() -> {
             log.error("[Booking for choreography] Area not found with id: {}", request.areaId());
