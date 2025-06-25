@@ -16,7 +16,8 @@ public interface ChoreographerService {
 
     List<ChoreographerResponse> getAllChoreography();
 
-    public List<ChoreographerFiltersResponse> getAllChoreographersFilters(ChoreographerFiltersRequest choreographerFiltersRequest);
+    public List<ChoreographerFiltersResponse> getAllChoreographersFilters(
+            ChoreographerFiltersRequest choreographerFiltersRequest);
 
     ChoreographerResponse getChoreographerBySubscriptionStatus(Integer id);
 

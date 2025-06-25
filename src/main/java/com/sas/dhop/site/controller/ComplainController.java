@@ -3,8 +3,6 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.ComplainRequest;
-import com.sas.dhop.site.dto.response.BookingCancelResponse;
-import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.dto.response.ComplainResponse;
 import com.sas.dhop.site.service.ComplainService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,6 +50,4 @@ public class ComplainController {
                 .data(complainService.completeBookingComplains(bookingId))
                 .build();
     }
-
-
 }

@@ -88,7 +88,7 @@ public enum ErrorConstant {
     CAN_NOT_FEEDBACK(45, "Không thể đánh giá dịch vụ này", HttpStatus.NOT_ACCEPTABLE),
     INVALID_BOOKING(46, "Dịch vụ thuê không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
     INVALID_MINIMUM_PRICE(47, "Số tiền tối thiểu không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
-    INVALID_USER(47,"Người dùng không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
+    INVALID_USER(47, "Người dùng không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
     DANCER_TEAM_SIZE_CONFLICT(48, "Xung đột về số lượng thành viên", HttpStatus.CONFLICT),
     CHOOREOGRAPHY_TIME_CONFLICT(49, "Xung đột thời gian làm việc của biên đạo", HttpStatus.CONFLICT),
     CAN_NOT_UPDATE_BOOKING(50, "Không thể cập nhập thông tin của dịch vụ", HttpStatus.FORBIDDEN),
@@ -96,15 +96,14 @@ public enum ErrorConstant {
     CAN_NOT_COMPLAIN(52, "Không thể khiếu nại", HttpStatus.NOT_ACCEPTABLE),
     BOOKING_STATUS_NOT_FOUND(53, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND),
     SUBSCRIPTION_ENDED(52, "Hết số lượt sử dụng thử", HttpStatus.FORBIDDEN),
+    SUBSCRIPTION_EXPIRED(52, "Hết hạn gói thành viên", HttpStatus.FORBIDDEN),
     BOOKING_NUMBER_OF_TEAM_MEMBER(55, "Số thành viên không đủ", HttpStatus.FORBIDDEN),
     DANCER_CAN_NOT_BOOKING(56, "Dancer không thể đặt lịch", HttpStatus.FORBIDDEN),
     PAYMENT_NOT_PAY(57, "Họp đồng chưa thanh toán", HttpStatus.FORBIDDEN),
     PAYMENT_NOT_FOUND(58, "Không tìm thấy hóa đơn", HttpStatus.NOT_FOUND),
     BOOKING_NOT_PAY(55, "Hợp đồng chưa gửi biên lai", HttpStatus.FORBIDDEN),
-    COMPLAIN_NOT_FOUND(59,"Không tìm thấy khiếu nại ", HttpStatus.NOT_FOUND),
-
-    ;
-
+    COMPLAIN_NOT_FOUND(59, "Không tìm thấy khiếu nại ", HttpStatus.NOT_FOUND),
+    BOOKING_CAN_NOT_START(60, "Hợp đồng không thể bắt đầu", HttpStatus.FORBIDDEN);
 
     private final Integer code;
     private final String message;

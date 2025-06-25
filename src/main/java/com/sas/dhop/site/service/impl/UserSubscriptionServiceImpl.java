@@ -5,16 +5,19 @@ import static com.sas.dhop.site.dto.response.UserSubscriptionResponse.mapToRespo
 import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.constant.SubscriptionPlan;
 import com.sas.dhop.site.constant.UserSubscriptionStatus;
-import com.sas.dhop.site.dto.request.UserSubscriptionRequest;
 import com.sas.dhop.site.dto.response.UserSubscriptionResponse;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.*;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
+
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,8 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
     private final AuthenticationService authenticationService;
     private final DancerRepository dancerRepository;
     private final ChoreographyRepository choreographyRepository;
+    private final UserRepository userRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     @Override
     public List<UserSubscriptionResponse> getSubscriptionStatus() {
@@ -49,21 +54,69 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
     }
 
     @Override
-    public UserSubscriptionResponse addSubscriptionToUser(UserSubscriptionRequest request) {
-        return null;
+    public boolean addOrForceToBuySubscription(Integer userId) {
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
+
+        boolean isDancer = authenticationService.authenticationChecking(RolePrefix.DANCER_PREFIX);
+        boolean isChoreography = authenticationService.authenticationChecking(RolePrefix.CHOREOGRAPHY_PREFIX);
+
+        if (!isDancer && !isChoreography) {
+            log.info("[Add Or Force To Buy Subscription] - Mày không có quyền vào đây nigga [{}]", user.getName());
+            throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
+        }
+
+        UserSubscription userSubscription =
+                userSubscriptionRepository.findByUser(user).orElse(null);
+
+        if (userSubscription != null) {
+            Dancer dancer = dancerRepository.findByUser(userSubscription.getUser())
+                    .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_DANCER));
+
+            long counted = bookingRepository.countBookingByDancerAndBookingDateBetween
+                    (dancer, userSubscription.getFromDate(), userSubscription.getToDate());
+            log.info("[Add Or Force To Buy Subscription] - Mày dùng hết [{}] lần rồi nigga", counted);
+            if (!checkCurrentSubscriptionAndNumberOfBookingAccepted(userSubscription, counted)) {
+                log.info("[Add Or Force To Buy Subscription] - Mua gói subscription mới đi [{}] ủng hộ người nghèo", userSubscription.getUser().getName());
+                throw new BusinessException(ErrorConstant.SUBSCRIPTION_ENDED);
+            }
+        } else {
+            Subscription freeTrialSubscription =
+                    subscriptionService.findOrCreateSubscription(SubscriptionPlan.FREE_TRIAL);
+            log.info("[Add Or Force To Buy Subscription] - Cho mày dùng thử gói [{}] nha nigga", SubscriptionPlan.FREE_TRIAL);
+            userSubscription = UserSubscription.builder()
+                    .user(user)
+                    .fromDate(LocalDateTime.from(Instant.now()))
+                    .toDate(LocalDateTime.from(Instant.now().plus(freeTrialSubscription.getDuration(), ChronoUnit.DAYS)))
+                    .status(statusService.findStatusOrCreated(UserSubscriptionStatus.FREE_TRIAL_USER_SUBSCRIPTION))
+                    .subscription(freeTrialSubscription)
+                    .build();
+
+            userSubscriptionRepository.save(userSubscription);
+        }
+        return true;
+    }
+
+    private static boolean checkCurrentSubscriptionAndNumberOfBookingAccepted(UserSubscription userSubscription, long counted) {
+        long maxBookings = switch (userSubscription.getSubscription().getStatus().getStatusName()) {
+            case SubscriptionPlan.FREE_TRIAL -> 3;
+            case SubscriptionPlan.STANDARD_3MONTHS -> 10;
+            case SubscriptionPlan.STANDARD_MONTHLY -> 20;
+            case SubscriptionPlan.UNLIMITED_YEARLY -> Long.MAX_VALUE;
+            default -> throw new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND);
+        };
+        return counted < maxBookings;
+    }
+
+
+    @Override
+    public void updateSubscriptionStatus() {
     }
 
     @Override
-    public void updateSubscriptionStatus() {}
-
-    @Override
     public UserSubscription findUserSubscriptionByUser(User user) {
-        return userSubscriptionRepository.findByUser(user).orElseGet(() -> UserSubscription.builder()
-                .user(user)
-                .subscription(subscriptionService.findOrCreateSubscription(SubscriptionPlan.FREE_TRIAL))
-                .fromDate(Instant.now())
-                .status(statusService.findStatusOrCreated(UserSubscriptionStatus.FREE_TRIAL_USER_SUBSCRIPTION))
-                .build());
+        return null;
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.sas.dhop.site.model;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDateTime;
+
 import lombok.*;
 
 @Getter
@@ -23,10 +25,10 @@ public class UserSubscription extends AbstractEntity<Integer> implements Seriali
     private Subscription subscription;
 
     @Column(name = "from_date")
-    private Instant fromDate;
+    private LocalDateTime fromDate;
 
     @Column(name = "to_date")
-    private Instant toDate;
+    private LocalDateTime toDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "status_id", nullable = false)

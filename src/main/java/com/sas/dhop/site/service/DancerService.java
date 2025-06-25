@@ -4,7 +4,6 @@ import com.sas.dhop.site.dto.request.DancerRequest;
 import com.sas.dhop.site.dto.request.DancersFiltersRequest;
 import com.sas.dhop.site.dto.response.DancerResponse;
 import com.sas.dhop.site.dto.response.DancersFiltersResponse;
-
 import java.util.List;
 
 public interface DancerService {

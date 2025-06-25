@@ -2,10 +2,8 @@ package com.sas.dhop.site.exception;
 
 import com.sas.dhop.site.dto.ResponseError;
 import jakarta.validation.ConstraintViolation;
-
 import java.util.Map;
 import java.util.Objects;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -35,8 +33,13 @@ public class GlobalHandlerException {
     }
 
     @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
-    public ResponseEntity<ResponseError> handleIncorrectResultSizeDataAccessException(IncorrectResultSizeDataAccessException e) {
-        log.info("[IncorrectResultSizeDataAccessException] - [actual size: {}] - [excepted size: {}] - [message: {}]", e.getActualSize(), e.getExpectedSize(), e.getMessage());
+    public ResponseEntity<ResponseError> handleIncorrectResultSizeDataAccessException(
+            IncorrectResultSizeDataAccessException e) {
+        log.info(
+                "[IncorrectResultSizeDataAccessException] - [actual size: {}] - [excepted size: {}] - [message: {}]",
+                e.getActualSize(),
+                e.getExpectedSize(),
+                e.getMessage());
         return ResponseEntity.status(ErrorConstant.UNCATEGORIZED_ERROR.getHttpStatusCode())
                 .body(ResponseError.builder()
                         .code(ErrorConstant.UNAUTHENTICATED.getCode())

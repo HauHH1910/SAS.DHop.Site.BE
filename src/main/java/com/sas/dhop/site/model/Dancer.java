@@ -26,8 +26,7 @@ public class Dancer extends AbstractEntity<Integer> implements Serializable {
     @JoinTable(
             name = "dancers_work_area_list",
             joinColumns = @JoinColumn(name = "dancer_id"),
-            inverseJoinColumns = @JoinColumn(name = "area_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "area_id"))
     private Set<Area> areas;
 
     @Column(name = "dancer_nick_name")
@@ -48,9 +47,6 @@ public class Dancer extends AbstractEntity<Integer> implements Serializable {
 
     @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Subscription subscription;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "status_id", nullable = false)

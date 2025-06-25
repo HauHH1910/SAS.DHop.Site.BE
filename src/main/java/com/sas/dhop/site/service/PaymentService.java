@@ -19,6 +19,6 @@ public interface PaymentService {
     ObjectNode confirmWebHook(Map<String, String> request);
 
     Payment findPayment(Long orderCode);
-    
+
     Payment saveCommissionPayment(String status, Long orderCode) throws Exception;
 }

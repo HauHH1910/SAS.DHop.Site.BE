@@ -1,11 +1,9 @@
 package com.sas.dhop.site.dto.request;
 
-import com.sas.dhop.site.model.Area;
 import com.sas.dhop.site.model.enums.RoleName;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-
 import java.util.List;
 
 public record RegisterRequest(

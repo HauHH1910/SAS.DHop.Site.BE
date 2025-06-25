@@ -2,13 +2,11 @@ package com.sas.dhop.site.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Set;
-
 import lombok.*;
 
 @Getter
@@ -74,7 +72,6 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
 
     @Column(name = "customer_phone")
     private String customerPhone;
-
 
     @Column(name = "number_of_training_sessions")
     private Integer numberOfTrainingSessions;
