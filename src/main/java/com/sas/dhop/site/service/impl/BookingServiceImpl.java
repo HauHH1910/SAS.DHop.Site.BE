@@ -17,14 +17,12 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.*;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -126,6 +124,16 @@ public class BookingServiceImpl implements BookingService {
         Status currentStatus = booking.getStatus();
         if (!currentStatus.getStatusName().equals(BOOKING_PENDING)) {
             throw new BusinessException(ErrorConstant.BOOKING_NOT_ACCEPTABLE);
+        }
+
+        User user = userService.getLoginUser();
+
+        boolean hasRole = user.getRoles().stream()
+                .anyMatch(role ->
+                        Arrays.asList(RoleName.DANCER, RoleName.CHOREOGRAPHY).contains(role.getName()));
+
+        if (hasRole) {
+            userSubscriptionService.addOrForceToBuySubscription(user.getId());
         }
 
         Status activateStatus = statusService.findStatusOrCreated(BOOKING_ACTIVATE);
@@ -290,13 +298,12 @@ public class BookingServiceImpl implements BookingService {
         User currentUser = userService.getLoginUser();
 
         boolean hasRole = currentUser.getRoles().stream()
-                .anyMatch(role -> Arrays.asList(RoleName.DANCER, RoleName.CHOREOGRAPHY)
-                        .contains(role.getName()));
+                .anyMatch(role ->
+                        Arrays.asList(RoleName.DANCER, RoleName.CHOREOGRAPHY).contains(role.getName()));
 
         if (hasRole) {
             throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
         }
-
 
         if (!booking.getBookingStatus().equals(BOOKING_PENDING)
                 && !booking.getBookingStatus().equals(BOOKING_ACTIVATE))
@@ -456,21 +463,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private boolean checkDancerBookingConflict(DancerBookingRequest request) {
-        User user = userService.getLoginUser();
-
-        boolean hasRole = user.getRoles().stream()
-                .anyMatch(role -> Arrays.asList(RoleName.DANCER, RoleName.CHOREOGRAPHY)
-                        .contains(role.getName()));
-
-        if (hasRole) {
-            throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
-        }
-        boolean subscription = userSubscriptionService.addOrForceToBuySubscription(user.getId());
-
-        if (!subscription) {
-            return false;
-        }
-
         bookingRepository.findByBookingDate(request.bookingDate()).ifPresent(booking -> {
             if (Arrays.asList(BOOKING_ACTIVATE, BOOKING_IN_PROGRESS, BOOKING_WORKING_DONE)
                     .contains(booking.getStatus().getStatusName())) {

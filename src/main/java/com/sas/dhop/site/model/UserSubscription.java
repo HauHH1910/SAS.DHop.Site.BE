@@ -2,9 +2,7 @@ package com.sas.dhop.site.model;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDateTime;
-
 import lombok.*;
 
 @Getter
