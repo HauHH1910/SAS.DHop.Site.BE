@@ -58,8 +58,9 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(bookingRepository.save(buildDancerBooking(request)), new ArrayList<>());
     }
 
-
-
+    //TODO: Cần chỉnh sửa service liên quan đến tạo booking request của biên đạo,
+    // xử lý các xung đột về mặt thời gian có trùng nhau hay không,
+    // hàm để xử lý thông tin tiến độ làm việc trong phần chi tiết của booking dối với biên đạo.
     @Override
     @Transactional
     public BookingResponse createBookingRequestForChoreography(BookingRequest request) {

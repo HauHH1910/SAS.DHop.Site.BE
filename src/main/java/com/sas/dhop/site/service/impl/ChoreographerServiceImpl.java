@@ -41,8 +41,7 @@ public class ChoreographerServiceImpl implements ChoreographerService {
     private final UserService userService;
 
     @Override
-    public ChoreographerResponse updateChoreographer(
-            Integer choreographyId, ChoreographerRequest choreographerRequest) {
+    public ChoreographerResponse updateChoreographer(Integer choreographyId, ChoreographerRequest choreographerRequest) {
         Choreography choreography = choreographyRepository
                 .findById(choreographyId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.USER_NOT_FOUND));
