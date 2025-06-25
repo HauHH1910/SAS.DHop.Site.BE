@@ -75,9 +75,6 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @Column(name = "customer_phone")
     private String customerPhone;
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "performance_id")
-//    private Performance performance;
 
     @Column(name = "number_of_training_sessions")
     private Integer numberOfTrainingSessions;
