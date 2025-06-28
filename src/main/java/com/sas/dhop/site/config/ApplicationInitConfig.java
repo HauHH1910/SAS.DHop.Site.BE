@@ -13,10 +13,8 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.model.enums.StatusType;
 import com.sas.dhop.site.repository.*;
 import jakarta.transaction.Transactional;
-
 import java.math.BigDecimal;
 import java.util.*;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
@@ -40,7 +38,8 @@ public class ApplicationInitConfig {
             DancerRepository dancerRepository,
             ChoreographyRepository choreographyRepository,
             PasswordEncoder passwordEncoder,
-            PerformanceRepository performanceRepository, SubscriptionRepository subscriptionRepository) {
+            PerformanceRepository performanceRepository,
+            SubscriptionRepository subscriptionRepository) {
         return args -> {
             Role adminRole = buildRole(roleRepository, RoleName.ADMIN);
             Status adminStatus = buildStatus(statusRepository, RolePrefix.ADMIN_PREFIX);
@@ -69,23 +68,46 @@ public class ApplicationInitConfig {
 
                     Status activeStatus = buildStatus(statusRepository, ACTIVE_USER);
 
-
                     // Các status subscription mẫu
                     switch (i) {
                         case 1 -> {
                             buildStatus(statusRepository, ACTIVE_USER_SUBSCRIPTION);
-                            buildSubscription(subscriptionRepository, SubscriptionPlan.FREE_TRIAL, statusRepository, BigDecimal.ZERO, 10, "Cho phép người dùng tạo hồ sơ, xem các cơ hội biểu diễn cơ bản.");
+                            buildSubscription(
+                                    subscriptionRepository,
+                                    SubscriptionPlan.FREE_TRIAL,
+                                    statusRepository,
+                                    BigDecimal.ZERO,
+                                    10,
+                                    "Cho phép người dùng tạo hồ sơ, xem các cơ hội biểu diễn cơ bản.");
                         }
                         case 2 -> {
                             buildStatus(statusRepository, EXPIRE_USER_SUBSCRIPTION);
-                            buildSubscription(subscriptionRepository, SubscriptionPlan.STANDARD_MONTHLY, statusRepository, BigDecimal.valueOf(250000), 30, "Mở khóa được các tính năng liên quan như xem các số liệu thống kê và tính năng được nhận booking khẩn cấp đến từ khách hàng");
+                            buildSubscription(
+                                    subscriptionRepository,
+                                    SubscriptionPlan.STANDARD_MONTHLY,
+                                    statusRepository,
+                                    BigDecimal.valueOf(250000),
+                                    30,
+                                    "Mở khóa được các tính năng liên quan như xem các số liệu thống kê và tính năng được nhận booking khẩn cấp đến từ khách hàng");
                         }
                         case 3 -> {
                             buildStatus(statusRepository, FREE_TRIAL_USER_SUBSCRIPTION);
-                            buildSubscription(subscriptionRepository, SubscriptionPlan.STANDARD_3MONTHS, statusRepository, BigDecimal.valueOf(550000), 90, "Mở khóa được các tính năng liên quan như xem các số liệu thống kê và tính năng được nhận booking khẩn cấp đến từ khách hàng.");
+                            buildSubscription(
+                                    subscriptionRepository,
+                                    SubscriptionPlan.STANDARD_3MONTHS,
+                                    statusRepository,
+                                    BigDecimal.valueOf(550000),
+                                    90,
+                                    "Mở khóa được các tính năng liên quan như xem các số liệu thống kê và tính năng được nhận booking khẩn cấp đến từ khách hàng.");
                         }
                         case 4 -> {
-                            buildSubscription(subscriptionRepository, SubscriptionPlan.UNLIMITED_YEARLY, statusRepository, BigDecimal.valueOf(1750000), Integer.MAX_VALUE, "mở khóa được các tính năng liên quan như xem các số liệu thống kê và tính năng được nhận booking khẩn cấp đến từ khách hàng");
+                            buildSubscription(
+                                    subscriptionRepository,
+                                    SubscriptionPlan.UNLIMITED_YEARLY,
+                                    statusRepository,
+                                    BigDecimal.valueOf(1750000),
+                                    Integer.MAX_VALUE,
+                                    "mở khóa được các tính năng liên quan như xem các số liệu thống kê và tính năng được nhận booking khẩn cấp đến từ khách hàng");
                             buildStatus(statusRepository, PENDING_USER_SUBSCRIPTION);
                         }
                         case 5 -> buildStatus(statusRepository, RENEWING_USER_SUBSCRIPTION);
@@ -131,19 +153,18 @@ public class ApplicationInitConfig {
             BigDecimal price,
             Integer duration,
             String content) {
-        Status subscriptionPlanStatus = statusRepository.findByStatusName(status)
-                .orElseGet(() -> statusRepository.save(buildStatus(status)));
+        Status subscriptionPlanStatus =
+                statusRepository.findByStatusName(status).orElseGet(() -> statusRepository.save(buildStatus(status)));
 
-        subscriptionRepository.findByStatus(subscriptionPlanStatus)
-                .orElseGet(() -> subscriptionRepository.save(
-                        Subscription.builder()
-                                .price(price)
-                                .name(status)
-                                .duration(duration)
-                                .content(content)
-                                .status(subscriptionPlanStatus)
-                                .build()
-                ));
+        subscriptionRepository
+                .findByStatus(subscriptionPlanStatus)
+                .orElseGet(() -> subscriptionRepository.save(Subscription.builder()
+                        .price(price)
+                        .name(status)
+                        .duration(duration)
+                        .content(content)
+                        .status(subscriptionPlanStatus)
+                        .build()));
     }
 
     private DanceType getRandomDanceType(List<DanceType> danceTypes) {
