@@ -77,4 +77,11 @@ public class PerformanceServiceImpl implements PerformanceService {
                 .map(PerformanceResponse::mapToPerformance)
                 .toList();
     }
+
+    @Override
+    public List<String> getPerformanceByBookingId(Integer bookingId) {
+        return performanceRepository.findByBooking(bookingId).stream()
+                .map(Performance::getMediaUrl)
+                .toList();
+    }
 }

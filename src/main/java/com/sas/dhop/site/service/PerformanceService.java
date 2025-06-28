@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface PerformanceService {
 
+    List<String> getPerformanceByBookingId(Integer bookingId);
+
     PerformanceResponse createPerformance(PerformanceRequest request);
 
     PerformanceResponse getPerformanceById(Integer id);

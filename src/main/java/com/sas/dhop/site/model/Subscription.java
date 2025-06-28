@@ -26,7 +26,7 @@ public class Subscription extends AbstractEntity<Integer> implements Serializabl
     @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
 }

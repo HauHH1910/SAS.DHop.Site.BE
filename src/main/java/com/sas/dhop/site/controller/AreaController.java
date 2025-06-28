@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class AreaController {
     private final AreaService areaService;
 
-    @GetMapping
+    @GetMapping("/getAllArea/")
     public ResponseData<List<AreaResponse>> getAllArea() {
         return ResponseData.<List<AreaResponse>>builder()
                 .message(ResponseMessage.GET_ALL_AREA)

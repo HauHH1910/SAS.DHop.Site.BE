@@ -1,5 +1,7 @@
 package com.sas.dhop.site.service.impl;
 
+import static com.sas.dhop.site.constant.ChoreographerStatus.ACTIVATED_CHOREOGRAPHER;
+import static com.sas.dhop.site.constant.DancerStatus.ACTIVATED_DANCER;
 import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
 import static com.sas.dhop.site.constant.UserStatus.INACTIVE_USER;
 
@@ -15,10 +17,13 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.JwtUtil;
+import com.sas.dhop.site.util.mapper.DancerMapper;
 import com.sas.dhop.site.util.mapper.UserMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +54,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final ChoreographyRepository choreographyRepository;
     private final DancerRepository dancerRepository;
     private final UserMapper userMapper;
+    private final DancerMapper dancerMapper;
+    private final AreaRepository areaRepository;
 
     @NonFinal
     @Value("${sas.dhop.oauth.client-id}")
@@ -93,7 +100,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
         log.info("User {} login successfully", user.getEmail());
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
 
     @Override
@@ -129,7 +136,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
 
     @Override
@@ -162,7 +169,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
 
     @Override
@@ -194,7 +201,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
 
     @Override
@@ -210,21 +217,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
 
     @Override
     @Transactional
     public void register(RegisterRequest request) throws MessagingException {
+        // Kiểm tra trùng email
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new BusinessException(ErrorConstant.EMAIL_ALREADY_EXIST);
         }
 
+        // Lấy status mặc định cho user mới
         Status userStatus = statusService.findStatusOrCreated(INACTIVE_USER);
 
+        // Tìm role theo tên
         Role role = roleService.findByRoleName(request.role());
         Set<Role> roles = Set.of(role);
 
+        // Tạo user entity
         User user = User.builder()
                 .name(request.name())
                 .phone(request.phone())
@@ -236,9 +247,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         userRepository.save(user);
 
+        // Chỉ bắt buộc kiểm tra khu vực nếu role là DANCER hoặc CHOREOGRAPHY
+        Set<Area> workAreas = new HashSet<>();
+        boolean isDancerOrChoreo =
+                RoleName.DANCER.equals(request.role()) || RoleName.CHOREOGRAPHY.equals(request.role());
+        if (isDancerOrChoreo) {
+            if (request.areaIds() == null || request.areaIds().isEmpty()) {
+                throw new BusinessException(ErrorConstant.AREA_NOT_NULL);
+            }
+            List<Area> foundAreas = areaRepository.findAllById(request.areaIds());
+            if (foundAreas.size() != request.areaIds().size()) {
+                throw new BusinessException(ErrorConstant.AREA_NOT_FOUND);
+            }
+            workAreas = new HashSet<>(foundAreas);
+        }
+
+        // Nếu là CHOREOGRAPHY
         if (RoleName.CHOREOGRAPHY.equals(request.role()) && request.choreography() != null) {
             log.info("[{}] đăng ký vai trò CHOREOGRAPHY", request.email());
-            Status choreographyStatus = statusService.findStatusOrCreated("Chờ xác nhận để trở thành biên đạo");
+
+            Status choreographyStatus = statusService.findStatusOrCreated(ACTIVATED_CHOREOGRAPHER);
 
             Set<DanceType> danceTypes = request.choreography().danceType().stream()
                     .map(danceTypeService::findDanceType)
@@ -250,12 +278,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .about(request.choreography().about())
                     .yearExperience(request.choreography().yearExperience())
                     .status(choreographyStatus)
+                    .areas(workAreas)
                     .build();
 
             choreographyRepository.save(choreography);
-        } else if (RoleName.DANCER.equals(request.role()) && request.dancer() != null) {
+        }
+        // Nếu là DANCER
+        else if (RoleName.DANCER.equals(request.role()) && request.dancer() != null) {
             log.info("[{}] đăng ký vai trò DANCER", request.email());
-            Status dancerStatus = statusService.findStatusOrCreated("Chờ xác nhận để trở thành nhóm nhảy");
+
+            Status dancerStatus = statusService.findStatusOrCreated(ACTIVATED_DANCER);
 
             Set<DanceType> danceTypes = request.dancer().danceType().stream()
                     .map(danceTypeService::findDanceType)
@@ -269,11 +301,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .yearExperience(request.dancer().yearExperience())
                     .teamSize(request.dancer().teamSize())
                     .status(dancerStatus)
+                    .areas(workAreas)
                     .build();
 
             dancerRepository.save(dancer);
         }
 
+        // Gửi OTP qua email
         String otp = oTPService.generateOTP(request.email());
         boolean success =
                 oTPService.sendOTPByEmail(request.email(), request.name(), otp).join();
@@ -302,7 +336,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var accessToken = jwtUtil.generateToken(user, VALID_DURATION, false);
         var refreshToken = jwtUtil.generateToken(user, REFRESHABLE_DURATION, true);
 
-        return new AuthenticationResponse(accessToken, refreshToken, userMapper.mapToUserResponse(user));
+        return getAuthenticationResponse(accessToken, refreshToken, user);
     }
 
     @Override
@@ -337,5 +371,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .name(String.join(" ", userInfo.givenName(), userInfo.familyName()))
                         .avatar(userInfo.picture())
                         .build()));
+    }
+
+    private AuthenticationResponse getAuthenticationResponse(String accessToken, String refreshToken, User user) {
+        Set<RoleName> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        if (roleNames.contains(RoleName.DANCER)) {
+            DancerResponse dancerResponse = dancerMapper.mapToDancerResponse(dancerRepository
+                    .findByUser(user)
+                    .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_DANCER)));
+            return new AuthenticationResponse(
+                    accessToken,
+                    refreshToken,
+                    userMapper.mapToUserResponse(user),
+                    user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()),
+                    dancerResponse);
+        } else {
+            return new AuthenticationResponse(
+                    accessToken,
+                    refreshToken,
+                    userMapper.mapToUserResponse(user),
+                    user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()),
+                    null);
+        }
     }
 }

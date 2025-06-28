@@ -59,16 +59,51 @@ public enum ErrorConstant {
     DANCER_END_TIME_NOT_NULL(43, "Thời gian kết thúc không được trống", HttpStatus.FORBIDDEN),
     ARTICLE_NOT_FOUND(44, "Không tìm thấy bài báo", HttpStatus.NOT_FOUND),
 
+    // Start dancer booking validate enum
+    BOOKING_DATE_NOT_NULL(1, "ngày diễn không được để trống", HttpStatus.FORBIDDEN),
+    BOOKING_DATE_NOT_BLANK(2, "ngày diễn không được để rỗng", HttpStatus.FORBIDDEN),
+    END_TIME_NOT_NULL(3, "thời gian kết thúc không được trống", HttpStatus.FORBIDDEN),
+    END_TIME_NOT_BLANK(4, "Thời gian kết thúc không được rỗng", HttpStatus.FORBIDDEN),
+    ADDRESS_NOT_NULL(5, "Địa chỉ không được trống", HttpStatus.FORBIDDEN),
+    ADDRESS_NOT_BLANK(6, "Địa chỉ không được rỗng", HttpStatus.FORBIDDEN),
+    DETAIL_NOT_BLANK(7, "Thông tin chi tiết không được rỗng", HttpStatus.FORBIDDEN),
+    DETAIL_NOT_NULL(7, "Thông tin chi tiết không được trống", HttpStatus.FORBIDDEN),
+    DANCER_NOT_BLANK(8, "Nhóm nhảy không được để trống", HttpStatus.FORBIDDEN),
+    DANCER_NOT_NULL(8, "Nhóm nhảy không được để rỗng", HttpStatus.FORBIDDEN),
+    AREA_NOT_BLANK(9, "Khu vực không được để trống", HttpStatus.FORBIDDEN),
+    AREA_NOT_NULL(9, "Khu vực không được để rỗng", HttpStatus.FORBIDDEN),
+    DANCE_TYPE_NAME_NOT_BLANK(10, "Thể loại nhảy không được trống", HttpStatus.FORBIDDEN),
+    DANCE_TYPE_NAME_NOT_NULL(10, "Thể loại nhảy không được rỗng", HttpStatus.FORBIDDEN),
+    PRICE_NOT_BLANK(11, "Giá không được trống", HttpStatus.FORBIDDEN),
+    PRICE_NOT_NULL(11, "Giá không được rỗng", HttpStatus.FORBIDDEN),
+    DANCER_PHONE_NOT_BLANK(12, "Số điện thoại của nhóm nhảy không được trống", HttpStatus.FORBIDDEN),
+    DANCER_PHONE_NOT_NULL(12, "Số điện thoại của nhóm nhảy không được rỗng", HttpStatus.FORBIDDEN),
+    CUSTOMER_PHONE_NOT_BLANK(13, "Số điện thoại của người dùng không được trống", HttpStatus.FORBIDDEN),
+    CUSTOMER_PHONE_NOT_NULL(13, "Số điện thoại của người dùng không được rỗng", HttpStatus.FORBIDDEN),
+    NUMBER_OF_TEAM_MEMBER_NOT_BLANK(14, "Số lượng thành viên không được rỗng", HttpStatus.FORBIDDEN),
+    NUMBER_OF_TEAM_MEMBER_NOT_NULL(14, "Số lượng thành viên không được trống", HttpStatus.FORBIDDEN),
+    NUMBER_OF_TEAM_MEMBER_MIN_VALUE(14, "Số lượng thành viên ít nhất là {value}", HttpStatus.FORBIDDEN),
+    // End dancer booking validate enum
+
     CAN_NOT_FEEDBACK(45, "Không thể đánh giá dịch vụ này", HttpStatus.NOT_ACCEPTABLE),
     INVALID_BOOKING(46, "Dịch vụ thuê không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
     INVALID_MINIMUM_PRICE(47, "Số tiền tối thiểu không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
+    INVALID_USER(47, "Người dùng không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
     DANCER_TEAM_SIZE_CONFLICT(48, "Xung đột về số lượng thành viên", HttpStatus.CONFLICT),
     CHOOREOGRAPHY_TIME_CONFLICT(49, "Xung đột thời gian làm việc của biên đạo", HttpStatus.CONFLICT),
     CAN_NOT_UPDATE_BOOKING(50, "Không thể cập nhập thông tin của dịch vụ", HttpStatus.FORBIDDEN),
     PERFORMANCE_CAN_NOT_BE_DELETED(51, "Không thể xóa được vì thuộc về một phần của hợp đồng", HttpStatus.FORBIDDEN),
     CAN_NOT_COMPLAIN(52, "Không thể khiếu nại", HttpStatus.NOT_ACCEPTABLE),
     BOOKING_STATUS_NOT_FOUND(53, "Không tìm thấy trạng thái", HttpStatus.NOT_FOUND),
-    SUBSCRIPTION_ENDED(52, "Hết số lượt sử dụng thử", HttpStatus.FORBIDDEN);
+    SUBSCRIPTION_ENDED(52, "Hết số lượt sử dụng thử", HttpStatus.FORBIDDEN),
+    SUBSCRIPTION_EXPIRED(52, "Hết hạn gói thành viên", HttpStatus.FORBIDDEN),
+    BOOKING_NUMBER_OF_TEAM_MEMBER(55, "Số thành viên không đủ", HttpStatus.FORBIDDEN),
+    DANCER_CAN_NOT_BOOKING(56, "Dancer không thể đặt lịch", HttpStatus.FORBIDDEN),
+    PAYMENT_NOT_PAY(57, "Họp đồng chưa thanh toán", HttpStatus.FORBIDDEN),
+    PAYMENT_NOT_FOUND(58, "Không tìm thấy hóa đơn", HttpStatus.NOT_FOUND),
+    BOOKING_NOT_PAY(55, "Hợp đồng chưa gửi biên lai", HttpStatus.FORBIDDEN),
+    COMPLAIN_NOT_FOUND(59, "Không tìm thấy khiếu nại ", HttpStatus.NOT_FOUND),
+    BOOKING_CAN_NOT_START(60, "Hợp đồng không thể bắt đầu", HttpStatus.FORBIDDEN);
 
     private final Integer code;
     private final String message;

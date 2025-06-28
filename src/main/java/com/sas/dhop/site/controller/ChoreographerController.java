@@ -2,10 +2,13 @@ package com.sas.dhop.site.controller;
 
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
+import com.sas.dhop.site.dto.request.ChoreographerFiltersRequest;
 import com.sas.dhop.site.dto.request.ChoreographerRequest;
+import com.sas.dhop.site.dto.response.ChoreographerFiltersResponse;
 import com.sas.dhop.site.dto.response.ChoreographerResponse;
 import com.sas.dhop.site.service.ChoreographerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +61,25 @@ public class ChoreographerController {
         return ResponseData.<ChoreographerResponse>builder()
                 .message(ResponseMessage.GET_CHOREOGRAPHER_BY_DANCE_TYPE)
                 .data(choreographerService.getChoreographerById(danceTypeId))
+                .build();
+    }
+
+    @GetMapping("/filter-choreographer")
+    public ResponseData<List<ChoreographerFiltersResponse>> filterChoreographer(
+            @RequestParam(required = false) Integer areaId,
+            @RequestParam(required = false) List<Integer> danceTypeId,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
+        ChoreographerFiltersRequest choreographerFiltersRequest = ChoreographerFiltersRequest.builder()
+                .areaId(areaId)
+                .danceTypeId(danceTypeId)
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
+                .build();
+
+        return ResponseData.<List<ChoreographerFiltersResponse>>builder()
+                .message(ResponseMessage.FILTERS_CHOREOGRAPHERS_COMPLETE)
+                .data(choreographerService.getAllChoreographersFilters(choreographerFiltersRequest))
                 .build();
     }
 }

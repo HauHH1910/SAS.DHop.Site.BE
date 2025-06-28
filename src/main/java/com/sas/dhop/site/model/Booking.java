@@ -46,8 +46,8 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     private Status status;
 
     @Column(name = "booking_date")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Instant bookingDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime bookingDate;
 
     @Column(name = "start_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
@@ -60,7 +60,8 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "detail")
+    @Lob
+    @Column(name = "detail", columnDefinition = "TEXT")
     private String detail;
 
     @Column(name = "update_booking_date")
@@ -72,10 +73,6 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @Column(name = "customer_phone")
     private String customerPhone;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "performance_id")
-    private Performance performance;
-
     @Column(name = "number_of_training_sessions")
     private Integer numberOfTrainingSessions;
 
@@ -85,19 +82,21 @@ public class Booking extends AbstractEntity<Integer> implements Serializable {
     @Column(name = "choreography_phone")
     private String choreographyPhone;
 
-    @Column(name = "cancel_reason")
-    private String cancelReason;
-
-    @Column(name = "cancel_person_name")
-    private String cancelPersonName;
-
     @Column(name = "price")
     private BigDecimal price;
 
-    @ManyToOne
-    @JoinColumn(name = "previous_status_id")
-    private Status previousStatus;
-
     @Column(name = "number_of_team_member")
     private Integer numberOfTeamMember;
+
+    @Column(name = "dancer_account_number")
+    private String dancerAccountNumber;
+
+    @Column(name = "dancer_bank")
+    private String dancerBank;
+
+    @Column(name = "choreography_account_number")
+    private String choreographyAccountNumber;
+
+    @Column(name = "choreography_bank")
+    private String choreographyBank;
 }

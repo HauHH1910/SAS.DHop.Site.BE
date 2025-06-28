@@ -1,16 +1,7 @@
 services:
-  db:
+  be:
     env_file:
       - .env
-    image: mysql:8.0
-    container_name: DHop-Database
-    environment:
-      - MYSQL_ROOT_PASSWORD=123456
-      - MYSQL_DATABASE=exe201
+    image: hauhh/sas.dhop.site.be:v1.0
     ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-
-volumes:
-  db_data:
+      - "8080:8080"

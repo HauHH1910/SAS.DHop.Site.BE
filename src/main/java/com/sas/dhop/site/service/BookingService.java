@@ -1,6 +1,7 @@
 package com.sas.dhop.site.service;
 
 import com.sas.dhop.site.dto.request.BookingRequest;
+import com.sas.dhop.site.dto.request.DancerAcceptRequest;
 import com.sas.dhop.site.dto.request.DancerBookingRequest;
 import com.sas.dhop.site.dto.request.EndWorkRequest;
 import com.sas.dhop.site.dto.response.BookingCancelResponse;
@@ -14,14 +15,16 @@ public interface BookingService {
     // status is Pending
     BookingResponse createBookingRequestForDancer(DancerBookingRequest request);
 
+    //    BookingResponse approveBookingRequestForDancer(Integer bookingId);
+
     // create booking contract for choreography(add field to insert information in
     // contract), set
     // booking status is
     // Pending
     BookingResponse createBookingRequestForChoreography(BookingRequest bookingRequest);
 
-    // Set booking status is Booking_Activate
-    BookingResponse acceptBookingRequest(int bookingId);
+    // Set booking status is Booking_Activate, stk, sdt dancer, ten ngan hang
+    BookingResponse acceptBookingRequest(int bookingId, DancerAcceptRequest request);
 
     // Set booking status is Booking_InProgress if system have no problem
     BookingResponse startWork(int bookingId);
@@ -32,7 +35,11 @@ public interface BookingService {
 
     BookingCancelResponse cancelBooking(int bookingId);
 
-    // BookingResponse confirmWork(int bookingId);
+    BookingResponse completeWork(int bookingId);
+
+    BookingResponse dancerAcceptBooking(Integer bookingId);
+
+    BookingResponse userSentPayment(EndWorkRequest request);
 
     BookingResponse endBooking(int bookingId);
 

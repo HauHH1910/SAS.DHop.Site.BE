@@ -1,7 +1,9 @@
 package com.sas.dhop.site.service;
 
 import com.sas.dhop.site.dto.request.DancerRequest;
+import com.sas.dhop.site.dto.request.DancersFiltersRequest;
 import com.sas.dhop.site.dto.response.DancerResponse;
+import com.sas.dhop.site.dto.response.DancersFiltersResponse;
 import java.util.List;
 
 public interface DancerService {
@@ -14,6 +16,8 @@ public interface DancerService {
     DancerResponse getDancerByDanceType(Integer dancerId);
 
     List<DancerResponse> getallDancer();
+
+    List<DancersFiltersResponse> getAllDancersFilters(DancersFiltersRequest dancersFiltersRequest);
 
     DancerResponse getDancerBySubscriptionStatus(Integer id);
 

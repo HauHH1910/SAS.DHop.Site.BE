@@ -2,9 +2,10 @@ package com.sas.dhop.site.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sas.dhop.site.model.Booking;
+import com.sas.dhop.site.model.DanceType;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 
 // yyyy-MM-dd HH:mm
@@ -20,31 +21,38 @@ public record BookingResponse(
         AreaResponse area,
         String address,
         String status,
-        Instant bookingDate,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime bookingDate,
         String customerPhone,
         Integer numberOfTrainingSessions,
+        Integer numberOfTeamMember,
         String choreographyPhone,
         String dancerPhone,
-        BigDecimal price) {
+        BigDecimal price,
+        List<String> danceTypeName,
+        String detail,
+        List<String> urls) {
 
-    public static BookingResponse mapToBookingResponse(Booking request) {
-        return BookingResponse.builder()
-                .id(request.getId())
-                .start(request.getStartTime())
-                .end(request.getEndTime())
-                .customer(request.getCustomer().getName())
-                .dancer(getDancer(request))
-                .choreography(getChoreography(request))
-                .area(AreaResponse.mapToAreaResponse(request.getArea()))
-                .address(request.getAddress())
-                .status(request.getStatus().getStatusName())
-                .bookingDate(request.getBookingDate())
-                .customerPhone(request.getCustomerPhone())
-                .numberOfTrainingSessions(request.getNumberOfTrainingSessions())
-                .choreographyPhone(request.getChoreographyPhone())
-                .dancerPhone(request.getDancerPhone())
-                .price(request.getPrice())
-                .build();
+    public static BookingResponse mapToBookingResponse(Booking request, List<String> mediaResponses) {
+        return new BookingResponse(
+                request.getId(),
+                request.getStartTime(),
+                request.getEndTime(),
+                request.getCustomer().getName(),
+                getDancer(request),
+                getChoreography(request),
+                AreaResponse.mapToAreaResponse(request.getArea()),
+                request.getAddress(),
+                request.getStatus().getStatusName(),
+                request.getBookingDate(),
+                request.getCustomerPhone(),
+                request.getNumberOfTrainingSessions(),
+                request.getNumberOfTeamMember(),
+                request.getChoreographyPhone(),
+                request.getDancerPhone(),
+                request.getPrice(),
+                request.getDanceType().stream().map(DanceType::getType).toList(),
+                request.getDetail(),
+                mediaResponses);
     }
 
     private static String getChoreography(Booking request) {
@@ -54,8 +62,8 @@ public record BookingResponse(
     }
 
     private static String getDancer(Booking request) {
-        return request.getDancer() != null && request.getDancer().getUser().getName() != null
-                ? request.getDancer().getUser().getName()
+        return request.getDancer() != null && request.getDancer().getDancerNickName() != null
+                ? request.getDancer().getDancerNickName()
                 : "";
     }
 }

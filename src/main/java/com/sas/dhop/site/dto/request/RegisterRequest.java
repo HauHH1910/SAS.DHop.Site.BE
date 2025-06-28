@@ -4,6 +4,7 @@ import com.sas.dhop.site.model.enums.RoleName;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 
 public record RegisterRequest(
         @NotNull(message = "EMAIL_NOT_NULL") @NotBlank(message = "EMAIL_NOT_BLANK") @NotEmpty(message = "EMAIL_NOT_EMPTY") String email,
@@ -12,4 +13,5 @@ public record RegisterRequest(
         RoleName role,
         String phone,
         ChoreographyRegisterRequest choreography,
+        List<Integer> areaIds,
         DancerRegisterRequest dancer) {}

@@ -17,13 +17,11 @@ public interface ChoreographerMapper {
 
     @Mapping(target = "danceTypes", ignore = true)
     @Mapping(target = "user", ignore = true)
-    @Mapping(target = "subscription", ignore = true)
     @Mapping(target = "status", ignore = true)
     Choreography mapToChoreography(ChoreographerRequest request);
 
     @Mapping(target = "danceTypeId", source = "danceTypes", qualifiedByName = "mapDanceTypeToId")
     @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "subscriptionId", source = "subscription.id")
     @Mapping(target = "statusId", source = "status.id")
     @Mapping(target = "userName", source = "user.name")
     ChoreographerResponse mapToChoreographerResponse(Choreography choreography);
@@ -38,7 +36,6 @@ public interface ChoreographerMapper {
 
     @Mapping(target = "danceTypes", ignore = true)
     @Mapping(target = "user", ignore = true)
-    @Mapping(target = "subscription", ignore = true)
     @Mapping(target = "status", ignore = true)
     void mapToUpdateChoreography(@MappingTarget Choreography choreography, ChoreographerRequest request);
 }

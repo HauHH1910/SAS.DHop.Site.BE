@@ -3,9 +3,12 @@ package com.sas.dhop.site.controller;
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.DancerRequest;
+import com.sas.dhop.site.dto.request.DancersFiltersRequest;
 import com.sas.dhop.site.dto.response.DancerResponse;
+import com.sas.dhop.site.dto.response.DancersFiltersResponse;
 import com.sas.dhop.site.service.DancerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +61,36 @@ public class DancersController {
         return ResponseData.<DancerResponse>builder()
                 .message(ResponseMessage.GET_DANCER_BY_DANCE_TYPE)
                 .data(dancerService.getDancerByDanceType(danceTypeId))
+                .build();
+    }
+
+    //    @PutMapping("/filter-dancer")
+    //    public ResponseData<List<DancersFiltersResponse>> filterDancers(@RequestBody DancersFiltersRequest
+    // dancersFiltersRequest) {
+    //        return ResponseData.<List<DancersFiltersResponse>>builder()
+    //                .message(ResponseMessage.FILTERS_DANCERS_COMPLETE)
+    //                .data(dancerService.getAllDancersFilters(dancersFiltersRequest))
+    //                .build();
+    //    }
+
+    @GetMapping("/filter-dancer")
+    public ResponseData<List<DancersFiltersResponse>> filterDancers(
+            @RequestParam(required = false) Integer areaId,
+            @RequestParam(required = false) List<Integer> danceTypeId,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Integer teamSize) {
+        DancersFiltersRequest request = DancersFiltersRequest.builder()
+                .areaId(areaId)
+                .danceTypeId(danceTypeId)
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
+                .teamSize(teamSize)
+                .build();
+
+        return ResponseData.<List<DancersFiltersResponse>>builder()
+                .message(ResponseMessage.FILTERS_DANCERS_COMPLETE)
+                .data(dancerService.getAllDancersFilters(request))
                 .build();
     }
 }
