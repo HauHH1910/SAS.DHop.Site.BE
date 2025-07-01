@@ -1,6 +1,5 @@
 package com.sas.dhop.site.dto;
 
-import com.sas.dhop.site.constant.ResponseMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
