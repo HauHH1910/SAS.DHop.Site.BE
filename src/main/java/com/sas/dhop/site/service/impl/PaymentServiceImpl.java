@@ -10,8 +10,10 @@ import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.Payment;
 import com.sas.dhop.site.repository.PaymentRepository;
 import com.sas.dhop.site.service.PaymentService;
+
 import java.util.Date;
 import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,7 +79,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public String createPaymentLink(CreatePaymentRequest request) {
+    public String createPaymentLinkForBuyingSubscription(CreatePaymentRequest request) {
         try {
             String currentTimeString = String.valueOf(new Date().getTime());
 
@@ -94,8 +96,8 @@ public class PaymentServiceImpl implements PaymentService {
                     .description(request.description())
                     .amount(request.price())
                     .item(item)
-                    .returnUrl(returnUrl)
-                    .cancelUrl(cancelUrl)
+                    .returnUrl("http://localhost:3000/subscription-status")
+                    .cancelUrl("http://localhost:3000/subscription-status")
                     .build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);
@@ -170,13 +172,19 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment saveCommissionPayment(String status, Long orderCode) throws Exception {
+    public Payment savePayment(String status, Long orderCode) throws Exception {
         PaymentLinkData order = payOS.getPaymentLinkInformation(orderCode);
-        if (order == null) {
-            throw new BusinessException(ErrorConstant.PAYMENT_NOT_FOUND);
+        log.info("[Save Payment] - [Status: {} - Order Code: {}]", order.getStatus(), order.getOrderCode());
+
+        Payment existingPayment = paymentRepository.findByOrderCode(orderCode).orElse(null);
+
+        if (existingPayment != null) {
+            existingPayment.setStatus(status);
+            return paymentRepository.save(existingPayment);
+        } else {
+            Payment newPayment = new Payment(order.getOrderCode(), status, order.getAmount());
+            return paymentRepository.save(newPayment);
         }
-        return paymentRepository
-                .findByOrderCode(orderCode)
-                .orElseGet(() -> paymentRepository.save(new Payment(orderCode, status, order.getAmount())));
     }
+
 }

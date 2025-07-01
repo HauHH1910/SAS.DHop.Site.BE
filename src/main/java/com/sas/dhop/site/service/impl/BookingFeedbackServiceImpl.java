@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 @Slf4j(topic = "[Booking Feedback Service]")
 public class BookingFeedbackServiceImpl implements BookingFeedbackService {
     private final UserService userService;
-    private final DancerService dancerService;
-    private final ChoreographerService choreographerService;
     private final StatusService statusService;
-    private final BookingService bookingService;
     private final BookingRepository bookingRepository;
     private final DancerRepository dancerRepository;
     private final ChoreographyRepository choreographyRepository;

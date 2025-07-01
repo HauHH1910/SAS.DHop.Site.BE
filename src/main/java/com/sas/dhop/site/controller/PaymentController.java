@@ -23,7 +23,7 @@ public class PaymentController {
 
     @PostMapping("/create")
     public ResponseEntity<String> createPayment(@RequestBody CreatePaymentRequest request) {
-        return ResponseEntity.ok(paymentService.createPaymentLink(request));
+        return ResponseEntity.ok(paymentService.createPaymentLinkForBuyingSubscription(request));
     }
 
     @GetMapping(path = "/{orderId}")
@@ -49,6 +49,6 @@ public class PaymentController {
     @PostMapping("/callback")
     public ResponseEntity<Payment> callBack(
             @RequestParam("status") String status, @RequestParam("orderCode") Long orderCode) throws Exception {
-        return ResponseEntity.ok(paymentService.saveCommissionPayment(status, orderCode));
+        return ResponseEntity.ok(paymentService.savePayment(status, orderCode));
     }
 }
