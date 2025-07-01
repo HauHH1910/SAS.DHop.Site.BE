@@ -15,7 +15,7 @@ public interface DancerService {
 
     DancerResponse getDancerByDanceType(Integer dancerId);
 
-    List<DancerResponse> getallDancer();
+    List<DancerResponse> getAllDancers();
 
     List<DancersFiltersResponse> getAllDancersFilters(DancersFiltersRequest dancersFiltersRequest);
 

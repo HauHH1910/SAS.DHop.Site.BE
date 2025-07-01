@@ -27,7 +27,7 @@ public class DancersController {
     public ResponseData<List<DancerResponse>> getAllDancer() {
         return ResponseData.<List<DancerResponse>>builder()
                 .message(ResponseMessage.GET_ALL_DANCERS)
-                .data(dancerService.getallDancer())
+                .data(dancerService.getAllDancers())
                 .build();
     }
 

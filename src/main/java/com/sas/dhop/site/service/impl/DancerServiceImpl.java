@@ -108,7 +108,7 @@ public class DancerServiceImpl implements DancerService {
     }
 
     @Override
-    public List<DancerResponse> getallDancer() {
+    public List<DancerResponse> getAllDancers() {
         User currentUser = userService.getLoginUser();
 
         Set<RoleName> collect =
