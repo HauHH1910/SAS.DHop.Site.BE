@@ -8,7 +8,6 @@ import com.sas.dhop.site.dto.response.DancerResponse;
 import com.sas.dhop.site.dto.response.DancersFiltersResponse;
 import com.sas.dhop.site.service.DancerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -65,13 +64,14 @@ public class DancersController {
                 .build();
     }
 
-//    @PutMapping("/filter-dancer")
-//    public ResponseData<List<DancersFiltersResponse>> filterDancers(@RequestBody DancersFiltersRequest dancersFiltersRequest) {
-//        return ResponseData.<List<DancersFiltersResponse>>builder()
-//                .message(ResponseMessage.FILTERS_DANCERS_COMPLETE)
-//                .data(dancerService.getAllDancersFilters(dancersFiltersRequest))
-//                .build();
-//    }
+    //    @PutMapping("/filter-dancer")
+    //    public ResponseData<List<DancersFiltersResponse>> filterDancers(@RequestBody DancersFiltersRequest
+    // dancersFiltersRequest) {
+    //        return ResponseData.<List<DancersFiltersResponse>>builder()
+    //                .message(ResponseMessage.FILTERS_DANCERS_COMPLETE)
+    //                .data(dancerService.getAllDancersFilters(dancersFiltersRequest))
+    //                .build();
+    //    }
 
     @GetMapping("/filter-dancer")
     public ResponseData<List<DancersFiltersResponse>> filterDancers(
@@ -79,8 +79,7 @@ public class DancersController {
             @RequestParam(required = false) List<Integer> danceTypeId,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
-            @RequestParam(required = false) Integer teamSize
-    ) {
+            @RequestParam(required = false) Integer teamSize) {
         DancersFiltersRequest request = DancersFiltersRequest.builder()
                 .areaId(areaId)
                 .danceTypeId(danceTypeId)
@@ -94,7 +93,4 @@ public class DancersController {
                 .data(dancerService.getAllDancersFilters(request))
                 .build();
     }
-
-
-
 }

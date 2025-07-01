@@ -26,8 +26,7 @@ public class Dancer extends AbstractEntity<Integer> implements Serializable {
     @JoinTable(
             name = "dancers_work_area_list",
             joinColumns = @JoinColumn(name = "dancer_id"),
-            inverseJoinColumns = @JoinColumn(name = "area_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "area_id"))
     private Set<Area> areas;
 
     @Column(name = "dancer_nick_name")

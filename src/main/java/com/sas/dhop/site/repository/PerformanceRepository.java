@@ -13,6 +13,4 @@ public interface PerformanceRepository
 
     @Query("SELECT p FROM Performance p WHERE p.booking.id = :id")
     List<Performance> findByBooking(Integer id);
-
-
 }

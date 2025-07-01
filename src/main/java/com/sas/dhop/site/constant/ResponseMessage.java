@@ -68,8 +68,6 @@ public class ResponseMessage {
     public static final String FILTERS_DANCERS_COMPLETE = "Lọc nhóm nhảy theo yêu cầu thành công";
     public static final String FILTERS_CHOREOGRAPHERS_COMPLETE = "Lọc biêm đạo theo yêu cầu thành công";
 
-
-
     public static final String DELETE_ROOM = "Xóa phòng thành công";
     public static final String OTP_RESET_PASSWORD = "Gửi OTP đặt lại mật khẩu thành công";
     public static final String UPLOAD_IMAGE = "Đăng ảnh thành công";

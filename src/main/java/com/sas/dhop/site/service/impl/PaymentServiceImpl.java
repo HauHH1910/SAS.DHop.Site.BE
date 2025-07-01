@@ -12,10 +12,8 @@ import com.sas.dhop.site.model.Payment;
 import com.sas.dhop.site.repository.BookingRepository;
 import com.sas.dhop.site.repository.PaymentRepository;
 import com.sas.dhop.site.service.PaymentService;
-
 import java.util.Date;
 import java.util.Map;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,7 +83,8 @@ public class PaymentServiceImpl implements PaymentService {
     public ObjectNode createPaymentLink(CreatePaymentRequest request) {
         ObjectNode response = objectMapper.createObjectNode();
         try {
-            Booking booking = bookingRepository.findById(request.bookingId())
+            Booking booking = bookingRepository
+                    .findById(request.bookingId())
                     .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
             String currentTimeString = String.valueOf(booking.getBookingDate());
 
@@ -191,7 +190,8 @@ public class PaymentServiceImpl implements PaymentService {
         if (order == null) {
             throw new BusinessException(ErrorConstant.PAYMENT_NOT_FOUND);
         }
-        return paymentRepository.findByOrderCode(orderCode)
+        return paymentRepository
+                .findByOrderCode(orderCode)
                 .orElseGet(() -> paymentRepository.save(new Payment(orderCode, status, order.getAmount())));
     }
 }

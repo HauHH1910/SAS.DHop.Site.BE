@@ -8,7 +8,6 @@ import com.sas.dhop.site.dto.response.ChoreographerFiltersResponse;
 import com.sas.dhop.site.dto.response.ChoreographerResponse;
 import com.sas.dhop.site.service.ChoreographerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -70,8 +69,7 @@ public class ChoreographerController {
             @RequestParam(required = false) Integer areaId,
             @RequestParam(required = false) List<Integer> danceTypeId,
             @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice
-    ) {
+            @RequestParam(required = false) BigDecimal maxPrice) {
         ChoreographerFiltersRequest choreographerFiltersRequest = ChoreographerFiltersRequest.builder()
                 .areaId(areaId)
                 .danceTypeId(danceTypeId)
@@ -84,5 +82,4 @@ public class ChoreographerController {
                 .data(choreographerService.getAllChoreographersFilters(choreographerFiltersRequest))
                 .build();
     }
-
 }

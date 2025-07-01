@@ -3,13 +3,10 @@ package com.sas.dhop.site.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.DanceType;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import lombok.Builder;
-import lombok.Getter;
 
 // yyyy-MM-dd HH:mm
 // Title, start, end, description, id[string||int], people []
@@ -33,8 +30,7 @@ public record BookingResponse(
         BigDecimal price,
         List<String> danceTypeName,
         String detail,
-        List<String> urls
-) {
+        List<String> urls) {
 
     public static BookingResponse mapToBookingResponse(Booking request, List<String> mediaResponses) {
         return new BookingResponse(
@@ -56,11 +52,8 @@ public record BookingResponse(
                 request.getPrice(),
                 request.getDanceType().stream().map(DanceType::getType).toList(),
                 request.getDetail(),
-                mediaResponses
-        );
+                mediaResponses);
     }
-
-
 
     private static String getChoreography(Booking request) {
         return request.getChoreography() != null && request.getChoreography().getUser() != null

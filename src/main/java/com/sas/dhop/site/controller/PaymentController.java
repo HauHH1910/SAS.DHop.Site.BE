@@ -6,9 +6,7 @@ import com.sas.dhop.site.dto.request.CreatePaymentRequest;
 import com.sas.dhop.site.model.Payment;
 import com.sas.dhop.site.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.util.Map;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +47,8 @@ public class PaymentController {
     }
 
     @PostMapping("/callback")
-    public ResponseEntity<Payment> callBack(@RequestParam("status") String status, @RequestParam("orderCode") Long orderCode) throws Exception {
+    public ResponseEntity<Payment> callBack(
+            @RequestParam("status") String status, @RequestParam("orderCode") Long orderCode) throws Exception {
         return ResponseEntity.ok(paymentService.saveCommissionPayment(status, orderCode));
     }
 }

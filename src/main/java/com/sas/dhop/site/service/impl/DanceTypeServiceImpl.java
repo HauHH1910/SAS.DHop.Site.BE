@@ -54,5 +54,4 @@ public class DanceTypeServiceImpl implements DanceTypeService {
                 .findByType(name)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.DANCE_TYPE_NOT_FOUND));
     }
-
 }

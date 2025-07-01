@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 public record ChoreographerFiltersResponse(
-
         Integer areaId,
         List<Integer> danceTypeId,
         BigDecimal price,
@@ -14,6 +13,4 @@ public record ChoreographerFiltersResponse(
         String about,
         Integer yearExperience,
         Integer statusId,
-        String name
-) {
-}
+        String name) {}

@@ -19,5 +19,4 @@ public class BookingStatus {
     public static final String BOOKING_COMPLAIN_APPROVED = "Chấp nhận yêu cầu khiếu nại";
     public static final String BOOKING_COMPLAIN_COMPLETED = "Hoàn thành yêu cầu khiếu nại";
     public static final String BOOKING_COMPLAIN_CANCELED = "Yêu cầu khiếu nại bị hủy";
-
 }

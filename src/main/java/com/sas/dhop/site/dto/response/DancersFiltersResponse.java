@@ -13,10 +13,7 @@ public record DancersFiltersResponse(
         Set<String> danceTypeName,
         Integer userId,
         Integer yearExperience,
-//        Integer subscriptionId,
+        //        Integer subscriptionId,
         Integer statusId,
         Integer dancerId,
-        String dancerPhone
-
-) {
-}
+        String dancerPhone) {}

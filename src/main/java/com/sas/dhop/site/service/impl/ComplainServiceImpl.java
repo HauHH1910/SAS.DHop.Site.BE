@@ -1,5 +1,7 @@
 package com.sas.dhop.site.service.impl;
 
+import static com.sas.dhop.site.constant.BookingStatus.*;
+
 import com.sas.dhop.site.constant.BookingStatus;
 import com.sas.dhop.site.dto.request.ComplainRequest;
 import com.sas.dhop.site.dto.response.ComplainResponse;
@@ -19,8 +21,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static com.sas.dhop.site.constant.BookingStatus.*;
-
 @Service
 @AllArgsConstructor
 @Slf4j(topic = "[Complain Service]")
@@ -32,13 +32,12 @@ public class ComplainServiceImpl implements ComplainService {
     private final UserService userService;
     private final ComplainMapper complainMapper;
 
-
     @Override
     public ComplainResponse bookingComplains(ComplainRequest complainRequest) {
 
-        Booking booking = bookingRepository.findById(complainRequest.bookingId())
+        Booking booking = bookingRepository
+                .findById(complainRequest.bookingId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
-
 
         if (BOOKING_INACTIVATE.equals(booking.getBookingStatus())
                 || BOOKING_PENDING.equals(booking.getBookingStatus())) {
@@ -47,8 +46,10 @@ public class ComplainServiceImpl implements ComplainService {
 
         User currentUser = userService.getLoginUser();
         if (!currentUser.equals(booking.getCustomer())
-                && (booking.getDancer() != null && !currentUser.equals(booking.getDancer().getUser()))
-                && (booking.getChoreography() != null && !currentUser.equals(booking.getChoreography().getUser()))) {
+                && (booking.getDancer() != null
+                        && !currentUser.equals(booking.getDancer().getUser()))
+                && (booking.getChoreography() != null
+                        && !currentUser.equals(booking.getChoreography().getUser()))) {
             throw new BusinessException(ErrorConstant.INVALID_USER);
         }
 
@@ -67,11 +68,9 @@ public class ComplainServiceImpl implements ComplainService {
 
         complainRepository.save(complain);
 
-
         Status complainStatus = statusService.findStatusOrCreated(BOOKING_DISPUTED_REQUEST);
         booking.setStatus(complainStatus);
         bookingRepository.save(booking);
-
 
         return complainMapper.mapToComplain(complain);
     }
@@ -126,16 +125,17 @@ public class ComplainServiceImpl implements ComplainService {
         }
 
         // Find complain
-        Complain complain = complainRepository.findByBooking(booking)
+        Complain complain = complainRepository
+                .findByBooking(booking)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.COMPLAIN_NOT_FOUND));
 
-//        // Khôi phục lại trạng thái trước đó của booking
-//        if (complain.getPreviousStatus() != null) {
-//            booking.setStatus(complain.getPreviousStatus());
-//        } else {
-//            // Nếu không có trạng thái trước đó, set về trạng thái mặc định
-//            booking.setStatus(statusService.findStatusOrCreated(BookingStatus.BOOKING_COMPLETED));
-//        }
+        //        // Khôi phục lại trạng thái trước đó của booking
+        //        if (complain.getPreviousStatus() != null) {
+        //            booking.setStatus(complain.getPreviousStatus());
+        //        } else {
+        //            // Nếu không có trạng thái trước đó, set về trạng thái mặc định
+        //            booking.setStatus(statusService.findStatusOrCreated(BookingStatus.BOOKING_COMPLETED));
+        //        }
 
         // Update complain status
         complain.setStatus(statusService.findStatusOrCreated(BookingStatus.BOOKING_COMPLAIN_APPROVED));
@@ -157,22 +157,22 @@ public class ComplainServiceImpl implements ComplainService {
         // Check if booking is in DISPUTED status
         log.info(booking.getStatus().getStatusName());
 
-
         if (!booking.getStatus().getStatusName().equals(BOOKING_COMPLAIN_APPROVED)) {
             throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
         }
 
         // Find complain
-        Complain complain = complainRepository.findByBooking(booking)
+        Complain complain = complainRepository
+                .findByBooking(booking)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.COMPLAIN_NOT_FOUND));
 
-//        // Khôi phục lại trạng thái trước đó của booking
-//        if (complain.getPreviousStatus() != null) {
-//            booking.setStatus(complain.getPreviousStatus());
-//        } else {
-//            // Nếu không có trạng thái trước đó, set về trạng thái mặc định
-//            booking.setStatus(statusService.findStatusOrCreated(BookingStatus.BOOKING_COMPLETED));
-//        }
+        //        // Khôi phục lại trạng thái trước đó của booking
+        //        if (complain.getPreviousStatus() != null) {
+        //            booking.setStatus(complain.getPreviousStatus());
+        //        } else {
+        //            // Nếu không có trạng thái trước đó, set về trạng thái mặc định
+        //            booking.setStatus(statusService.findStatusOrCreated(BookingStatus.BOOKING_COMPLETED));
+        //        }
 
         // Update complain status
         complain.setStatus(statusService.findStatusOrCreated(BOOKING_COMPLAIN_COMPLETED));

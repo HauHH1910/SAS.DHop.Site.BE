@@ -2,7 +2,6 @@ package com.sas.dhop.site.service.impl;
 
 import static com.sas.dhop.site.constant.BookingStatus.*;
 
-import com.sas.dhop.site.constant.PaymentStatus;
 import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.request.BookingRequest;
 import com.sas.dhop.site.dto.request.DancerAcceptRequest;
@@ -18,14 +17,12 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingCancelMapper;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.*;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
     private final PerformanceService performanceService;
     private final AuthenticationService authenticationService;
 
-    //TODO: Hiện tại đang thiếu các hàm liên quan tới luồng booking không chỉ định,
+    // TODO: Hiện tại đang thiếu các hàm liên quan tới luồng booking không chỉ định,
     // cần làm các hàm liên quan tới apply danh sách và get danh sach đó
 
     // Booking is only for the dancer, the booker wants
@@ -56,10 +53,11 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingResponse createBookingRequestForDancer(DancerBookingRequest request) {
         checkDancerBookingConflict(request);
-        return BookingResponse.mapToBookingResponse(bookingRepository.save(buildDancerBooking(request)), new ArrayList<>());
+        return BookingResponse.mapToBookingResponse(
+                bookingRepository.save(buildDancerBooking(request)), new ArrayList<>());
     }
 
-    //TODO: Cần chỉnh sửa service liên quan đến tạo booking request của biên đạo,
+    // TODO: Cần chỉnh sửa service liên quan đến tạo booking request của biên đạo,
     // xử lý các xung đột về mặt thời gian có trùng nhau hay không,
     // hàm để xử lý thông tin tiến độ làm việc trong phần chi tiết của booking dối với biên đạo.
     @Override
@@ -180,7 +178,6 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(booking, new ArrayList<>());
     }
 
-
     @Override
     @Transactional
     public BookingResponse userSentPayment(EndWorkRequest request) {
@@ -197,10 +194,8 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(workingStatus);
         booking = bookingRepository.save(booking);
 
-
         return BookingResponse.mapToBookingResponse(booking, new ArrayList<>());
     }
-
 
     @Override
     public BookingResponse getBookingDetail(int bookingId) {
@@ -235,10 +230,10 @@ public class BookingServiceImpl implements BookingService {
         return bookingCancelMapper.mapToBookingCancelResponse(booking);
     }
 
-
     @Override
     public BookingResponse completeWork(int bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
+        Booking booking = bookingRepository
+                .findById(bookingId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         if (!booking.getStatus().getStatusName().equals(BOOKING_WORKING_DONE)) {
@@ -252,10 +247,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponse dancerAcceptBooking(Integer bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
+        Booking booking = bookingRepository
+                .findById(bookingId)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
-        if(!booking.getStatus().getStatusName().equals(BOOKING_SENT_IMAGE)){
+        if (!booking.getStatus().getStatusName().equals(BOOKING_SENT_IMAGE)) {
             throw new BusinessException(ErrorConstant.BOOKING_NOT_PAY);
         }
 
@@ -321,21 +317,24 @@ public class BookingServiceImpl implements BookingService {
 
         if (isUser) {
             return bookingRepository.findAllByCustomer(user).stream()
-                    .map(booking -> BookingResponse.mapToBookingResponse(booking, performanceService.getPerformanceByBookingId(booking.getId())))
+                    .map(booking -> BookingResponse.mapToBookingResponse(
+                            booking, performanceService.getPerformanceByBookingId(booking.getId())))
                     .toList();
         } else if (isDancer) {
             Dancer dancer = dancerRepository
                     .findByUser(user)
                     .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_DANCER));
             return bookingRepository.findAllByDancer(dancer).stream()
-                    .map(booking -> BookingResponse.mapToBookingResponse(booking, performanceService.getPerformanceByBookingId(booking.getId())))
+                    .map(booking -> BookingResponse.mapToBookingResponse(
+                            booking, performanceService.getPerformanceByBookingId(booking.getId())))
                     .toList();
         } else if (isChoreography) {
             Choreography choreography = choreographyRepository
                     .findByUser(user)
                     .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_FOUND_CHOREOGRAPHY));
             return bookingRepository.findAllByChoreography(choreography).stream()
-                    .map(booking -> BookingResponse.mapToBookingResponse(booking, performanceService.getPerformanceByBookingId(booking.getId())))
+                    .map(booking -> BookingResponse.mapToBookingResponse(
+                            booking, performanceService.getPerformanceByBookingId(booking.getId())))
                     .toList();
         } else {
             return bookingRepository.findAll().stream()
@@ -407,9 +406,9 @@ public class BookingServiceImpl implements BookingService {
 
     // Check price after original have commission
     private BigDecimal calculateCommissionPrice(BigDecimal price) {
-//        if (price.compareTo(new BigDecimal("500000")) < 0) {
-//            throw new BusinessException(ErrorConstant.INVALID_MINIMUM_PRICE);
-//        }
+        //        if (price.compareTo(new BigDecimal("500000")) < 0) {
+        //            throw new BusinessException(ErrorConstant.INVALID_MINIMUM_PRICE);
+        //        }
 
         if (price.compareTo(new BigDecimal("500000")) >= 0 && price.compareTo(new BigDecimal("1000000")) < 0) {
             // Phí hoa hồng 20%

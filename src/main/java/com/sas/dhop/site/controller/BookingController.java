@@ -10,9 +10,7 @@ import com.sas.dhop.site.dto.response.BookingCancelResponse;
 import com.sas.dhop.site.dto.response.BookingResponse;
 import com.sas.dhop.site.service.BookingService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -100,29 +98,29 @@ public class BookingController {
                 .build();
     }
 
-//    @PutMapping("/booking-complains/{bookingId}")
-//    public ResponseData<BookingCancelResponse> bookingComplains(@PathVariable Integer bookingId) {
-//        return ResponseData.<BookingCancelResponse>builder()
-//                .message(ResponseMessage.BOOKING_COMPLAINS_REQUEST)
-//                .data(bookingService.bookingComplains(bookingId))
-//                .build();
-//    }
+    //    @PutMapping("/booking-complains/{bookingId}")
+    //    public ResponseData<BookingCancelResponse> bookingComplains(@PathVariable Integer bookingId) {
+    //        return ResponseData.<BookingCancelResponse>builder()
+    //                .message(ResponseMessage.BOOKING_COMPLAINS_REQUEST)
+    //                .data(bookingService.bookingComplains(bookingId))
+    //                .build();
+    //    }
 
-//    @PutMapping("/booking-complains-accept/{bookingId}")
-//    public ResponseData<BookingResponse> acceptBookingComplainsProgress(@PathVariable Integer bookingId) {
-//        return ResponseData.<BookingResponse>builder()
-//                .message(ResponseMessage.BOOKING_COMPLAINS_APPLY)
-//                .data(bookingService.acceptBookingComplainsProgress(bookingId))
-//                .build();
-//    }
+    //    @PutMapping("/booking-complains-accept/{bookingId}")
+    //    public ResponseData<BookingResponse> acceptBookingComplainsProgress(@PathVariable Integer bookingId) {
+    //        return ResponseData.<BookingResponse>builder()
+    //                .message(ResponseMessage.BOOKING_COMPLAINS_APPLY)
+    //                .data(bookingService.acceptBookingComplainsProgress(bookingId))
+    //                .build();
+    //    }
 
-//    @PutMapping("/booking-complains-deny/{bookingId}")
-//    public ResponseData<BookingResponse> denyBookingComplainsProgress(@PathVariable Integer bookingId) {
-//        return ResponseData.<BookingResponse>builder()
-//                .message(ResponseMessage.BOOKING_COMPLAINS_DENY)
-//                .data(bookingService.denyBookingComplainsProgress(bookingId))
-//                .build();
-//    }
+    //    @PutMapping("/booking-complains-deny/{bookingId}")
+    //    public ResponseData<BookingResponse> denyBookingComplainsProgress(@PathVariable Integer bookingId) {
+    //        return ResponseData.<BookingResponse>builder()
+    //                .message(ResponseMessage.BOOKING_COMPLAINS_DENY)
+    //                .data(bookingService.denyBookingComplainsProgress(bookingId))
+    //                .build();
+    //    }
 
     @GetMapping("/booking")
     public ResponseData<List<BookingResponse>> getAllBookingByAuthenticatedUser() {
@@ -156,7 +154,7 @@ public class BookingController {
     }
 
     @PutMapping("/end-book/{bookingId}")
-    public ResponseData<BookingResponse> endBooking(@PathVariable("bookingId") Integer bookingId){
+    public ResponseData<BookingResponse> endBooking(@PathVariable("bookingId") Integer bookingId) {
         return ResponseData.<BookingResponse>builder()
                 .data(bookingService.endBooking(bookingId))
                 .build();

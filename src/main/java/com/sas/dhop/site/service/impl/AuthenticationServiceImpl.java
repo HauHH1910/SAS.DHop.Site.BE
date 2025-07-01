@@ -249,7 +249,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         // Chỉ bắt buộc kiểm tra khu vực nếu role là DANCER hoặc CHOREOGRAPHY
         Set<Area> workAreas = new HashSet<>();
-        boolean isDancerOrChoreo = RoleName.DANCER.equals(request.role()) || RoleName.CHOREOGRAPHY.equals(request.role());
+        boolean isDancerOrChoreo =
+                RoleName.DANCER.equals(request.role()) || RoleName.CHOREOGRAPHY.equals(request.role());
         if (isDancerOrChoreo) {
             if (request.areaIds() == null || request.areaIds().isEmpty()) {
                 throw new BusinessException(ErrorConstant.AREA_NOT_NULL);
@@ -308,7 +309,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         // Gửi OTP qua email
         String otp = oTPService.generateOTP(request.email());
-        boolean success = oTPService.sendOTPByEmail(request.email(), request.name(), otp).join();
+        boolean success =
+                oTPService.sendOTPByEmail(request.email(), request.name(), otp).join();
 
         if (!success) {
             log.error("Gửi OTP thất bại cho email [{}]", request.email());
@@ -317,7 +319,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("OTP đã được gửi tới [{}]", request.email());
     }
-
 
     @Override
     public AuthenticationResponse verifyOTPAndActiveUSer(VerifyOTPRequest request) {

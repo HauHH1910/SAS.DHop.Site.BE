@@ -13,9 +13,7 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.model.enums.StatusType;
 import com.sas.dhop.site.repository.*;
 import jakarta.transaction.Transactional;
-
 import java.util.*;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
@@ -78,27 +76,27 @@ public class ApplicationInitConfig {
                     }
 
                     if (i % 2 == 0) {
-                        User userWithRoleDancer = buildUser(userRepository, activeStatus, passwordEncoder, fakerUS, dancerRole);
+                        User userWithRoleDancer =
+                                buildUser(userRepository, activeStatus, passwordEncoder, fakerUS, dancerRole);
                         DanceType randomType = getRandomDanceType(danceTypeList);
                         buildDancer(
                                 dancerRepository,
                                 buildStatus(statusRepository, ACTIVATED_DANCER),
                                 userWithRoleDancer,
-                                randomType
-                        );
+                                randomType);
                         buildPerformance(performanceRepository, activeStatus, userWithRoleDancer);
                     }
 
                     buildUser(userRepository, activeStatus, passwordEncoder, fakerUS, userRole);
 
-                    User choreographyUser = buildUser(userRepository, activeStatus, passwordEncoder, fakerUS, choreographyRole);
+                    User choreographyUser =
+                            buildUser(userRepository, activeStatus, passwordEncoder, fakerUS, choreographyRole);
                     DanceType randomType = getRandomDanceType(danceTypeList);
                     buildChoreography(
                             choreographyRepository,
                             buildStatus(statusRepository, ACTIVATED_CHOREOGRAPHER),
                             choreographyUser,
-                            randomType
-                    );
+                            randomType);
 
                     buildArea(areaRepository, fakerVN, buildStatus(statusRepository, ACTIVATED_AREA));
                 }
@@ -113,7 +111,6 @@ public class ApplicationInitConfig {
     private DanceType getRandomDanceType(List<DanceType> danceTypes) {
         return danceTypes.get(new Random().nextInt(danceTypes.size()));
     }
-
 
     private void buildArea(AreaRepository areaRepository, Faker faker, Status status) {
         areaRepository.save(Area.builder()

@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class EndWorkRequest{
+public class EndWorkRequest {
     private Integer id;
     private MultipartFile[] multipartFiles;
 }

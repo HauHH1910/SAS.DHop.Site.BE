@@ -1,7 +1,6 @@
 package com.sas.dhop.site.repository;
 
 import com.sas.dhop.site.model.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +18,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
 
     Optional<Booking> findByBookingDate(LocalDateTime bookingDate);
 
-//    List<Booking> findAllByBookingIdAndStatus(Integer bookingId, Status status);
+    //    List<Booking> findAllByBookingIdAndStatus(Integer bookingId, Status status);
 
     List<Booking> findAllByStatus(Status status);
-
-
 }

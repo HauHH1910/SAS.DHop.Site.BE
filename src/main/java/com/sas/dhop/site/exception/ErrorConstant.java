@@ -88,7 +88,7 @@ public enum ErrorConstant {
     CAN_NOT_FEEDBACK(45, "Không thể đánh giá dịch vụ này", HttpStatus.NOT_ACCEPTABLE),
     INVALID_BOOKING(46, "Dịch vụ thuê không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
     INVALID_MINIMUM_PRICE(47, "Số tiền tối thiểu không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
-    INVALID_USER(47,"Người dùng không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
+    INVALID_USER(47, "Người dùng không hợp lệ", HttpStatus.NOT_ACCEPTABLE),
     DANCER_TEAM_SIZE_CONFLICT(48, "Xung đột về số lượng thành viên", HttpStatus.CONFLICT),
     CHOOREOGRAPHY_TIME_CONFLICT(49, "Xung đột thời gian làm việc của biên đạo", HttpStatus.CONFLICT),
     CAN_NOT_UPDATE_BOOKING(50, "Không thể cập nhập thông tin của dịch vụ", HttpStatus.FORBIDDEN),
@@ -101,10 +101,8 @@ public enum ErrorConstant {
     PAYMENT_NOT_PAY(57, "Họp đồng chưa thanh toán", HttpStatus.FORBIDDEN),
     PAYMENT_NOT_FOUND(58, "Không tìm thấy hóa đơn", HttpStatus.NOT_FOUND),
     BOOKING_NOT_PAY(55, "Hợp đồng chưa gửi biên lai", HttpStatus.FORBIDDEN),
-    COMPLAIN_NOT_FOUND(59,"Không tìm thấy khiếu nại ", HttpStatus.NOT_FOUND),
-
+    COMPLAIN_NOT_FOUND(59, "Không tìm thấy khiếu nại ", HttpStatus.NOT_FOUND),
     ;
-
 
     private final Integer code;
     private final String message;

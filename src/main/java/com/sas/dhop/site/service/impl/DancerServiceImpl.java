@@ -17,7 +17,6 @@ import com.sas.dhop.site.service.DancerService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.service.UserService;
 import com.sas.dhop.site.util.mapper.DancerMapper;
-
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
@@ -141,8 +140,10 @@ public class DancerServiceImpl implements DancerService {
                     // 1. Lọc theo khu vực (dựa trên dancers_work_area_list)
                     Integer areaId = dancersFiltersRequest.areaId();
                     if (areaId != null) {
-                        if (dancer.getAreas() == null || dancer.getAreas().isEmpty() ||
-                                dancer.getAreas().stream().noneMatch(area -> area.getId().equals(areaId))) {
+                        if (dancer.getAreas() == null
+                                || dancer.getAreas().isEmpty()
+                                || dancer.getAreas().stream()
+                                        .noneMatch(area -> area.getId().equals(areaId))) {
                             return false;
                         }
                     }
@@ -173,7 +174,8 @@ public class DancerServiceImpl implements DancerService {
                     // 4. Lọc theo thể loại nhảy (ít nhất 1 thể loại trùng)
                     List<Integer> requestedDanceTypeIds = dancersFiltersRequest.danceTypeId();
                     if (requestedDanceTypeIds != null && !requestedDanceTypeIds.isEmpty()) {
-                        if (dancer.getDanceTypes() == null || dancer.getDanceTypes().isEmpty()) {
+                        if (dancer.getDanceTypes() == null
+                                || dancer.getDanceTypes().isEmpty()) {
                             return false;
                         }
 
@@ -192,7 +194,8 @@ public class DancerServiceImpl implements DancerService {
         return filtered.stream()
                 .map(dancer -> new DancersFiltersResponse(
                         dancer.getAreas() != null && !dancer.getAreas().isEmpty()
-                                ? dancer.getAreas().iterator().next().getId() : null,
+                                ? dancer.getAreas().iterator().next().getId()
+                                : null,
                         dancer.getDanceTypes().stream().map(DanceType::getId).toList(),
                         dancer.getPrice(),
                         dancer.getTeamSize(),
@@ -202,12 +205,9 @@ public class DancerServiceImpl implements DancerService {
                         dancer.getYearExperience() != null ? dancer.getYearExperience() : 0, // ✅ fix null
                         dancer.getStatus() != null ? dancer.getStatus().getId() : null,
                         dancer.getId(),
-                        dancer.getUser().getPhone()
-                ))
-
+                        dancer.getUser().getPhone()))
                 .toList();
     }
-
 
     @Override
     public DancerResponse getDancerBySubscriptionStatus(Integer id) {
