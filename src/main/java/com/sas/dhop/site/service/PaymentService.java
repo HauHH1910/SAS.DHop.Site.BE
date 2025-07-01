@@ -10,7 +10,7 @@ public interface PaymentService {
 
     ObjectNode commissionPayment(CommissionPaymentRequest request);
 
-    String createPaymentLink(CreatePaymentRequest request);
+    String createPaymentLinkForBuyingSubscription(CreatePaymentRequest request);
 
     ObjectNode getOrderByID(Long orderId);
 
@@ -20,5 +20,5 @@ public interface PaymentService {
 
     Payment findPayment(Long orderCode);
 
-    Payment saveCommissionPayment(String status, Long orderCode) throws Exception;
+    Payment savePayment(String status, Long orderCode) throws Exception;
 }

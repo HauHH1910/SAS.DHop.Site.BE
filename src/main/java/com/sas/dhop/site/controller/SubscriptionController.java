@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,6 +26,7 @@ public class SubscriptionController {
     private final UserSubscriptionService userSubscriptionService;
 
     @GetMapping
+    @PreAuthorize("!hasRole('USER')")
     public ResponseData<List<SubscriptionResponse>> getSubscription() {
         return ResponseData.<List<SubscriptionResponse>>builder()
                 .data(subscriptionService.getAllSubscription())

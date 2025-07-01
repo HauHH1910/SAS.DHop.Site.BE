@@ -11,9 +11,11 @@ import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.*;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -100,13 +102,20 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
 
     @Override
     public UserSubscriptionResponse buySubscription(Integer id) {
+        boolean isUser = authenticationService.authenticationChecking(RolePrefix.USER_PREFIX);
+
+        if (isUser) {
+            throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
+        }
         Subscription subscription = subscriptionRepository
                 .findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND));
 
         Status status =
                 statusService.findStatusOrCreated(subscription.getStatus().getStatusName());
+
         User user = userService.getLoginUser();
+
         UserSubscription userSubscription = UserSubscription.builder()
                 .user(user)
                 .subscription(subscription)
@@ -117,7 +126,7 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
 
         userSubscriptionRepository.save(userSubscription);
 
-        String paymentLink = paymentService.createPaymentLink(new CreatePaymentRequest(
+        String paymentLink = paymentService.createPaymentLinkForBuyingSubscription(new CreatePaymentRequest(
                 subscription.getName(),
                 "Mua gói dịch vụ",
                 subscription.getPrice().intValue()));
@@ -139,7 +148,8 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
     }
 
     @Override
-    public void updateSubscriptionStatus() {}
+    public void updateSubscriptionStatus() {
+    }
 
     @Override
     public UserSubscription findUserSubscriptionByUser(User user) {
