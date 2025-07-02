@@ -94,8 +94,8 @@ public class PaymentServiceImpl implements PaymentService {
                     .description(request.description())
                     .amount(request.price())
                     .item(item)
-                    .returnUrl("http://localhost:3000/subscription-status")
-                    .cancelUrl("http://localhost:3000/subscription-status")
+                    .returnUrl("https://dhop-site.vercel.app/subscription-status")
+                    .cancelUrl("https://dhop-site.vercel.app//subscription-status")
                     .build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);
