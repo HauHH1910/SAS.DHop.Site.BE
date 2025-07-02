@@ -64,7 +64,7 @@ public class SecurityConfig {
 
         configuration.setAllowCredentials(true);
 
-        configuration.setAllowedOrigins(Arrays.asList("https://dhop-site.vercel.app/", "http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("https://dhop-site.vercel.app", "http://localhost:3000"));
         configuration.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.ORIGIN, HttpHeaders.CONTENT_TYPE, HttpHeaders.ACCEPT, HttpHeaders.AUTHORIZATION));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH"));

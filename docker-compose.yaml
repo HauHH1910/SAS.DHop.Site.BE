@@ -2,6 +2,6 @@ services:
   be:
     env_file:
       - .env
-    image: hauhh/sas.dhop.site.be:v1.0
+    image: hauhh/sas.dhop.site.be
     ports:
       - "8080:8080"
