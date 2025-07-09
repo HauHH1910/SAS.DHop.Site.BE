@@ -6,9 +6,12 @@ import com.sas.dhop.site.dto.request.DancerDashboardRequest;
 import com.sas.dhop.site.dto.response.AdminDashboardResponse;
 import com.sas.dhop.site.dto.response.ChoreographerDashboardResponse;
 import com.sas.dhop.site.dto.response.DancerDashboardResponse;
+import com.sas.dhop.site.model.Status;
+
+import java.util.List;
 
 public interface DashboardService {
-    AdminDashboardResponse getAdminDashboard(AdminDashboardRequest request);
+    List<AdminDashboardResponse> getAdminDashboard(String statusName);
 
     DancerDashboardResponse getDancerDashboard(DancerDashboardRequest request);
 

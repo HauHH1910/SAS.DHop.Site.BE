@@ -13,4 +13,5 @@ public interface ChoreographyRepository
     List<Choreography> findByStatus(Status status);
 
     Optional<Choreography> findByUser(User user);
+
 }
