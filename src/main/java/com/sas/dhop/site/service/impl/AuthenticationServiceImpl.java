@@ -351,6 +351,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 });
     }
 
+    @Override
+    public UserResponse getUserInfo() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository
+                .findByEmail(email)
+                .map(userMapper::mapToUserResponse)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
+    }
+
     private ExchangeTokenResponse getTokenResponse(String code) {
         return identityClient.exchangeToken(ExchangeTokenRequest.builder()
                 .code(code)
