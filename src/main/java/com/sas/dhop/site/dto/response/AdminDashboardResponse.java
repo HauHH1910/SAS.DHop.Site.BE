@@ -8,7 +8,7 @@ public record AdminDashboardResponse(
         Long totalDancers,
         Long totalChoreographers,
         Long totalBookings,
-        BigDecimal totalRevenue,
-        List<BookingResponse> recentBookings,
-        List<DancerResponse> topDancers,
-        List<ChoreographerResponse> topChoreographers) {}
+        BigDecimal totalRevenue
+
+
+) {}

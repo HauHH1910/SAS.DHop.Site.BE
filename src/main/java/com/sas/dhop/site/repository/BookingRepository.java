@@ -28,5 +28,5 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
     long countBookingByDancerAndBookingDateBetween(
             Dancer dancer, LocalDateTime bookingDateAfter, LocalDateTime bookingDateBefore);
 
-    List<Booking> findAllByStatus(Status status);
+    List<Booking> findAllByStatus(Optional<Status> status);
 }
