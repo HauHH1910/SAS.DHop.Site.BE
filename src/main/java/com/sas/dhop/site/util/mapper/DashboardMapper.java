@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public interface DashboardMapper {
 
 
-     AdminDashboardResponse toAdminDashboardResponse(
+     OverviewStatisticsResponse toAdminDashboardResponse(
              Long totalUsers,
              Long totalDancers,
              Long totalChoreographers,

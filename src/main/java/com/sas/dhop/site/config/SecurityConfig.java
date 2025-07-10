@@ -1,6 +1,7 @@
 package com.sas.dhop.site.config;
 
 import java.util.Arrays;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,13 +31,16 @@ public class SecurityConfig {
     private final CustomJwtDecoder customJwtDecoder;
 
     private final String[] PUBLIC_ENDPOINTS = {
-        "/auth/**", "/users", "/dance-type", "/ws/**", "/area/getAllArea/", "/swagger-ui/**", "/v3/api-docs*/**"
+            "/auth/**", "/users", "/dance-type", "/ws/**", "/area/getAllArea/", "/swagger-ui/**", "/v3/api-docs*/**"
     };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(requests -> requests.requestMatchers(PUBLIC_ENDPOINTS)
+        httpSecurity.authorizeHttpRequests(requests -> requests
+                .requestMatchers(PUBLIC_ENDPOINTS)
                 .permitAll()
+                .requestMatchers("/dashboard/**")
+                .hasAnyAuthority("ROLE_ADMIN")
                 .anyRequest()
                 .authenticated());
         httpSecurity.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));

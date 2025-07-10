@@ -1,25 +1,24 @@
 package com.sas.dhop.site.service.impl;
+
+import com.sas.dhop.site.constant.PaymentStatus;
 import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.request.ChoreographerDashboardRequest;
 import com.sas.dhop.site.dto.request.DancerDashboardRequest;
 import com.sas.dhop.site.dto.response.*;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
-import com.sas.dhop.site.model.*;
+import com.sas.dhop.site.model.BookingFeedback;
+import com.sas.dhop.site.model.Payment;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.AuthenticationService;
-import com.sas.dhop.site.service.BookingFeedbackService;
 import com.sas.dhop.site.service.DashboardService;
-import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.util.mapper.DashboardMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
-
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Service
@@ -32,66 +31,40 @@ public class DashboardServiceImpl implements DashboardService {
     private final BookingRepository bookingRepository;
     private final AuthenticationService authenticationService;
     private final StatusRepository statusRepository;
-//    private final UserSubscriptionRepository userSubscriptionRepository;
-//    private final BookingFeedbackService bookingFeedbackService;
+    private final UserSubscriptionRepository userSubscriptionRepository;
     private final DashboardMapper dashboardMapper;
+    private final PaymentRepository paymentRepository;
+    private final BookingFeedbackRepository bookingFeedbackRepository;
 
     @Override
-    public List<AdminDashboardResponse> getAdminDashboard(String statusName) {
-
-
+    public OverviewStatisticsResponse overviewStatistics() {
         boolean isAdmin = authenticationService.authenticationChecking(RolePrefix.ADMIN_PREFIX);
-
         if (!isAdmin) {
-            throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
+            throw new BusinessException(ErrorConstant.UNAUTHENTICATED);
         }
 
-        // Tổng số entity
-        Long totalUsers = userRepository.count();
-        Long totalDancers = dancerRepository.count();
-        Long totalChoreographers = choreographyRepository.count();
-        Long totalBookings = bookingRepository.count();
+        long totalUser = userRepository.count();
+        long totalBookings = bookingRepository.count();
 
+        AtomicInteger totalRevenue = new AtomicInteger();
 
-        // Lọc booking theo status người dùng truyền lên
-        List<Booking> bookingByStatus;
-        Optional<Status> status = null;
-        if (statusName != null && !statusName.isBlank()) {
-            status = statusRepository.findByStatusName(statusName);
-            if (status == null){
-                throw new BusinessException(ErrorConstant.STATUS_NOT_FOUND);
-            }
-            bookingByStatus = bookingRepository.findAllByStatus(status);
-        } else {
-            bookingByStatus = bookingRepository.findAll();
-        }
+        List<Payment> payments = paymentRepository.findAll();
 
+        payments.stream().
+                filter(payment -> payment.getStatus().equals(PaymentStatus.PAID))
+                .forEach(payment -> {
+                    totalRevenue.addAndGet(payment.getAmount());
+                });
 
-        // Tính tổng doanh thu theo status
-        BigDecimal totalRevenue = bookingByStatus.stream()
-                .map(Booking::getPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        List<BookingFeedback> feedbacks = bookingFeedbackRepository.findAll();
 
-        // (Optional) Nếu bạn muốn lấy danh sách đã sắp xếp theo ngày tạo:
-        Sort sortAsc = Sort.by(Sort.Direction.ASC, "createdAt");
-        Sort sortDesc = Sort.by(Sort.Direction.DESC, "createdAt");
+        long bookingFeedbackRating = (long) feedbacks.stream()
+                .mapToInt(BookingFeedback::getRating)
+                .average()
+                .orElse(0.0);
 
-        List<Booking> sortedBookingsAsc = bookingRepository.findAll(sortAsc);
-        List<Booking> sortedBookingsDesc = bookingRepository.findAll(sortDesc);
-        List<User> usersByDateAsc = userRepository.findAll(sortAsc);
-        List<User> usersByDateDesc = userRepository.findAll(sortDesc);
-
-        // Có thể xử lý thêm: Top 5 gần nhất, biểu đồ tăng trưởng,... tại đây nếu muốn
-
-
-        // Trả kết quả
-        return List.of(dashboardMapper.toAdminDashboardResponse(
-                totalUsers,
-                totalDancers,
-                totalChoreographers,
-                totalBookings,
-                totalRevenue
-        ));
+        return new OverviewStatisticsResponse
+                (totalUser, totalBookings, BigDecimal.valueOf(totalRevenue.get()), bookingFeedbackRating);
     }
 
 
