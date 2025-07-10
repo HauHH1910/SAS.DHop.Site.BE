@@ -67,6 +67,10 @@ public class DashboardServiceImpl implements DashboardService {
                 (totalUser, totalBookings, BigDecimal.valueOf(totalRevenue.get()), bookingFeedbackRating);
     }
 
+    @Override
+    public List<Object> revenueAndUserGrowth() {
+        return null;
+    }
 
     @Override
     public DancerDashboardResponse getDancerDashboard(DancerDashboardRequest request) {
