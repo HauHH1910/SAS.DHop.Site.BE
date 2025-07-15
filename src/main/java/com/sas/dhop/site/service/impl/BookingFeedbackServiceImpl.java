@@ -71,7 +71,8 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
                 .findById(bookingFeebackRequest.bookingId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
-        if (!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_ACCEPTED)) {
+        if (!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_ACCEPTED)
+                && !booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_HAD_FEED_BACK)) {
             throw new BusinessException(ErrorConstant.CAN_NOT_FEEDBACK);
         }
         // Take customer
@@ -97,6 +98,10 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
                 .build();
 
         bookingFeedback = bookingFeedbackRepository.save(bookingFeedback);
+
+        booking.setStatus(statusService.findStatusOrCreated(BookingStatus.BOOKING_HAD_FEED_BACK));
+
+        bookingRepository.save(booking);
 
         return bookingFeebackMapper.mapToFeedbackResponse(bookingFeedback);
     }
