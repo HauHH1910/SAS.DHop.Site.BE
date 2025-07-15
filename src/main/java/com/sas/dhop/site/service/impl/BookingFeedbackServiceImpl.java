@@ -12,8 +12,10 @@ import com.sas.dhop.site.repository.ChoreographyRepository;
 import com.sas.dhop.site.repository.DancerRepository;
 import com.sas.dhop.site.service.*;
 import com.sas.dhop.site.util.mapper.BookingFeebackMapper;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -65,13 +67,13 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
 
     @Override
     public BookingFeedbackResponse createBookingFeedback(BookingFeedbackRequest bookingFeebackRequest) {
-
-        checkingBookingStatus(bookingFeebackRequest.bookingId());
-
         Booking booking = bookingRepository
                 .findById(bookingFeebackRequest.bookingId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
+        if (!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_COMPLETED)) {
+            throw new BusinessException(ErrorConstant.CAN_NOT_FEEDBACK);
+        }
         // Take customer
         User fromUser = userService.getLoginUser();
 
@@ -101,9 +103,16 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
 
     @Override
     public BookingFeedbackResponse getBookingFeedbackByBookingId(Integer bookingId) {
-        checkingBookingStatus(bookingId);
+        Booking booking = bookingRepository
+                .findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
-        bookingRepository.findById(bookingId).orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+        if (!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_ACCEPTED)) {
+            throw new BusinessException(ErrorConstant.CAN_NOT_FEEDBACK);
+        }
+
+        bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         BookingFeedback feedback = bookingFeedbackRepository.findAll().stream()
                 .filter(f -> f.getBooking().getId().equals(bookingId))
@@ -111,16 +120,5 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         return bookingFeebackMapper.mapToFeedbackResponse(feedback);
-    }
-
-    // Check valid booking status to review
-    private void checkingBookingStatus(Integer bookingId) {
-        Booking booking = bookingRepository
-                .findById(bookingId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
-
-        if (!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_COMPLETED)) {
-            throw new BusinessException(ErrorConstant.CAN_NOT_FEEDBACK);
-        }
     }
 }
