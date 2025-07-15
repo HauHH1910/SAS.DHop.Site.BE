@@ -82,4 +82,5 @@ public class ResponseMessage {
     public static final String DELETE_PERFORMANCE = "Xóa bằng chứng thành công";
     public static final String GET_BOOKING_DETAILS = "Lấy thông tin chi tiết của dịch vụ thuê thành công";
     public static final String GET_BOOKING_STATISTICS = "Lấy thống kê dịch vụ thuê thành công";
+    public static final String GET_USER_MANAGEMENT = "Lấy thông tin quản lý người dùng thành công";
 }

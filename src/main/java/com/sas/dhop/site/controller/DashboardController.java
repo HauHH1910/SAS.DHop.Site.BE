@@ -5,6 +5,7 @@ import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.response.BookingDetailResponse;
 import com.sas.dhop.site.dto.response.BookingStatisticsResponse;
 import com.sas.dhop.site.dto.response.OverviewStatisticsResponse;
+import com.sas.dhop.site.dto.response.UserResponse;
 import com.sas.dhop.site.service.DashboardService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -59,5 +60,12 @@ public class DashboardController {
         return ResponseData.ok(
                 dashboardService.getBookingDetails(statusName),
                 ResponseMessage.GET_BOOKING_DETAILS);
+    }
+
+    @GetMapping("/user-management")
+    public ResponseData<List<UserResponse>> userManagement() {
+        return ResponseData.ok(
+                dashboardService.userManagement(),
+                ResponseMessage.GET_USER_MANAGEMENT);
     }
 }

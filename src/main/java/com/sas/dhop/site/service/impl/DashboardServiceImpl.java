@@ -7,7 +7,9 @@ import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.Payment;
+import com.sas.dhop.site.model.Role;
 import com.sas.dhop.site.model.Status;
+import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.AuthenticationService;
 import com.sas.dhop.site.service.DashboardService;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.sas.dhop.site.service.StatusService;
+import com.sas.dhop.site.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +47,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final PaymentRepository paymentRepository;
     private final BookingFeedbackRepository bookingFeedbackRepository;
     private final StatusService statusService;
+    private final UserMapper userMapper;
 
     @Override
     public List<BookingDetailResponse> getBookingDetails(String bookingStatus) {
@@ -88,6 +92,19 @@ public class DashboardServiceImpl implements DashboardService {
 
         return new OverviewStatisticsResponse(
                 totalUser, totalBookings, BigDecimal.valueOf(totalRevenue.get()), totalRating);
+    }
+
+    @Override
+    public List<UserResponse> userManagement() {
+        return userRepository.findAll()
+                .stream()
+                .filter(user -> !user.getRoles()
+                        .stream()
+                        .map(Role::getName)
+                        .collect(Collectors.toSet())
+                        .contains(RoleName.ADMIN))
+                .map(userMapper::mapToUserResponse)
+                .toList();
     }
 
     @Override
@@ -248,8 +265,6 @@ public class DashboardServiceImpl implements DashboardService {
 
     private List<BookingStatisticsResponse> getYearlyBookingStats(LocalDateTime date) {
         int year = date.getYear();
-        LocalDate startOfYear = LocalDate.of(year, 1, 1);
-        LocalDate endOfYear = LocalDate.of(year, 12, 31);
 
         // Get monthly totals
         List<Object[]> bookingsCountByMonth = bookingRepository.countBookingsByMonthInYear(year);
