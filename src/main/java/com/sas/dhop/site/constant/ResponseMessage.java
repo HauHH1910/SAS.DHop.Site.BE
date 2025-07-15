@@ -69,7 +69,6 @@ public class ResponseMessage {
     public static final String FILTERS_CHOREOGRAPHERS_COMPLETE = "Lọc biên đạo theo yêu cầu thành công";
     public static final String GET_DASHBOARD_FOR_ADMIN = "Lấy thống kê cho quản trị viên thành công";
 
-
     public static final String DELETE_ROOM = "Xóa phòng thành công";
     public static final String OTP_RESET_PASSWORD = "Gửi OTP đặt lại mật khẩu thành công";
     public static final String UPLOAD_IMAGE = "Đăng ảnh thành công";
@@ -81,4 +80,7 @@ public class ResponseMessage {
     public static final String GET_ALL_PERFORMANCE_BELONG_TO_CURRENT_USER =
             "Lấy bằng chứng thuộc về người dùng hịện tại";
     public static final String DELETE_PERFORMANCE = "Xóa bằng chứng thành công";
+    public static final String GET_BOOKING_DETAILS = "Lấy thông tin chi tiết của dịch vụ thuê thành công";
+    public static final String GET_BOOKING_STATISTICS = "Lấy thống kê dịch vụ thuê thành công";
+    public static final String GET_USER_MANAGEMENT = "Lấy thông tin quản lý người dùng thành công";
 }

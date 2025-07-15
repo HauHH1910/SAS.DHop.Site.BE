@@ -4,6 +4,7 @@ import com.sas.dhop.site.dto.request.ChoreographerFiltersRequest;
 import com.sas.dhop.site.dto.request.ChoreographerRequest;
 import com.sas.dhop.site.dto.response.ChoreographerFiltersResponse;
 import com.sas.dhop.site.dto.response.ChoreographerResponse;
+
 import java.util.List;
 
 public interface ChoreographerService {
@@ -16,8 +17,7 @@ public interface ChoreographerService {
 
     List<ChoreographerResponse> getAllChoreography();
 
-    public List<ChoreographerFiltersResponse> getAllChoreographersFilters(
-            ChoreographerFiltersRequest choreographerFiltersRequest);
+    List<ChoreographerFiltersResponse> getAllChoreographersFilters(ChoreographerFiltersRequest choreographerFiltersRequest);
 
     ChoreographerResponse getChoreographerBySubscriptionStatus(Integer id);
 

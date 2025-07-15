@@ -31,11 +31,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final ObjectMapper objectMapper;
 
-    @Value("${sas.payos.return-url}")
-    private String returnUrl;
-
-    @Value("${sas.payos.cancel-url}")
-    private String cancelUrl;
+    @Value("${sas.payos.url}")
+    private String url;
 
     @Override
     public ObjectNode commissionPayment(CommissionPaymentRequest request) {
@@ -56,8 +53,8 @@ public class PaymentServiceImpl implements PaymentService {
                     .description(request.description())
                     .amount(request.price())
                     .item(item)
-                    .returnUrl(returnUrl)
-                    .cancelUrl(cancelUrl)
+                    .returnUrl(url + "/payment-success")
+                    .cancelUrl(url + "/payment-error")
                     .build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);
@@ -94,8 +91,8 @@ public class PaymentServiceImpl implements PaymentService {
                     .description(request.description())
                     .amount(request.price())
                     .item(item)
-                    .returnUrl("https://dhop-site.vercel.app/subscription-status")
-                    .cancelUrl("https://dhop-site.vercel.app//subscription-status")
+                    .returnUrl(url + "/subscription-status")
+                    .cancelUrl(url + "/subscription-status")
                     .build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);

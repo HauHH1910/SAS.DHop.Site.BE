@@ -65,13 +65,14 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
 
     @Override
     public BookingFeedbackResponse createBookingFeedback(BookingFeedbackRequest bookingFeebackRequest) {
-
-        checkingBookingStatus(bookingFeebackRequest.bookingId());
-
         Booking booking = bookingRepository
                 .findById(bookingFeebackRequest.bookingId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
+        if (!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_ACCEPTED)
+                && !booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_HAD_FEED_BACK)) {
+            throw new BusinessException(ErrorConstant.CAN_NOT_FEEDBACK);
+        }
         // Take customer
         User fromUser = userService.getLoginUser();
 
@@ -96,12 +97,22 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
 
         bookingFeedback = bookingFeedbackRepository.save(bookingFeedback);
 
+        booking.setStatus(statusService.findStatusOrCreated(BookingStatus.BOOKING_HAD_FEED_BACK));
+
+        bookingRepository.save(booking);
+
         return bookingFeebackMapper.mapToFeedbackResponse(bookingFeedback);
     }
 
     @Override
     public BookingFeedbackResponse getBookingFeedbackByBookingId(Integer bookingId) {
-        checkingBookingStatus(bookingId);
+        Booking booking = bookingRepository
+                .findById(bookingId)
+                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
+
+        if (!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_HAD_FEED_BACK)) {
+            throw new BusinessException(ErrorConstant.CAN_NOT_FEEDBACK);
+        }
 
         bookingRepository.findById(bookingId).orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
@@ -111,16 +122,5 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         return bookingFeebackMapper.mapToFeedbackResponse(feedback);
-    }
-
-    // Check valid booking status to review
-    private void checkingBookingStatus(Integer bookingId) {
-        Booking booking = bookingRepository
-                .findById(bookingId)
-                .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
-
-        if (!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_COMPLETED)) {
-            throw new BusinessException(ErrorConstant.CAN_NOT_FEEDBACK);
-        }
     }
 }

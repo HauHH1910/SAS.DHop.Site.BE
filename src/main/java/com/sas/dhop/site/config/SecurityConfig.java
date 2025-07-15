@@ -37,6 +37,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(requests -> requests.requestMatchers(PUBLIC_ENDPOINTS)
                 .permitAll()
+                .requestMatchers("/dashboard/**")
+                .hasAnyAuthority("ROLE_ADMIN")
                 .anyRequest()
                 .authenticated());
         httpSecurity.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));

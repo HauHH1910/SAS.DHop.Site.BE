@@ -103,7 +103,8 @@ public enum ErrorConstant {
     PAYMENT_NOT_FOUND(58, "Không tìm thấy hóa đơn", HttpStatus.NOT_FOUND),
     BOOKING_NOT_PAY(55, "Hợp đồng chưa gửi biên lai", HttpStatus.FORBIDDEN),
     COMPLAIN_NOT_FOUND(59, "Không tìm thấy khiếu nại ", HttpStatus.NOT_FOUND),
-    BOOKING_CAN_NOT_START(60, "Hợp đồng không thể bắt đầu", HttpStatus.FORBIDDEN);
+    BOOKING_CAN_NOT_START(60, "Hợp đồng không thể bắt đầu", HttpStatus.FORBIDDEN),
+    INVALID_DATE_RANGE(61, "Khoảng thời gian không hợp lệ", HttpStatus.BAD_REQUEST);
 
     private final Integer code;
     private final String message;
