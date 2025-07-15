@@ -1,19 +1,13 @@
 package com.sas.dhop.site.service;
 
-import com.sas.dhop.site.dto.request.ChoreographerDashboardRequest;
-import com.sas.dhop.site.dto.request.DancerDashboardRequest;
+import com.sas.dhop.site.dto.response.BookingStatisticsResponse;
 import com.sas.dhop.site.dto.response.OverviewStatisticsResponse;
-import com.sas.dhop.site.dto.response.ChoreographerDashboardResponse;
-import com.sas.dhop.site.dto.response.DancerDashboardResponse;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface DashboardService {
     OverviewStatisticsResponse overviewStatistics();
 
-    List<Object> revenueAndUserGrowth();
-
-    DancerDashboardResponse getDancerDashboard(DancerDashboardRequest request);
-
-    ChoreographerDashboardResponse getChoreographerDashboard(ChoreographerDashboardRequest request);
+    List<BookingStatisticsResponse> getBookingStatistics(
+            String timeFrame, LocalDateTime date, LocalDateTime startDate, LocalDateTime endDate);
 }

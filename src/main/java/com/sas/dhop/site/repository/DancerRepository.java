@@ -14,7 +14,4 @@ public interface DancerRepository extends JpaRepository<Dancer, Integer>, JpaSpe
     Optional<Dancer> findByUser(User user);
 
     List<Dancer> findByStatus(Status status);
-
-    List<Dancer> findTop5ByOrderByPriceDesc();
-
 }

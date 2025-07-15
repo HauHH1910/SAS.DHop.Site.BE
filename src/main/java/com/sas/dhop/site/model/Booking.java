@@ -16,9 +16,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "booking")
-public class
-
-Booking extends AbstractEntity<Integer> implements Serializable {
+public class Booking extends AbstractEntity<Integer> implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)

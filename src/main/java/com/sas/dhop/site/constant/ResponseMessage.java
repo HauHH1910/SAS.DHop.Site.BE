@@ -69,7 +69,6 @@ public class ResponseMessage {
     public static final String FILTERS_CHOREOGRAPHERS_COMPLETE = "Lọc biên đạo theo yêu cầu thành công";
     public static final String GET_DASHBOARD_FOR_ADMIN = "Lấy thống kê cho quản trị viên thành công";
 
-
     public static final String DELETE_ROOM = "Xóa phòng thành công";
     public static final String OTP_RESET_PASSWORD = "Gửi OTP đặt lại mật khẩu thành công";
     public static final String UPLOAD_IMAGE = "Đăng ảnh thành công";

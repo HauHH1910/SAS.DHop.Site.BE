@@ -5,16 +5,11 @@ import com.sas.dhop.site.dto.request.UpdateUserRequest;
 import com.sas.dhop.site.dto.response.AreaResponse;
 import com.sas.dhop.site.dto.response.UserResponse;
 import com.sas.dhop.site.model.Area;
-import com.sas.dhop.site.model.DanceType;
 import com.sas.dhop.site.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -27,12 +22,7 @@ public interface UserMapper {
     @Named("mapToAreaResponse")
     default AreaResponse mapToAreaResponse(Area area) {
         if (area != null) {
-            return new AreaResponse(
-                area.getDistrict(),
-                area.getWard(),
-                area.getCity(),
-                area.getId()
-            );
+            return new AreaResponse(area.getDistrict(), area.getWard(), area.getCity(), area.getId());
         } else {
             return null;
         }
