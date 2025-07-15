@@ -71,7 +71,7 @@ public class BookingFeedbackServiceImpl implements BookingFeedbackService {
                 .findById(bookingFeebackRequest.bookingId())
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
-        if (!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_COMPLETED)) {
+        if (!booking.getStatus().getStatusName().equals(BookingStatus.BOOKING_ACCEPTED)) {
             throw new BusinessException(ErrorConstant.CAN_NOT_FEEDBACK);
         }
         // Take customer
