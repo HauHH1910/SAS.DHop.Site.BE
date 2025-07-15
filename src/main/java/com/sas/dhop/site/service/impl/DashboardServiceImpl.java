@@ -5,10 +5,13 @@ import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.response.*;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
+import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.Payment;
+import com.sas.dhop.site.model.Status;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.AuthenticationService;
 import com.sas.dhop.site.service.DashboardService;
+
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -26,6 +29,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import com.sas.dhop.site.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +43,26 @@ public class DashboardServiceImpl implements DashboardService {
     private final AuthenticationService authenticationService;
     private final PaymentRepository paymentRepository;
     private final BookingFeedbackRepository bookingFeedbackRepository;
+    private final StatusService statusService;
+
+    @Override
+    public List<BookingDetailResponse> getBookingDetails(String bookingStatus) {
+
+        if (bookingStatus != null) {
+
+            Status status = statusService.findStatusOrCreated(bookingStatus);
+
+            return bookingRepository.findAllByStatus(status)
+                    .stream()
+                    .map(BookingDetailResponse::mapToBookingDetail)
+                    .toList();
+        }
+
+        return bookingRepository.findAll()
+                .stream()
+                .map(BookingDetailResponse::mapToBookingDetail)
+                .toList();
+    }
 
     @Override
     public OverviewStatisticsResponse overviewStatistics() {

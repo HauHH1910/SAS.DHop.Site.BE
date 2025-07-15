@@ -25,7 +25,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
     long countBookingByDancerAndBookingDateBetween(
             Dancer dancer, LocalDateTime bookingDateAfter, LocalDateTime bookingDateBefore);
 
-    List<Booking> findAllByStatus(Optional<Status> status);
+    List<Booking> findAllByStatus(Status status);
 
     @Query("SELECT CAST(b.bookingDate AS date) as bookingDate, COUNT(b) as count " + "FROM Booking b "
             + "WHERE b.bookingDate BETWEEN :startDate AND :endDate "

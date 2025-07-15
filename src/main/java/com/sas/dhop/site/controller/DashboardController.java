@@ -2,13 +2,16 @@ package com.sas.dhop.site.controller;
 
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
+import com.sas.dhop.site.dto.response.BookingDetailResponse;
 import com.sas.dhop.site.dto.response.BookingStatisticsResponse;
 import com.sas.dhop.site.dto.response.OverviewStatisticsResponse;
 import com.sas.dhop.site.service.DashboardService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -48,6 +51,13 @@ public class DashboardController {
                 endDateTime);
         List<BookingStatisticsResponse> statistics =
                 dashboardService.getBookingStatistics(timeFrame, dateTime, startDateTime, endDateTime);
-        return ResponseData.ok(statistics, "Booking statistics retrieved successfully");
+        return ResponseData.ok(statistics, ResponseMessage.GET_BOOKING_STATISTICS);
+    }
+
+    @GetMapping("/booking")
+    public ResponseData<List<BookingDetailResponse>> getBookingDetails(@RequestParam(required = false) String statusName) {
+        return ResponseData.ok(
+                dashboardService.getBookingDetails(statusName),
+                ResponseMessage.GET_BOOKING_DETAILS);
     }
 }
