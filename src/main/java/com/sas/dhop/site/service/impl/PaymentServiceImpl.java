@@ -10,8 +10,10 @@ import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.Payment;
 import com.sas.dhop.site.repository.PaymentRepository;
 import com.sas.dhop.site.service.PaymentService;
+
 import java.util.Date;
 import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -96,7 +98,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);
-            paymentRepository.save(new Payment(orderCode, data.getStatus(), paymentData.getAmount()));
+            paymentRepository.save(new Payment(orderCode, PaymentStatus.PAID, paymentData.getAmount()));
 
             return data.getCheckoutUrl();
         } catch (Exception e) {
@@ -174,10 +176,10 @@ public class PaymentServiceImpl implements PaymentService {
         Payment existingPayment = paymentRepository.findByOrderCode(orderCode).orElse(null);
 
         if (existingPayment != null) {
-            existingPayment.setStatus(status);
+            existingPayment.setStatus(PaymentStatus.PAID);
             return paymentRepository.save(existingPayment);
         } else {
-            Payment newPayment = new Payment(order.getOrderCode(), status, order.getAmount());
+            Payment newPayment = new Payment(order.getOrderCode(), PaymentStatus.PAID, order.getAmount());
             return paymentRepository.save(newPayment);
         }
     }
