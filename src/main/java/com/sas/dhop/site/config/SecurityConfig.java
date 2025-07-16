@@ -1,6 +1,7 @@
 package com.sas.dhop.site.config;
 
 import java.util.Arrays;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +31,7 @@ public class SecurityConfig {
     private final CustomJwtDecoder customJwtDecoder;
 
     private final String[] PUBLIC_ENDPOINTS = {
-        "/auth/**", "/users", "/dance-type", "/ws/**", "/area/getAllArea/", "/swagger-ui/**", "/v3/api-docs*/**"
+            "/auth/**", "/users", "/dance-type", "/ws/**", "/area/getAllArea/", "/swagger-ui/**", "/v3/api-docs*/**"
     };
 
     @Bean
@@ -63,7 +64,7 @@ public class SecurityConfig {
 
         configuration.setAllowCredentials(true);
 
-        configuration.setAllowedOrigins(Arrays.asList("https://dhop-site.vercel.app", "http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("https://dhop-site.vercel.app", "https://dhop.io.vn", "http://localhost:3000"));
         configuration.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.ORIGIN, HttpHeaders.CONTENT_TYPE, HttpHeaders.ACCEPT, HttpHeaders.AUTHORIZATION));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH"));
