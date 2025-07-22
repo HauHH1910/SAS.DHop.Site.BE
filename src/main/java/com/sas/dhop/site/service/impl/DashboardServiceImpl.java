@@ -1,10 +1,12 @@
 package com.sas.dhop.site.service.impl;
 
+import com.sas.dhop.site.constant.BookingStatus;
 import com.sas.dhop.site.constant.PaymentStatus;
 import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.response.*;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
+import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.Payment;
 import com.sas.dhop.site.model.Role;
 import com.sas.dhop.site.model.Status;
@@ -14,6 +16,7 @@ import com.sas.dhop.site.service.AuthenticationService;
 import com.sas.dhop.site.service.DashboardService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.util.mapper.UserMapper;
+
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -31,6 +34,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -73,21 +77,27 @@ public class DashboardServiceImpl implements DashboardService {
         long totalUser = userRepository.count();
         long totalBookings = bookingRepository.count();
 
-        AtomicInteger totalRevenue = new AtomicInteger();
-
+        BigDecimal totalRevenue = BigDecimal.ZERO;
         List<Payment> payments = paymentRepository.findAll();
+        for (Payment payment : payments) {
+            if (payment.getStatus().equals(PaymentStatus.PAID)) {
+                totalRevenue = totalRevenue.add(BigDecimal.valueOf(payment.getAmount()));
+            }
+        }
 
-        payments.stream()
-                .filter(payment -> payment.getStatus().equals(PaymentStatus.PAID))
-                .forEach(payment -> {
-                    totalRevenue.addAndGet(payment.getAmount());
-                });
+        BigDecimal totalBookingPayments = bookingRepository.findAll().stream()
+                .filter(bookingPayment -> bookingPayment.getStatus().getStatusName().equals(BookingStatus.BOOKING_HAD_FEED_BACK))
+                .map(Booking::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalRevenueCombined = totalRevenue.add(totalBookingPayments);
 
         long totalRating = bookingFeedbackRepository.count();
 
         return new OverviewStatisticsResponse(
-                totalUser, totalBookings, BigDecimal.valueOf(totalRevenue.get()), totalRating);
+                totalUser, totalBookings, totalRevenueCombined, totalRating);
     }
+
 
     @Override
     public List<UserResponse> userManagement() {
