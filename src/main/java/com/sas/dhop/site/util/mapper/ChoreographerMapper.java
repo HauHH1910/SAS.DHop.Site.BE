@@ -4,11 +4,8 @@ import com.sas.dhop.site.dto.request.ChoreographerRequest;
 import com.sas.dhop.site.dto.response.ChoreographerResponse;
 import com.sas.dhop.site.model.Choreography;
 import com.sas.dhop.site.model.DanceType;
-
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -33,9 +30,7 @@ public interface ChoreographerMapper {
         if (danceTypes == null) {
             return List.of();
         }
-        return danceTypes.stream()
-                .map(DanceType::getType)
-                .toList();
+        return danceTypes.stream().map(DanceType::getType).toList();
     }
 
     @Mapping(target = "danceTypes", ignore = true)

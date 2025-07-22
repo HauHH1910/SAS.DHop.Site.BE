@@ -1,0 +1,15 @@
+steps:
+  # Step 1: Build the Docker image (includes building the application inside Docker)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '--no-cache', '-t', 'gcr.io/sublime-scion-464620-c5/dhop-site-be', '.']
+  
+  # Step 2: Push the container image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/sublime-scion-464620-c5/dhop-site-be']
+
+# Images to be stored in Google Container Registry
+images:
+  - 'gcr.io/sublime-scion-464620-c5/dhop-site-be'
+
+# Set a timeout for the build
+timeout: 1800s 

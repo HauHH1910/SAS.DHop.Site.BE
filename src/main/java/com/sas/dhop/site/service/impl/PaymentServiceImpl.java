@@ -96,7 +96,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);
-            paymentRepository.save(new Payment(orderCode, data.getStatus(), paymentData.getAmount()));
+            paymentRepository.save(new Payment(orderCode, PaymentStatus.PAID, paymentData.getAmount()));
 
             return data.getCheckoutUrl();
         } catch (Exception e) {
@@ -174,10 +174,10 @@ public class PaymentServiceImpl implements PaymentService {
         Payment existingPayment = paymentRepository.findByOrderCode(orderCode).orElse(null);
 
         if (existingPayment != null) {
-            existingPayment.setStatus(status);
+            existingPayment.setStatus(PaymentStatus.PAID);
             return paymentRepository.save(existingPayment);
         } else {
-            Payment newPayment = new Payment(order.getOrderCode(), status, order.getAmount());
+            Payment newPayment = new Payment(order.getOrderCode(), PaymentStatus.PAID, order.getAmount());
             return paymentRepository.save(newPayment);
         }
     }

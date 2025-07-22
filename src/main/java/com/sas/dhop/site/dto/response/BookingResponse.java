@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.DanceType;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import lombok.Builder;
 
 @Builder

@@ -113,7 +113,6 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(booking, new ArrayList<>());
     }
 
-    // accept button for dancers and choreographer
     @Override
     @Transactional
     public BookingResponse acceptBookingRequest(int bookingId, DancerAcceptRequest request) {
@@ -128,12 +127,15 @@ public class BookingServiceImpl implements BookingService {
 
         User user = userService.getLoginUser();
 
-        boolean hasRole = user.getRoles().stream()
-                .anyMatch(role ->
-                        Arrays.asList(RoleName.DANCER, RoleName.CHOREOGRAPHY).contains(role.getName()));
+        boolean hasRole = authenticationService.authenticationChecking(RolePrefix.DANCER_PREFIX)
+                || authenticationService.authenticationChecking(RolePrefix.CHOREOGRAPHY_PREFIX);
 
         if (hasRole) {
-            userSubscriptionService.addOrForceToBuySubscription(user.getId());
+            try {
+                userSubscriptionService.addOrForceToBuySubscription(user.getId());
+            } catch (org.springframework.dao.IncorrectResultSizeDataAccessException e) {
+                log.warn("Found duplicate records when checking subscription. Using default behavior.");
+            }
         }
 
         Status activateStatus = statusService.findStatusOrCreated(BOOKING_ACTIVATE);
