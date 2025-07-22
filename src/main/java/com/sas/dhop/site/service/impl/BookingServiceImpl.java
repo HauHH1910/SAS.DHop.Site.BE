@@ -49,15 +49,15 @@ public class BookingServiceImpl implements BookingService {
     // Booking is only for the dancer, the booker wants
     @Override
     @Transactional
-    public BookingResponse createBookingRequestForDancer(DancerBookingRequest request) {
+    public List<BookingResponse> createBookingRequestForDancer(DancerBookingRequest request) {
         boolean conflict = checkDancerBookingConflict(request);
 
         if (!conflict) {
             throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_START);
         }
 
-        return BookingResponse.mapToBookingResponse(
-                bookingRepository.save(buildDancerBooking(request)), new ArrayList<>());
+        return List.of(BookingResponse.mapToBookingResponse(
+                bookingRepository.save(buildDancerBooking(request)), new ArrayList<>()));
     }
 
     // TODO: Cần chỉnh sửa service liên quan đến tạo booking request của biên đạo,
