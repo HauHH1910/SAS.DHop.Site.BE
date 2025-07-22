@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mã OTP - Xác thực tài khoản</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            color: #2d3748;
+            margin-bottom: 24px;
+        }
+
+        .otp-section {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+            border: 2px solid #e2e8f0;
+        }
+
+        .otp-label {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .otp-code {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 8px;
+            margin: 16px 0;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+            border: 2px solid #667eea20;
+        }
+
+        .expiration {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .expiration-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .expiration-text {
+            color: #c53030;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .instructions {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .instructions h3 {
+            color: #22543d;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instructions ul {
+            color: #2f855a;
+            font-size: 14px;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .footer {
+            background: #f8fafc;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer p {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .security-note {
+            background: #fffbeb;
+            border: 1px solid #f6e05e;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .security-note p {
+            color: #744210;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 10px;
+                border-radius: 12px;
+            }
+
+            .header, .content, .footer {
+                padding: 20px;
+            }
+
+            .otp-section {
+                padding: 20px;
+            }
+
+            .otp-code {
+                font-size: 28px;
+                letter-spacing: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+
+    <div class="content">
+        <div class="greeting">
+            Chào <strong th:text="${name}">[Tên người dùng]</strong>,
+        </div>
+
+        <p style="color: #4a5568; font-size: 16px; margin-bottom: 20px;">
+            Chúng tôi đã nhận được yêu cầu đăng nhập vào tài khoản của bạn.
+            Vui lòng sử dụng mã OTP bên dưới để hoàn tất quá trình xác thực:
+        </p>
+
+        <div class="otp-section">
+            <div class="otp-label">Mã OTP của bạn</div>
+            <div class="otp-code" th:text="${OTP}">[Mã OTP]</div>
+        </div>
+
+        <div class="expiration">
+            <div class="expiration-text">
+                Mã có hiệu lực trong <span th:text="${OTP_EXPIRATION_MINUTES}">[Thời gian hết hạn]</span> phút
+            </div>
+        </div>
+
+        <div class="security-note">
+            <p>
+                <strong>⚠️ Lưu ý bảo mật:</strong>
+                Chúng tôi sẽ không bao giờ yêu cầu bạn cung cấp mã OTP qua điện thoại hoặc email.
+                Nếu có ai đó yêu cầu, đó có thể là hành vi lừa đảo.
+            </p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Cảm ơn bạn đã tin tưởng sử dụng dịch vụ của chúng tôi!</p>
+        <p>Nếu bạn cần hỗ trợ, vui lòng liên hệ với đội ngũ chăm sóc khách hàng.</p>
+        <p style="margin-top: 16px; font-size: 12px; color: #a0aec0;">
+            © 2025 DHop Site. All rights reserved.
+        </p>
+    </div>
+</div>
+</body>
+</html>
