@@ -11,9 +11,11 @@ import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.*;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -74,8 +76,10 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
 
                 long counted = bookingRepository.countBookingByDancerAndBookingDateBetween(
                         dancer, userSubscription.getFromDate(), userSubscription.getToDate());
-                log.info("[Add Or Force To Buy Subscription] - Mày dùng hết [{}] lần rồi nigga", counted);
-                if (!checkCurrentSubscriptionAndNumberOfBookingAccepted(userSubscription, counted)) {
+                log.info("[Add Or Force To Buy Subscription] - Mày dùng hết [{}] lần rồi", counted);
+
+                // Sửa lại điều kiện kiểm tra số booking
+                if (checkCurrentSubscriptionAndNumberOfBookingAccepted(userSubscription, counted)) {
                     log.info(
                             "[Add Or Force To Buy Subscription] - Mua gói subscription mới đi [{}] ủng hộ người nghèo",
                             userSubscription.getUser().getName());
@@ -90,7 +94,7 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
                 Subscription freeTrialSubscription =
                         subscriptionService.findOrCreateSubscription(SubscriptionPlan.FREE_TRIAL);
                 log.info(
-                        "[Add Or Force To Buy Subscription] - Cho mày dùng thử gói [{}] nha nigga",
+                        "[Add Or Force To Buy Subscription] - Cho mày dùng thử gói [{}] nha",
                         SubscriptionPlan.FREE_TRIAL);
                 userSubscription = UserSubscription.builder()
                         .user(user)
@@ -106,6 +110,7 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
                 // Continue with the process even if there was an issue creating the trial subscription
             }
         }
+
     }
 
     @Override
@@ -149,14 +154,20 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
                     case SubscriptionPlan.FREE_TRIAL -> 3;
                     case SubscriptionPlan.STANDARD_3MONTHS -> 10;
                     case SubscriptionPlan.STANDARD_MONTHLY -> 20;
-                    case SubscriptionPlan.UNLIMITED_YEARLY -> Long.MAX_VALUE;
-                    default -> throw new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND);
+                    default -> Long.MAX_VALUE;
                 };
-        return counted < maxBookings;
+
+        if (counted == 0) {
+            return false;
+        }
+
+        return counted >= maxBookings;
     }
 
+
     @Override
-    public void updateSubscriptionStatus() {}
+    public void updateSubscriptionStatus() {
+    }
 
     @Override
     public UserSubscription findUserSubscriptionByUser(User user) {
