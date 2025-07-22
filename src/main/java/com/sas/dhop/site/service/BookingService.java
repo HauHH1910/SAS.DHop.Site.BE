@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface BookingService {
 
-    BookingResponse createBookingRequestForDancer(DancerBookingRequest request);
+    List<BookingResponse> createBookingRequestForDancer(DancerBookingRequest request);
 
     BookingResponse createBookingRequestForChoreography(BookingRequest bookingRequest);
 
