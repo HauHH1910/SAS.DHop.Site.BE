@@ -11,5 +11,4 @@ public record ChoreographerResponse(
         List<String> danceTypeName,
         Integer subscriptionId,
         Integer statusId,
-        String userName) {
-}
+        String userName) {}
