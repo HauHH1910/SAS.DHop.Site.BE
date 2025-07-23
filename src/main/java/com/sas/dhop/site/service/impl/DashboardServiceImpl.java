@@ -1,7 +1,7 @@
 package com.sas.dhop.site.service.impl;
 
-import com.sas.dhop.site.constant.BookingStatus;
-import com.sas.dhop.site.constant.PaymentStatus;
+import static com.sas.dhop.site.constant.BookingStatus.*;
+
 import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.response.*;
 import com.sas.dhop.site.exception.BusinessException;
@@ -13,7 +13,6 @@ import com.sas.dhop.site.service.AuthenticationService;
 import com.sas.dhop.site.service.DashboardService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.util.mapper.UserMapper;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
@@ -25,14 +24,10 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import static com.sas.dhop.site.constant.BookingStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -73,12 +68,12 @@ public class DashboardServiceImpl implements DashboardService {
         long totalBookings = bookingRepository.count();
 
         BigDecimal totalRevenue = BigDecimal.ZERO;
-        List<Subscription> subscriptions = userSubscriptionRepository
-                .findAll().stream().map(UserSubscription::getSubscription).toList();
+        List<Subscription> subscriptions = userSubscriptionRepository.findAll().stream()
+                .map(UserSubscription::getSubscription)
+                .toList();
 
-        BigDecimal totalSubscriptionPayments = subscriptions.stream()
-                .map(Subscription::getPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalSubscriptionPayments =
+                subscriptions.stream().map(Subscription::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         totalRevenue = totalRevenue.add(totalSubscriptionPayments);
 
@@ -90,11 +85,11 @@ public class DashboardServiceImpl implements DashboardService {
                 BOOKING_IN_PROGRESS,
                 BOOKING_WORKING_DONE,
                 BOOKING_ACCEPTED,
-                BOOKING_HAD_FEED_BACK
-        );
+                BOOKING_HAD_FEED_BACK);
 
         List<Booking> validBookings = bookingRepository.findAll().stream()
-                .filter(booking -> validBookingStatuses.contains(booking.getStatus().getStatusName()))
+                .filter(booking ->
+                        validBookingStatuses.contains(booking.getStatus().getStatusName()))
                 .toList();
 
         for (Booking booking : validBookings) {
@@ -103,8 +98,7 @@ public class DashboardServiceImpl implements DashboardService {
             totalRevenue = totalRevenue.add(commissionPrice);
         }
 
-        return new OverviewStatisticsResponse(
-                totalUser, totalBookings, totalRevenue, (long) validBookings.size());
+        return new OverviewStatisticsResponse(totalUser, totalBookings, totalRevenue, (long) validBookings.size());
     }
 
     @Override

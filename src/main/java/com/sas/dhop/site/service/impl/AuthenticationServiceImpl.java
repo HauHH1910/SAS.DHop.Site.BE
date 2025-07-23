@@ -23,13 +23,11 @@ import com.sas.dhop.site.util.mapper.DancerMapper;
 import com.sas.dhop.site.util.mapper.UserMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
-
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -344,9 +342,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 && !(authentication instanceof AnonymousAuthenticationToken)
                 && authentication.isAuthenticated()
                 && authentication.getAuthorities().stream().anyMatch(authority -> {
-            log.info("User has the required role: {}", authority.getAuthority());
-            return role.equals(authority.getAuthority());
-        });
+                    log.info("User has the required role: {}", authority.getAuthority());
+                    return role.equals(authority.getAuthority());
+                });
     }
 
     @Override
@@ -357,11 +355,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
         if (isDancer) {
-            Dancer dancer = dancerRepository.findByUser(user)
+            Dancer dancer = dancerRepository
+                    .findByUser(user)
                     .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_DANCER));
-            return new
-                    UserResponse(user.getId(), user.getAvatar(), user.getName(), user.getEmail(), user.getPhone(),
-                    AreaResponse.mapToAreaResponse(user.getArea()), dancerMapper.mapToDancerResponse(dancer));
+            return new UserResponse(
+                    user.getId(),
+                    user.getAvatar(),
+                    user.getName(),
+                    user.getEmail(),
+                    user.getPhone(),
+                    AreaResponse.mapToAreaResponse(user.getArea()),
+                    dancerMapper.mapToDancerResponse(dancer));
         }
         return userMapper.mapToUserResponse(user);
     }

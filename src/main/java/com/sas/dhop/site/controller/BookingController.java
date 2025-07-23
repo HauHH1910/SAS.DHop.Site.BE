@@ -66,7 +66,8 @@ public class BookingController {
     }
 
     @PostMapping("/create-booking-for-dancers")
-    public ResponseData<List<BookingResponse>> createBookingForDancers(@RequestBody DancerBookingRequest bookingRequest) {
+    public ResponseData<List<BookingResponse>> createBookingForDancers(
+            @RequestBody DancerBookingRequest bookingRequest) {
         return ResponseData.<List<BookingResponse>>builder()
                 .message(ResponseMessage.CREATE_BOOKING)
                 .data(bookingService.createBookingRequestForDancer(bookingRequest))

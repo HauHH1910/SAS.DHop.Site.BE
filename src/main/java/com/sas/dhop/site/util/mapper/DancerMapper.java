@@ -27,6 +27,7 @@ public interface DancerMapper {
     @Mapping(target = "dancerId", source = "id")
     @Mapping(target = "dancerPhone", source = "user.phone")
     @Mapping(target = "dancerEmail", source = "user.email")
+    @Mapping(target = "avatar", source = "user.avatar")
     DancerResponse mapToDancerResponse(Dancer dancer);
 
     @Named("mapDanceTypeToId")

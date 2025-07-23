@@ -11,11 +11,9 @@ import com.sas.dhop.site.exception.ErrorConstant;
 import com.sas.dhop.site.model.*;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -110,7 +108,6 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
                 // Continue with the process even if there was an issue creating the trial subscription
             }
         }
-
     }
 
     @Override
@@ -164,10 +161,8 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
         return counted >= maxBookings;
     }
 
-
     @Override
-    public void updateSubscriptionStatus() {
-    }
+    public void updateSubscriptionStatus() {}
 
     @Override
     public UserSubscription findUserSubscriptionByUser(User user) {
