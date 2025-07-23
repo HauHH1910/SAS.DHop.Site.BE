@@ -1,9 +1,11 @@
 package com.sas.dhop.site.model;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Set;
+
 import lombok.*;
 
 @Getter
@@ -36,7 +38,8 @@ public class Dancer extends AbstractEntity<Integer> implements Serializable {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "about")
+    @Lob
+    @Column(name = "about", columnDefinition = "TEXT")
     private String about;
 
     @Column(name = "year_experience")
