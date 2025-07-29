@@ -30,7 +30,9 @@ public class SecurityConfig {
     private final CustomJwtDecoder customJwtDecoder;
 
     private final String[] PUBLIC_ENDPOINTS = {
-        "/auth/**", "/users", "/dance-type", "/ws/**", "/area/getAllArea/", "/swagger-ui/**", "/v3/api-docs*/**"
+        "/auth/**", "/users", "/dance-type", "/ws/**", "/area/getAllArea/", 
+        "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", 
+        "/v3/api-docs", "/swagger-resources/**", "/webjars/**"
     };
 
     @Bean
