@@ -1,7 +1,6 @@
 package com.sas.dhop.site.service.impl;
 
 import static com.sas.dhop.site.constant.SubscriptionPlan.*;
-import static com.sas.dhop.site.constant.SubscriptionStatus.*;
 
 import com.sas.dhop.site.constant.SubscriptionStatus;
 import com.sas.dhop.site.dto.request.SubscriptionRequest;
@@ -95,6 +94,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 subscription.setContent(FREE_TRIAL);
                 subscription.setName(FREE_TRIAL);
                 subscription.setStatus(serviceStatusOrCreated);
+                subscription.setDuration(10);
             }
 
             case STANDARD_MONTHLY -> {
@@ -102,18 +102,24 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 subscription.setContent(STANDARD_MONTHLY);
                 subscription.setName(STANDARD_MONTHLY);
                 subscription.setStatus(serviceStatusOrCreated);
+                subscription.setDuration(30);
             }
             case STANDARD_3MONTHS -> {
                 subscription.setPrice(BigDecimal.valueOf(550000));
                 subscription.setContent(STANDARD_3MONTHS);
                 subscription.setName(STANDARD_3MONTHS);
                 subscription.setStatus(serviceStatusOrCreated);
+                subscription.setDuration(90);
             }
             case UNLIMITED_YEARLY -> {
                 subscription.setPrice(BigDecimal.valueOf(1750000));
                 subscription.setContent(UNLIMITED_YEARLY);
                 subscription.setName(UNLIMITED_YEARLY);
                 subscription.setStatus(serviceStatusOrCreated);
+                subscription.setDuration(365);
+            }
+            default -> {
+                throw new BusinessException(ErrorConstant.SUBSCRIPTION_NOT_FOUND);
             }
         }
         return subscription;

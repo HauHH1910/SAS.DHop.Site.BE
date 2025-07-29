@@ -33,9 +33,6 @@ public class Choreography extends AbstractEntity<Integer> implements Serializabl
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Subscription subscription;
-
     @Column(name = "about")
     private String about;
 

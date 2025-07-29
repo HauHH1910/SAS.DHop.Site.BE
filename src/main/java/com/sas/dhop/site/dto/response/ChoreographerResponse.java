@@ -8,7 +8,7 @@ public record ChoreographerResponse(
         int yearExperience,
         Integer userId,
         BigDecimal price,
-        List<Integer> danceTypeId,
+        List<String> danceTypeName,
         Integer subscriptionId,
         Integer statusId,
         String userName) {}

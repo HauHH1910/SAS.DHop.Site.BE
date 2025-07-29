@@ -6,6 +6,7 @@ import com.sas.dhop.site.dto.ResponseData;
 import com.sas.dhop.site.dto.request.*;
 import com.sas.dhop.site.dto.response.AuthenticationResponse;
 import com.sas.dhop.site.dto.response.IntrospectResponse;
+import com.sas.dhop.site.dto.response.UserResponse;
 import com.sas.dhop.site.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -98,6 +99,14 @@ public class AuthenticationController {
         return ResponseData.<AuthenticationResponse>builder()
                 .message(ResponseMessage.REFRESH_TOKEN)
                 .data(authenticationService.refreshToken(request))
+                .build();
+    }
+
+    @PostMapping("/info")
+    public ResponseData<UserResponse> getUserInfo() {
+        return ResponseData.<UserResponse>builder()
+                .message(ResponseMessage.GET_USER_INFO)
+                .data(authenticationService.getUserInfo())
                 .build();
     }
 }

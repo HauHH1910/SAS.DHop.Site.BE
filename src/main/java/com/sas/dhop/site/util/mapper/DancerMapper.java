@@ -18,16 +18,16 @@ import org.mapstruct.Named;
 public interface DancerMapper {
     @Mapping(target = "danceTypes", ignore = true)
     @Mapping(target = "user", ignore = true)
-    @Mapping(target = "subscription", ignore = true)
     @Mapping(target = "status", ignore = true)
     Dancer mapToDancer(DancerRequest request);
 
     @Mapping(target = "danceTypeName", source = "danceTypes", qualifiedByName = "mapDanceTypeToId")
     @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "subscriptionId", source = "subscription.id")
     @Mapping(target = "statusId", source = "status.id")
     @Mapping(target = "dancerId", source = "id")
     @Mapping(target = "dancerPhone", source = "user.phone")
+    @Mapping(target = "dancerEmail", source = "user.email")
+    @Mapping(target = "avatar", source = "user.avatar")
     DancerResponse mapToDancerResponse(Dancer dancer);
 
     @Named("mapDanceTypeToId")
@@ -40,7 +40,6 @@ public interface DancerMapper {
 
     @Mapping(target = "danceTypes", ignore = true)
     @Mapping(target = "user", ignore = true)
-    @Mapping(target = "subscription", ignore = true)
     @Mapping(target = "status", ignore = true)
     void mapToUpdateDancer(@MappingTarget Dancer dancer, DancerRequest request);
 

@@ -32,7 +32,7 @@ public class User extends AbstractEntity<Integer> implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "area_id")
     private Area area;
 
@@ -46,4 +46,7 @@ public class User extends AbstractEntity<Integer> implements Serializable {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<UserSubscription> userSubscriptions;
 }

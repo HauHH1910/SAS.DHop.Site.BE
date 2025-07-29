@@ -36,7 +36,8 @@ public class Dancer extends AbstractEntity<Integer> implements Serializable {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "about")
+    @Lob
+    @Column(name = "about", columnDefinition = "TEXT")
     private String about;
 
     @Column(name = "year_experience")
@@ -47,9 +48,6 @@ public class Dancer extends AbstractEntity<Integer> implements Serializable {
 
     @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Subscription subscription;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "status_id", nullable = false)

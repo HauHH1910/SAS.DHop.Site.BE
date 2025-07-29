@@ -1,3 +1,3 @@
 package com.sas.dhop.site.dto.request;
 
-public record UserSubscriptionRequest(Integer subscriptionId) {}
+public record UserSubscriptionRequest(Integer userId) {}

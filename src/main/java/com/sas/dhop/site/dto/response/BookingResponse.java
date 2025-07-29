@@ -1,6 +1,7 @@
 package com.sas.dhop.site.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.DanceType;
 import java.math.BigDecimal;
@@ -8,9 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
 
-// yyyy-MM-dd HH:mm
-// Title, start, end, description, id[string||int], people []
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record BookingResponse(
         Integer id,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime start,
@@ -58,12 +58,12 @@ public record BookingResponse(
     private static String getChoreography(Booking request) {
         return request.getChoreography() != null && request.getChoreography().getUser() != null
                 ? request.getChoreography().getUser().getName()
-                : "";
+                : null;
     }
 
     private static String getDancer(Booking request) {
         return request.getDancer() != null && request.getDancer().getDancerNickName() != null
                 ? request.getDancer().getDancerNickName()
-                : "";
+                : null;
     }
 }

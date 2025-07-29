@@ -44,17 +44,20 @@ public class BookingServiceImpl implements BookingService {
     private final CloudStorageService cloudStorageService;
     private final PerformanceService performanceService;
     private final AuthenticationService authenticationService;
-
-    // TODO: Hiện tại đang thiếu các hàm liên quan tới luồng booking không chỉ định,
-    // cần làm các hàm liên quan tới apply danh sách và get danh sach đó
+    private final UserSubscriptionService userSubscriptionService;
 
     // Booking is only for the dancer, the booker wants
     @Override
     @Transactional
-    public BookingResponse createBookingRequestForDancer(DancerBookingRequest request) {
-        checkDancerBookingConflict(request);
-        return BookingResponse.mapToBookingResponse(
-                bookingRepository.save(buildDancerBooking(request)), new ArrayList<>());
+    public List<BookingResponse> createBookingRequestForDancer(DancerBookingRequest request) {
+        boolean conflict = checkDancerBookingConflict(request);
+
+        if (!conflict) {
+            throw new BusinessException(ErrorConstant.BOOKING_CAN_NOT_START);
+        }
+
+        return List.of(BookingResponse.mapToBookingResponse(
+                bookingRepository.save(buildDancerBooking(request)), new ArrayList<>()));
     }
 
     // TODO: Cần chỉnh sửa service liên quan đến tạo booking request của biên đạo,
@@ -76,7 +79,7 @@ public class BookingServiceImpl implements BookingService {
         log.debug("[Booking for choreography] Fetched logged-in customer: {}", customer.getName());
 
         DanceType danceType = danceTypeService.findDanceTypeName(request.danceTypeName());
-        log.debug("[Booking for choreography] lFetched dance type: {}", danceType.getType());
+        log.debug("[Booking for choreography] Fetched dance type: {}", danceType.getType());
 
         Area area = areaRepository.findById(request.areaId()).orElseThrow(() -> {
             log.error("[Booking for choreography] Area not found with id: {}", request.areaId());
@@ -110,7 +113,6 @@ public class BookingServiceImpl implements BookingService {
         return BookingResponse.mapToBookingResponse(booking, new ArrayList<>());
     }
 
-    // accept button for dancers and choreographer
     @Override
     @Transactional
     public BookingResponse acceptBookingRequest(int bookingId, DancerAcceptRequest request) {
@@ -121,6 +123,19 @@ public class BookingServiceImpl implements BookingService {
         Status currentStatus = booking.getStatus();
         if (!currentStatus.getStatusName().equals(BOOKING_PENDING)) {
             throw new BusinessException(ErrorConstant.BOOKING_NOT_ACCEPTABLE);
+        }
+
+        User user = userService.getLoginUser();
+
+        boolean hasRole = authenticationService.authenticationChecking(RolePrefix.DANCER_PREFIX)
+                || authenticationService.authenticationChecking(RolePrefix.CHOREOGRAPHY_PREFIX);
+
+        if (hasRole) {
+            try {
+                userSubscriptionService.addOrForceToBuySubscription(user.getId());
+            } catch (org.springframework.dao.IncorrectResultSizeDataAccessException e) {
+                log.warn("Found duplicate records when checking subscription. Using default behavior.");
+            }
         }
 
         Status activateStatus = statusService.findStatusOrCreated(BOOKING_ACTIVATE);
@@ -283,8 +298,12 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
 
         User currentUser = userService.getLoginUser();
-        if (currentUser.getRoles().equals(RoleName.DANCER)
-                && currentUser.getRoles().equals(RoleName.CHOREOGRAPHY)) {
+
+        boolean hasRole = currentUser.getRoles().stream()
+                .anyMatch(role ->
+                        Arrays.asList(RoleName.DANCER, RoleName.CHOREOGRAPHY).contains(role.getName()));
+
+        if (hasRole) {
             throw new BusinessException(ErrorConstant.ROLE_ACCESS_DENIED);
         }
 
@@ -358,8 +377,6 @@ public class BookingServiceImpl implements BookingService {
         Status complainStatus = statusService.findStatusOrCreated(BOOKING_DISPUTED_REQUEST);
         booking.setStatus(complainStatus);
 
-        User currentUser = userService.getLoginUser();
-
         bookingRepository.save(booking);
 
         return bookingCancelMapper.mapToBookingCancelResponse(booking);
@@ -391,14 +408,6 @@ public class BookingServiceImpl implements BookingService {
             throw new BusinessException(ErrorConstant.CAN_NOT_COMPLAIN);
         }
 
-        //        // Khôi phục trạng thái trước khi khiếu nại
-        ////        Status restoredStatus = booking.getPreviousStatus(); // cần có cột này
-        //        if (restoredStatus == null) {
-        //            throw new BusinessException(ErrorConstant.BOOKING_STATUS_NOT_FOUND);
-        //        }
-        //
-        //        booking.setStatus(restoredStatus);
-        //        booking.setPreviousStatus(null); // clear lại nếu cần
         bookingRepository.save(booking);
 
         return BookingResponse.mapToBookingResponse(booking, new ArrayList<>());
@@ -406,10 +415,6 @@ public class BookingServiceImpl implements BookingService {
 
     // Check price after original have commission
     private BigDecimal calculateCommissionPrice(BigDecimal price) {
-        //        if (price.compareTo(new BigDecimal("500000")) < 0) {
-        //            throw new BusinessException(ErrorConstant.INVALID_MINIMUM_PRICE);
-        //        }
-
         if (price.compareTo(new BigDecimal("500000")) >= 0 && price.compareTo(new BigDecimal("1000000")) < 0) {
             // Phí hoa hồng 20%
             return price.multiply(new BigDecimal("1.20")).setScale(2, RoundingMode.HALF_UP);
@@ -453,15 +458,11 @@ public class BookingServiceImpl implements BookingService {
                 .status(status)
                 .customerPhone(request.customerPhone())
                 .dancerPhone(request.dancerPhone())
-                .price(calculateCommissionPrice(request.bookingPrice()))
+                .price(request.bookingPrice())
                 .build();
     }
 
-    private void checkDancerBookingConflict(DancerBookingRequest request) {
-        boolean isDancer = authenticationService.authenticationChecking(RolePrefix.DANCER_PREFIX);
-        if (isDancer) {
-            throw new BusinessException(ErrorConstant.DANCER_CAN_NOT_BOOKING);
-        }
+    private boolean checkDancerBookingConflict(DancerBookingRequest request) {
         bookingRepository.findByBookingDate(request.bookingDate()).ifPresent(booking -> {
             if (Arrays.asList(BOOKING_ACTIVATE, BOOKING_IN_PROGRESS, BOOKING_WORKING_DONE)
                     .contains(booking.getStatus().getStatusName())) {
@@ -472,6 +473,7 @@ public class BookingServiceImpl implements BookingService {
                 }
             }
         });
+        return true;
     }
 
     // Check same time of the schedule
@@ -482,7 +484,7 @@ public class BookingServiceImpl implements BookingService {
                         && b.getChoreography().getId().equals(choreography.getId()))
                 .filter(b -> !b.getStatus().getStatusName().equals(BOOKING_CANCELED))
                 .filter(b -> b.getStartTime().toLocalDate().equals(bookingDate))
-                .collect(Collectors.toList());
+                .toList();
 
         for (Booking b : bookings) {
             boolean isOverlap = !(bookingRequest.endTime().isBefore(b.getStartTime())
@@ -503,7 +505,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> lateBookings = bookingRepository.findAll().stream()
                 .filter(b -> b.getStatus().getStatusName().equals(BOOKING_ACTIVATE))
                 .filter(b -> b.getStartTime().plusHours(24).isBefore(ChronoLocalDateTime.from(now)))
-                .collect(Collectors.toList());
+                .toList();
 
         // Lấy trạng thái INACTIVATE để set
         Status inactivateStatus = statusService.findStatusOrCreated(BOOKING_INACTIVATE);

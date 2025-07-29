@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import com.sas.dhop.site.dto.request.*;
 import com.sas.dhop.site.dto.response.AuthenticationResponse;
 import com.sas.dhop.site.dto.response.IntrospectResponse;
+import com.sas.dhop.site.dto.response.UserResponse;
 import jakarta.mail.MessagingException;
 import java.text.ParseException;
 
@@ -28,4 +29,6 @@ public interface AuthenticationService {
     AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException;
 
     boolean authenticationChecking(String role);
+
+    UserResponse getUserInfo();
 }

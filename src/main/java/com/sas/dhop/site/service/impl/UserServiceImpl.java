@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         User user = findUserById(id);
         userMapper.mapToUpdateUser(user, request);
         log.info("[update user] - [{}]", id);
-        return userMapper.mapToUserResponse(user);
+        return userMapper.mapToUserResponse(userRepository.save(user));
     }
 
     @Override

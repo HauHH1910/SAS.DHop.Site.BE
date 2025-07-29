@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .addInterceptors(authHandshakeInterceptor)
-                .setAllowedOriginPatterns("http://localhost:3000")
+                .setAllowedOriginPatterns("http://localhost:3000", "https://dhop-site.vercel.app", "https://dhop.io.vn")
                 .withSockJS();
     }
 

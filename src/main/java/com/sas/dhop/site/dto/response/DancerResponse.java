@@ -16,4 +16,7 @@ public record DancerResponse(
         Integer statusId,
         Integer dancerId,
         Integer areaId,
-        String dancerPhone) {}
+        String dancerPhone,
+        String dancerEmail,
+        String about,
+        String avatar) {}

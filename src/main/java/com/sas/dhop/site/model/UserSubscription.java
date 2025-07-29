@@ -1,8 +1,9 @@
 package com.sas.dhop.site.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import lombok.*;
 
 @Getter
@@ -14,21 +15,23 @@ import lombok.*;
 @Table(name = "user_subscription")
 public class UserSubscription extends AbstractEntity<Integer> implements Serializable {
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "subscription_id", nullable = false)
     private Subscription subscription;
 
     @Column(name = "from_date")
-    private Instant fromDate;
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm")
+    private LocalDateTime fromDate;
 
     @Column(name = "to_date")
-    private Instant toDate;
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm")
+    private LocalDateTime toDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
 }

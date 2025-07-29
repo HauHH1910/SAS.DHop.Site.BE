@@ -7,9 +7,7 @@ import com.sas.dhop.site.dto.request.CommissionPaymentRequest;
 import com.sas.dhop.site.dto.request.CreatePaymentRequest;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
-import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.Payment;
-import com.sas.dhop.site.repository.BookingRepository;
 import com.sas.dhop.site.repository.PaymentRepository;
 import com.sas.dhop.site.service.PaymentService;
 import java.util.Date;
@@ -32,13 +30,9 @@ public class PaymentServiceImpl implements PaymentService {
     private final PayOS payOS;
     private final PaymentRepository paymentRepository;
     private final ObjectMapper objectMapper;
-    private final BookingRepository bookingRepository;
 
-    @Value("${sas.payos.return-url}")
-    private String returnUrl;
-
-    @Value("${sas.payos.cancel-url}")
-    private String cancelUrl;
+    @Value("${sas.payos.url}")
+    private String url;
 
     @Override
     public ObjectNode commissionPayment(CommissionPaymentRequest request) {
@@ -59,8 +53,8 @@ public class PaymentServiceImpl implements PaymentService {
                     .description(request.description())
                     .amount(request.price())
                     .item(item)
-                    .returnUrl(returnUrl)
-                    .cancelUrl(cancelUrl)
+                    .returnUrl(url + "/payment-success")
+                    .cancelUrl(url + "/payment-error")
                     .build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);
@@ -80,13 +74,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ObjectNode createPaymentLink(CreatePaymentRequest request) {
-        ObjectNode response = objectMapper.createObjectNode();
+    public String createPaymentLinkForBuyingSubscription(CreatePaymentRequest request) {
         try {
-            Booking booking = bookingRepository
-                    .findById(request.bookingId())
-                    .orElseThrow(() -> new BusinessException(ErrorConstant.BOOKING_NOT_FOUND));
-            String currentTimeString = String.valueOf(booking.getBookingDate());
+            String currentTimeString = String.valueOf(new Date().getTime());
 
             long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
 
@@ -101,30 +91,22 @@ public class PaymentServiceImpl implements PaymentService {
                     .description(request.description())
                     .amount(request.price())
                     .item(item)
-                    .returnUrl(returnUrl)
-                    .cancelUrl(cancelUrl)
+                    .returnUrl(url + "/subscription-status")
+                    .cancelUrl(url + "/subscription-status")
                     .build();
 
             CheckoutResponseData data = payOS.createPaymentLink(paymentData);
-            paymentRepository.save(new Payment(orderCode, "", paymentData.getAmount()));
-            response.put("error", 0);
-            response.put("message", "success");
-            response.set("data", objectMapper.valueToTree(data));
-            return response;
+            paymentRepository.save(new Payment(orderCode, PaymentStatus.PAID, paymentData.getAmount()));
 
+            return data.getCheckoutUrl();
         } catch (Exception e) {
-            log.info("[create payment link] - [{}]", e.getMessage());
-            response.put("error", -1);
-            response.put("message", "fail");
-            response.set("data", null);
-            return response;
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public ObjectNode getOrderByID(Long orderId) {
         ObjectNode response = objectMapper.createObjectNode();
-
         try {
             PaymentLinkData order = payOS.getPaymentLinkInformation(orderId);
 
@@ -185,13 +167,18 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment saveCommissionPayment(String status, Long orderCode) throws Exception {
+    public Payment savePayment(String status, Long orderCode) throws Exception {
         PaymentLinkData order = payOS.getPaymentLinkInformation(orderCode);
-        if (order == null) {
-            throw new BusinessException(ErrorConstant.PAYMENT_NOT_FOUND);
+        log.info("[Save Payment] - [Status: {} - Order Code: {}]", order.getStatus(), order.getOrderCode());
+
+        Payment existingPayment = paymentRepository.findByOrderCode(orderCode).orElse(null);
+
+        if (existingPayment != null) {
+            existingPayment.setStatus(PaymentStatus.PAID);
+            return paymentRepository.save(existingPayment);
+        } else {
+            Payment newPayment = new Payment(order.getOrderCode(), PaymentStatus.PAID, order.getAmount());
+            return paymentRepository.save(newPayment);
         }
-        return paymentRepository
-                .findByOrderCode(orderCode)
-                .orElseGet(() -> paymentRepository.save(new Payment(orderCode, status, order.getAmount())));
     }
 }
