@@ -21,7 +21,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer>, JpaS
     Optional<Booking> findByBookingDate(LocalDateTime bookingDate);
 
     @Query(
-            "select count(b) from Booking b where b.dancer = ?1 and b.bookingDate between ?2 and ?3 and b.status.statusName = 'Đã hoàn tất'")
+            "select count(b) from Booking b where b.dancer = ?1 and b.bookingDate between ?2 and ?3 and b.status.statusName = 'Đã có phản hồi'")
     long countBookingByDancerAndBookingDateBetween(
             Dancer dancer, LocalDateTime bookingDateAfter, LocalDateTime bookingDateBefore);
 

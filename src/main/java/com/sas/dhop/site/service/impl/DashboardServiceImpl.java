@@ -1,13 +1,12 @@
 package com.sas.dhop.site.service.impl;
 
-import com.sas.dhop.site.constant.PaymentStatus;
+import static com.sas.dhop.site.constant.BookingStatus.*;
+
 import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.dto.response.*;
 import com.sas.dhop.site.exception.BusinessException;
 import com.sas.dhop.site.exception.ErrorConstant;
-import com.sas.dhop.site.model.Payment;
-import com.sas.dhop.site.model.Role;
-import com.sas.dhop.site.model.Status;
+import com.sas.dhop.site.model.*;
 import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.repository.*;
 import com.sas.dhop.site.service.AuthenticationService;
@@ -15,6 +14,7 @@ import com.sas.dhop.site.service.DashboardService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.util.mapper.UserMapper;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,12 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
@@ -41,10 +36,10 @@ public class DashboardServiceImpl implements DashboardService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final AuthenticationService authenticationService;
-    private final PaymentRepository paymentRepository;
-    private final BookingFeedbackRepository bookingFeedbackRepository;
     private final StatusService statusService;
+    private final UserSubscriptionRepository userSubscriptionRepository;
     private final UserMapper userMapper;
+    private final BookingFeedbackRepository bookingFeedbackRepository;
 
     @Override
     public List<BookingDetailResponse> getBookingDetails(String bookingStatus) {
@@ -73,20 +68,59 @@ public class DashboardServiceImpl implements DashboardService {
         long totalUser = userRepository.count();
         long totalBookings = bookingRepository.count();
 
-        AtomicInteger totalRevenue = new AtomicInteger();
+        Set<String> validBookingStatuses = Set.of(
+                BOOKING_PENDING,
+                BOOKING_ACTIVATE,
+                BOOKING_COMPLETED,
+                BOOKING_SENT_IMAGE,
+                BOOKING_IN_PROGRESS,
+                BOOKING_WORKING_DONE,
+                BOOKING_ACCEPTED,
+                BOOKING_HAD_FEED_BACK);
 
-        List<Payment> payments = paymentRepository.findAll();
+        List<Booking> validBookings = bookingRepository.findAll().stream()
+                .filter(booking ->
+                        validBookingStatuses.contains(booking.getStatus().getStatusName()))
+                .toList();
+        BigDecimal totalBookingPrice = BigDecimal.ZERO; // Tổng giá gốc
+        BigDecimal totalCommissionRevenue = BigDecimal.ZERO; // Tổng hoa hồng
+        for (Booking booking : validBookings) {
+            BigDecimal price = booking.getPrice(); // 500,000 VND
+            totalBookingPrice = totalBookingPrice.add(price);
+            totalCommissionRevenue = totalCommissionRevenue.add(calculateCommissionPrice(price)); // 100,000 VND
+        }
 
-        payments.stream()
-                .filter(payment -> payment.getStatus().equals(PaymentStatus.PAID))
-                .forEach(payment -> {
-                    totalRevenue.addAndGet(payment.getAmount());
-                });
+        long totalRating = bookingFeedbackRepository.findAll().size();
 
-        long totalRating = bookingFeedbackRepository.count();
+        BigDecimal totalSubscriptionPayments = BigDecimal.ZERO;
+        List<Subscription> subscriptions = userSubscriptionRepository.findAll().stream()
+                .map(UserSubscription::getSubscription)
+                .toList();
 
-        return new OverviewStatisticsResponse(
-                totalUser, totalBookings, BigDecimal.valueOf(totalRevenue.get()), totalRating);
+        for(Subscription subscription : subscriptions) {
+            totalSubscriptionPayments = totalSubscriptionPayments.add(subscription.getPrice());
+        }
+
+        return OverviewStatisticsResponse.builder()
+                .totalUsers(totalUser)
+                .totalBookings(totalBookings)
+                .totalRating(totalRating)
+                .totalSubscriptionRevenue(totalSubscriptionPayments.longValueExact())
+                .totalBookingRevenue(totalCommissionRevenue.longValueExact())
+                .build();
+    }
+
+    private BigDecimal calculateCommissionPrice(BigDecimal price) {
+        if (price.compareTo(new BigDecimal("500000")) >= 0 && price.compareTo(new BigDecimal("1000000")) < 0) {
+            // Phí hoa hồng 20%
+            return price.multiply(new BigDecimal("0.20")).setScale(2, RoundingMode.HALF_UP);
+        } else if (price.compareTo(new BigDecimal("1000000")) >= 0 && price.compareTo(new BigDecimal("2000000")) < 0) {
+            // Phí hoa hồng 15%
+            return price.multiply(new BigDecimal("0.15")).setScale(2, RoundingMode.HALF_UP);
+        } else {
+            // Phí hoa hồng 10% (>= 2 triệu)
+            return price.multiply(new BigDecimal("0.10")).setScale(2, RoundingMode.HALF_UP);
+        }
     }
 
     @Override
@@ -130,6 +164,8 @@ public class DashboardServiceImpl implements DashboardService {
             default -> getMonthlyBookingStats(date);
         };
     }
+
+
 
     private List<BookingStatisticsResponse> getWeeklyBookingStats(LocalDateTime date) {
         // Determine the start and end of the week based on the given date

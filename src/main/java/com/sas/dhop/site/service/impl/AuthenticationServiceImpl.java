@@ -6,6 +6,8 @@ import static com.sas.dhop.site.constant.UserStatus.ACTIVE_USER;
 import static com.sas.dhop.site.constant.UserStatus.INACTIVE_USER;
 
 import com.nimbusds.jose.*;
+import com.sas.dhop.site.constant.AreaStatus;
+import com.sas.dhop.site.constant.RolePrefix;
 import com.sas.dhop.site.controller.client.OAuthIdentityClient;
 import com.sas.dhop.site.controller.client.OAuthUserClient;
 import com.sas.dhop.site.dto.request.*;
@@ -223,19 +225,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public void register(RegisterRequest request) throws MessagingException {
-        // Kiểm tra trùng email
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new BusinessException(ErrorConstant.EMAIL_ALREADY_EXIST);
         }
 
-        // Lấy status mặc định cho user mới
         Status userStatus = statusService.findStatusOrCreated(INACTIVE_USER);
 
-        // Tìm role theo tên
         Role role = roleService.findByRoleName(request.role());
         Set<Role> roles = Set.of(role);
 
-        // Tạo user entity
+        Area area = areaRepository.findAreaByIdAndStatus(request.areaIds().get(0), AreaStatus.ACTIVATED_AREA);
+
         User user = User.builder()
                 .name(request.name())
                 .phone(request.phone())
@@ -243,16 +243,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .password(passwordEncoder.encode(request.password()))
                 .roles(roles)
                 .status(userStatus)
+                .area(area)
                 .build();
 
         userRepository.save(user);
 
-        // Chỉ bắt buộc kiểm tra khu vực nếu role là DANCER hoặc CHOREOGRAPHY
         Set<Area> workAreas = new HashSet<>();
         boolean isDancerOrChoreo =
                 RoleName.DANCER.equals(request.role()) || RoleName.CHOREOGRAPHY.equals(request.role());
         if (isDancerOrChoreo) {
-            if (request.areaIds() == null || request.areaIds().isEmpty()) {
+            if (request.areaIds().isEmpty()) {
                 throw new BusinessException(ErrorConstant.AREA_NOT_NULL);
             }
             List<Area> foundAreas = areaRepository.findAllById(request.areaIds());
@@ -261,8 +261,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             }
             workAreas = new HashSet<>(foundAreas);
         }
-
-        // Nếu là CHOREOGRAPHY
         if (RoleName.CHOREOGRAPHY.equals(request.role()) && request.choreography() != null) {
             log.info("[{}] đăng ký vai trò CHOREOGRAPHY", request.email());
 
@@ -282,9 +280,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build();
 
             choreographyRepository.save(choreography);
-        }
-        // Nếu là DANCER
-        else if (RoleName.DANCER.equals(request.role()) && request.dancer() != null) {
+        } else if (RoleName.DANCER.equals(request.role()) && request.dancer() != null) {
             log.info("[{}] đăng ký vai trò DANCER", request.email());
 
             Status dancerStatus = statusService.findStatusOrCreated(ACTIVATED_DANCER);
@@ -354,10 +350,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public UserResponse getUserInfo() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository
+        boolean isDancer = authenticationChecking(RolePrefix.DANCER_PREFIX);
+        User user = userRepository
                 .findByEmail(email)
-                .map(userMapper::mapToUserResponse)
                 .orElseThrow(() -> new BusinessException(ErrorConstant.EMAIL_NOT_FOUND));
+        if (isDancer) {
+            Dancer dancer = dancerRepository
+                    .findByUser(user)
+                    .orElseThrow(() -> new BusinessException(ErrorConstant.NOT_DANCER));
+            return new UserResponse(
+                    user.getId(),
+                    user.getAvatar(),
+                    user.getName(),
+                    user.getEmail(),
+                    user.getPhone(),
+                    AreaResponse.mapToAreaResponse(user.getArea()),
+                    dancerMapper.mapToDancerResponse(dancer));
+        }
+        return userMapper.mapToUserResponse(user);
     }
 
     private ExchangeTokenResponse getTokenResponse(String code) {

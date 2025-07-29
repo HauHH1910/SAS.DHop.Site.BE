@@ -461,7 +461,7 @@ public class BookingServiceImpl implements BookingService {
                 .status(status)
                 .customerPhone(request.customerPhone())
                 .dancerPhone(request.dancerPhone())
-                .price(calculateCommissionPrice(request.bookingPrice()))
+                .price(request.bookingPrice())
                 .build();
     }
 

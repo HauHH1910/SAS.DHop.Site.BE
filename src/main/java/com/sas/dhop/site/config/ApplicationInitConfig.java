@@ -6,20 +6,13 @@ import com.sas.dhop.site.model.enums.RoleName;
 import com.sas.dhop.site.model.enums.StatusType;
 import com.sas.dhop.site.repository.*;
 import jakarta.transaction.Transactional;
-
-import java.math.BigDecimal;
 import java.util.*;
-
-import lombok.Builder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import static com.sas.dhop.site.constant.AreaStatus.ACTIVATED_AREA;
 
 @Configuration
 @RequiredArgsConstructor
@@ -28,7 +21,13 @@ public class ApplicationInitConfig {
 
     @Bean
     @Transactional
-    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository, StatusRepository statusRepository, AreaRepository areaRepository, DanceTypeRepository danceTypeRepository, PasswordEncoder passwordEncoder) {
+    ApplicationRunner applicationRunner(
+            UserRepository userRepository,
+            RoleRepository roleRepository,
+            StatusRepository statusRepository,
+            AreaRepository areaRepository,
+            DanceTypeRepository danceTypeRepository,
+            PasswordEncoder passwordEncoder) {
         return args -> {
             Role adminRole = buildRole(roleRepository, RoleName.ADMIN);
             Status adminStatus = buildStatus(statusRepository, RolePrefix.ADMIN_PREFIX);
@@ -42,29 +41,48 @@ public class ApplicationInitConfig {
     }
 
     private Role buildRole(RoleRepository roleRepository, RoleName role) {
-        return roleRepository.findByName(role).orElseGet(() -> roleRepository.save(Role.builder().name(role).build()));
+        return roleRepository
+                .findByName(role)
+                .orElseGet(() -> roleRepository.save(Role.builder().name(role).build()));
     }
 
     private Status buildStatus(StatusRepository statusRepository, String status) {
         try {
-            return statusRepository.findByStatusName(status).orElseGet(() -> statusRepository.save(Status.builder().statusName(status).statusType(StatusType.ACTIVE).description(status).build()));
+            return statusRepository
+                    .findByStatusName(status)
+                    .orElseGet(() -> statusRepository.save(Status.builder()
+                            .statusName(status)
+                            .statusType(StatusType.ACTIVE)
+                            .description(status)
+                            .build()));
         } catch (org.springframework.dao.IncorrectResultSizeDataAccessException e) {
             log.warn("Found duplicate status records for name: {}. Using the first one.", status);
-            List<Status> statuses = statusRepository.findAll().stream().filter(s -> status.equals(s.getStatusName())).toList();
+            List<Status> statuses = statusRepository.findAll().stream()
+                    .filter(s -> status.equals(s.getStatusName()))
+                    .toList();
 
             if (!statuses.isEmpty()) {
                 return statuses.get(0);
             } else {
-                return statusRepository.save(Status.builder().statusName(status).statusType(StatusType.ACTIVE).description(status).build());
+                return statusRepository.save(Status.builder()
+                        .statusName(status)
+                        .statusType(StatusType.ACTIVE)
+                        .description(status)
+                        .build());
             }
         }
     }
 
     private static User adminEntity(PasswordEncoder passwordEncoder) {
-        return User.builder().name("admin").email("admin@gmail.com").password(passwordEncoder.encode("123456")).build();
+        return User.builder()
+                .name("admin")
+                .email("admin@gmail.com")
+                .password(passwordEncoder.encode("123456"))
+                .build();
     }
 
-    private User checkIfAdminExistOrNot(UserRepository userRepository, Role role, Status status, PasswordEncoder passwordEncoder) {
+    private User checkIfAdminExistOrNot(
+            UserRepository userRepository, Role role, Status status, PasswordEncoder passwordEncoder) {
         User user = adminEntity(passwordEncoder);
         if (userRepository.findByEmail(user.getEmail()).isEmpty()) {
             user.setRoles(Set.of(role));

@@ -36,7 +36,8 @@ public class Dancer extends AbstractEntity<Integer> implements Serializable {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "about")
+    @Lob
+    @Column(name = "about", columnDefinition = "TEXT")
     private String about;
 
     @Column(name = "year_experience")
