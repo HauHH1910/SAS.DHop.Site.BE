@@ -39,6 +39,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final StatusService statusService;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final UserMapper userMapper;
+    private final BookingFeedbackRepository bookingFeedbackRepository;
 
     @Override
     public List<BookingDetailResponse> getBookingDetails(String bookingStatus) {
@@ -67,16 +68,6 @@ public class DashboardServiceImpl implements DashboardService {
         long totalUser = userRepository.count();
         long totalBookings = bookingRepository.count();
 
-        BigDecimal totalRevenue = BigDecimal.ZERO;
-        List<Subscription> subscriptions = userSubscriptionRepository.findAll().stream()
-                .map(UserSubscription::getSubscription)
-                .toList();
-
-        BigDecimal totalSubscriptionPayments =
-                subscriptions.stream().map(Subscription::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        totalRevenue = totalRevenue.add(totalSubscriptionPayments);
-
         Set<String> validBookingStatuses = Set.of(
                 BOOKING_PENDING,
                 BOOKING_ACTIVATE,
@@ -91,14 +82,45 @@ public class DashboardServiceImpl implements DashboardService {
                 .filter(booking ->
                         validBookingStatuses.contains(booking.getStatus().getStatusName()))
                 .toList();
-
+        BigDecimal totalBookingPrice = BigDecimal.ZERO; // Tổng giá gốc
+        BigDecimal totalCommissionRevenue = BigDecimal.ZERO; // Tổng hoa hồng
         for (Booking booking : validBookings) {
-            BigDecimal price = booking.getPrice();
-            BigDecimal commissionPrice = calculateCommissionPrice(price);
-            totalRevenue = totalRevenue.add(commissionPrice);
+            BigDecimal price = booking.getPrice(); // 500,000 VND
+            totalBookingPrice = totalBookingPrice.add(price);
+            totalCommissionRevenue = totalCommissionRevenue.add(calculateCommissionPrice(price)); // 100,000 VND
         }
 
-        return new OverviewStatisticsResponse(totalUser, totalBookings, totalRevenue, (long) validBookings.size());
+        long totalRating = bookingFeedbackRepository.findAll().size();
+
+        BigDecimal totalSubscriptionPayments = BigDecimal.ZERO;
+        List<Subscription> subscriptions = userSubscriptionRepository.findAll().stream()
+                .map(UserSubscription::getSubscription)
+                .toList();
+
+        for(Subscription subscription : subscriptions) {
+            totalSubscriptionPayments = totalSubscriptionPayments.add(subscription.getPrice());
+        }
+
+        return OverviewStatisticsResponse.builder()
+                .totalUsers(totalUser)
+                .totalBookings(totalBookings)
+                .totalRating(totalRating)
+                .totalSubscriptionRevenue(totalSubscriptionPayments.longValueExact())
+                .totalBookingRevenue(totalCommissionRevenue.longValueExact())
+                .build();
+    }
+
+    private BigDecimal calculateCommissionPrice(BigDecimal price) {
+        if (price.compareTo(new BigDecimal("500000")) >= 0 && price.compareTo(new BigDecimal("1000000")) < 0) {
+            // Phí hoa hồng 20%
+            return price.multiply(new BigDecimal("0.20")).setScale(2, RoundingMode.HALF_UP);
+        } else if (price.compareTo(new BigDecimal("1000000")) >= 0 && price.compareTo(new BigDecimal("2000000")) < 0) {
+            // Phí hoa hồng 15%
+            return price.multiply(new BigDecimal("0.15")).setScale(2, RoundingMode.HALF_UP);
+        } else {
+            // Phí hoa hồng 10% (>= 2 triệu)
+            return price.multiply(new BigDecimal("0.10")).setScale(2, RoundingMode.HALF_UP);
+        }
     }
 
     @Override
@@ -143,15 +165,7 @@ public class DashboardServiceImpl implements DashboardService {
         };
     }
 
-    private BigDecimal calculateCommissionPrice(BigDecimal price) {
-        if (price.compareTo(new BigDecimal("500000")) >= 0 && price.compareTo(new BigDecimal("1000000")) < 0) {
-            return price.multiply(new BigDecimal("0.20")).setScale(2, RoundingMode.HALF_UP);
-        } else if (price.compareTo(new BigDecimal("1000000")) >= 0 && price.compareTo(new BigDecimal("2000000")) < 0) {
-            return price.multiply(new BigDecimal("0.15")).setScale(2, RoundingMode.HALF_UP);
-        } else {
-            return price.multiply(new BigDecimal("0.10")).setScale(2, RoundingMode.HALF_UP);
-        }
-    }
+
 
     private List<BookingStatisticsResponse> getWeeklyBookingStats(LocalDateTime date) {
         // Determine the start and end of the week based on the given date

@@ -1,6 +1,16 @@
 package com.sas.dhop.site.dto.response;
 
+import lombok.Builder;
+
 import java.math.BigDecimal;
 
-public record OverviewStatisticsResponse(
-        Long totalUsers, Long totalBookings, BigDecimal totalRevenue, Long totalBookingCompleteTransaction) {}
+@Builder
+public record OverviewStatisticsResponse
+        (
+        Long totalUsers,
+        Long totalBookings,
+        Long totalSubscriptionRevenue,
+        Long totalBookingRevenue,
+        Long totalRating
+        ) {
+}
