@@ -2,10 +2,7 @@ package com.sas.dhop.site.controller;
 
 import com.sas.dhop.site.constant.ResponseMessage;
 import com.sas.dhop.site.dto.ResponseData;
-import com.sas.dhop.site.dto.response.BookingDetailResponse;
-import com.sas.dhop.site.dto.response.BookingStatisticsResponse;
-import com.sas.dhop.site.dto.response.OverviewStatisticsResponse;
-import com.sas.dhop.site.dto.response.UserResponse;
+import com.sas.dhop.site.dto.response.*;
 import com.sas.dhop.site.service.DashboardService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
@@ -62,5 +59,10 @@ public class DashboardController {
     @GetMapping("/user-management")
     public ResponseData<List<UserResponse>> userManagement() {
         return ResponseData.ok(dashboardService.userManagement(), ResponseMessage.GET_USER_MANAGEMENT);
+    }
+
+    @GetMapping("/history")
+    public ResponseData<List<PaymentResponse>> getPaymentHistory(){
+        return ResponseData.ok(dashboardService.paymentHistory(), "");
     }
 }

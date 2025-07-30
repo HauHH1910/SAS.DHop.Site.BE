@@ -2,6 +2,8 @@ package com.sas.dhop.site.dto.response;
 
 import com.sas.dhop.site.model.Booking;
 import com.sas.dhop.site.model.DanceType;
+
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +23,7 @@ public class BookingDetailResponse {
     private String endTime;
     private String address;
     private String description;
+    private BigDecimal price;
 
     public static BookingDetailResponse mapToBookingDetail(Booking booking) {
         return BookingDetailResponse.builder()
@@ -38,6 +41,7 @@ public class BookingDetailResponse {
                 .endTime(booking.getEndTime().toString())
                 .address(booking.getAddress())
                 .description(booking.getDetail())
+                .price(booking.getPrice())
                 .danceTypes(
                         booking.getDanceType().stream().map(DanceType::getType).toList())
                 .build();

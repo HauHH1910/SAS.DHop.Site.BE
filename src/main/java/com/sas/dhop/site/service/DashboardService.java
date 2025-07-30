@@ -1,9 +1,7 @@
 package com.sas.dhop.site.service;
 
-import com.sas.dhop.site.dto.response.BookingDetailResponse;
-import com.sas.dhop.site.dto.response.BookingStatisticsResponse;
-import com.sas.dhop.site.dto.response.OverviewStatisticsResponse;
-import com.sas.dhop.site.dto.response.UserResponse;
+import com.sas.dhop.site.dto.response.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,4 +14,6 @@ public interface DashboardService {
     List<BookingDetailResponse> getBookingDetails(String bookingStatus);
 
     List<UserResponse> userManagement();
+
+    List<PaymentResponse> paymentHistory();
 }

@@ -40,6 +40,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final UserMapper userMapper;
     private final BookingFeedbackRepository bookingFeedbackRepository;
+    private final PaymentRepository paymentRepository;
 
     @Override
     public List<BookingDetailResponse> getBookingDetails(String bookingStatus) {
@@ -132,6 +133,11 @@ public class DashboardServiceImpl implements DashboardService {
                         .contains(RoleName.ADMIN))
                 .map(userMapper::mapToUserResponse)
                 .toList();
+    }
+
+    @Override
+    public List<PaymentResponse> paymentHistory() {
+        return paymentRepository.findAll().stream().map(PaymentResponse::mapToPaymentResponse).toList();
     }
 
     @Override
@@ -253,7 +259,6 @@ public class DashboardServiceImpl implements DashboardService {
         // Group by week
         LocalDateTime current = startOfMonth;
         WeekFields weekFields = WeekFields.of(Locale.getDefault());
-        int currentWeek = current.get(weekFields.weekOfWeekBasedYear());
 
         while (!current.isAfter(endOfMonth)) {
             LocalDateTime weekStart = current;
@@ -410,7 +415,6 @@ public class DashboardServiceImpl implements DashboardService {
             }
 
             LocalDateTime current = startDate;
-            WeekFields weekFields = WeekFields.of(Locale.getDefault());
 
             while (!current.isAfter(endDate)) {
                 // Start of current week (Monday)
