@@ -95,8 +95,8 @@ public class DashboardServiceImpl implements DashboardService {
                 .filter(booking ->
                         validBookingStatuses.contains(booking.getStatus().getStatusName()))
                 .toList();
-        BigDecimal totalBookingPrice = BigDecimal.ZERO; // Tổng giá gốc
-        BigDecimal totalCommissionRevenue = BigDecimal.ZERO; // Tổng hoa hồng
+        BigDecimal totalBookingPrice = BigDecimal.ZERO;
+        BigDecimal totalCommissionRevenue = BigDecimal.ZERO;
         for (Booking booking : validBookings) {
             BigDecimal price = booking.getPrice(); // 500,000 VND
             totalBookingPrice = totalBookingPrice.add(price);

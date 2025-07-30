@@ -28,6 +28,7 @@ public class BookingDetailResponse {
     private BigDecimal price;
     private BigDecimal commissionPrice;
     private Integer rating;
+    private String review;
 
     public static BookingDetailResponse mapToBookingDetail(Booking booking, BookingFeedback bookingFeedback) {
         return BookingDetailResponse.builder()
@@ -50,6 +51,7 @@ public class BookingDetailResponse {
                         booking.getDanceType().stream().map(DanceType::getType).toList())
                 .commissionPrice(calculateCommissionPrice(booking.getPrice()))
                 .rating(bookingFeedback != null ? bookingFeedback.getRating() : null)
+                .review(bookingFeedback != null ? bookingFeedback.getComment() : null)
                 .build();
     }
 
