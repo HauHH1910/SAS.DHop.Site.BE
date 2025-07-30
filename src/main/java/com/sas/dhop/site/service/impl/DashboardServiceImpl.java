@@ -13,6 +13,7 @@ import com.sas.dhop.site.service.AuthenticationService;
 import com.sas.dhop.site.service.DashboardService;
 import com.sas.dhop.site.service.StatusService;
 import com.sas.dhop.site.util.mapper.UserMapper;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
@@ -26,6 +27,7 @@ import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -50,12 +52,22 @@ public class DashboardServiceImpl implements DashboardService {
             Status status = statusService.findStatusOrCreated(bookingStatus);
 
             return bookingRepository.findAllByStatus(status).stream()
-                    .map(BookingDetailResponse::mapToBookingDetail)
+                    .map(booking -> {
+                        BookingFeedback bookingFeedback = bookingFeedbackRepository.findByBooking(booking)
+                                .orElse(null);
+
+                        return BookingDetailResponse.mapToBookingDetail(booking, bookingFeedback);
+                    })
                     .toList();
         }
 
         return bookingRepository.findAll().stream()
-                .map(BookingDetailResponse::mapToBookingDetail)
+                .map(booking -> {
+                    BookingFeedback bookingFeedback = bookingFeedbackRepository.findByBooking(booking)
+                            .orElse(null);
+
+                    return BookingDetailResponse.mapToBookingDetail(booking, bookingFeedback);
+                })
                 .toList();
     }
 
@@ -92,13 +104,14 @@ public class DashboardServiceImpl implements DashboardService {
         }
 
         long totalRating = bookingFeedbackRepository.findAll().size();
+        OptionalDouble averageRating = bookingFeedbackRepository.findAll().stream().mapToInt(BookingFeedback::getRating).average();
 
         BigDecimal totalSubscriptionPayments = BigDecimal.ZERO;
         List<Subscription> subscriptions = userSubscriptionRepository.findAll().stream()
                 .map(UserSubscription::getSubscription)
                 .toList();
 
-        for(Subscription subscription : subscriptions) {
+        for (Subscription subscription : subscriptions) {
             totalSubscriptionPayments = totalSubscriptionPayments.add(subscription.getPrice());
         }
 
@@ -108,6 +121,7 @@ public class DashboardServiceImpl implements DashboardService {
                 .totalRating(totalRating)
                 .totalSubscriptionRevenue(totalSubscriptionPayments.longValueExact())
                 .totalBookingRevenue(totalCommissionRevenue.longValueExact())
+                .averageRating(averageRating)
                 .build();
     }
 
@@ -170,7 +184,6 @@ public class DashboardServiceImpl implements DashboardService {
             default -> getMonthlyBookingStats(date);
         };
     }
-
 
 
     private List<BookingStatisticsResponse> getWeeklyBookingStats(LocalDateTime date) {
