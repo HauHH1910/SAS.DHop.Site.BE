@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface BookingFeedbackRepository
         extends JpaRepository<BookingFeedback, Integer>, JpaSpecificationExecutor<BookingFeedback> {
-    Optional<BookingFeedback> findByBooking(Booking booking);
+    List<BookingFeedback> findByBooking(Booking booking);
 }

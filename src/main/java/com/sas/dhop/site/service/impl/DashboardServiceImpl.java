@@ -46,27 +46,18 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public List<BookingDetailResponse> getBookingDetails(String bookingStatus) {
+        List<Booking> bookings = (bookingStatus != null)
+                ? bookingRepository.findAllByStatus(statusService.findStatusOrCreated(bookingStatus))
+                : bookingRepository.findAll();
 
-        if (bookingStatus != null) {
-
-            Status status = statusService.findStatusOrCreated(bookingStatus);
-
-            return bookingRepository.findAllByStatus(status).stream()
-                    .map(booking -> {
-                        BookingFeedback bookingFeedback = bookingFeedbackRepository.findByBooking(booking)
-                                .orElse(null);
-
-                        return BookingDetailResponse.mapToBookingDetail(booking, bookingFeedback);
-                    })
-                    .toList();
-        }
-
-        return bookingRepository.findAll().stream()
+        return bookings.stream()
                 .map(booking -> {
-                    BookingFeedback bookingFeedback = bookingFeedbackRepository.findByBooking(booking)
-                            .orElse(null);
-
-                    return BookingDetailResponse.mapToBookingDetail(booking, bookingFeedback);
+                    List<BookingFeedback> feedbacks = bookingFeedbackRepository.findByBooking(booking);
+                    BookingFeedback selectedFeedback = feedbacks.isEmpty() ? null :
+                            feedbacks.stream()
+                                    .max(Comparator.comparing(BookingFeedback::getCreatedAt))
+                                    .orElse(null);
+                    return BookingDetailResponse.mapToBookingDetail(booking, selectedFeedback);
                 })
                 .toList();
     }
